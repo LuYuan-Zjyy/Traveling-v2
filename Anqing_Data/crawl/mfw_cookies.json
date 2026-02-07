@@ -1,0 +1,22 @@
+[
+  {
+    "name": "x-waf-captcha-referer",
+    "value": "https%3A%2F%2Fwww.mafengwo.cn%2Ftravel-scenic-spot%2Fmafengwo%2F12058.html",
+    "domain": "www.mafengwo.cn",
+    "path": "/",
+    "expires": 1770434699.666798,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "w_tsfp",
+    "value": "ltvuV0MF2utBvS0Q7qrtl0+oHj4hcDk4h0wpEaR0f5thQLErU5mC0YJ5us3/N3bY4cxnvd7DsZoyJTLYCJI3dwMUR5qXd9gUjFyYwNNwiogWAEJgGMnbXFYfJrx3vTAUdHhCNxS00jA8eIUd379yilgMsyN1zap3TO14fstJ019E6KDQmI5uDW3HlFWQRzaLbjcMcuqPr6g18L5a5TfZ7Qj/LAl3VrJCghbH3S0eCS4l4xK/IewIYBz5cJr6SqA=",
+    "domain": "www.mafengwo.cn",
+    "path": "/",
+    "expires": 1770434702,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
