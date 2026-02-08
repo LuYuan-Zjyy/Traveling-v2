@@ -1,0 +1,19 @@
+# TravelPlanner 依赖
+
+# 核心
+pandas>=2.0.0
+numpy>=1.24.0
+datasets>=2.14.0
+tqdm>=4.66.0
+
+# 模糊匹配
+fuzzywuzzy>=0.18.0
+python-Levenshtein>=0.21.0
+
+# LLM API
+openai>=1.0.0
+google-generativeai>=0.3.0
+
+# 搜索 (事实验证)
+ddgs>=6.0.0
+requests>=2.31.0
