@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_115510_234886",
+  "user_input": "I am looking for a 3-day trip from Xi'an to Suzhou, departing on Thursday evening and returning on Sunday evening, with a budget of ¥5000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical gardens, scenic lakeside areas, and unique architectural spaces, along with enjoying diverse cuisines like Jiangsu, Zhejiang, Japanese, and creative dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime, and include opportunities for relaxation, such as hot springs or evening strolls.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T11:55:10.234886",
+  "duration_seconds": 267.85,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Suzhou",
+  "duration_days": 3
+}

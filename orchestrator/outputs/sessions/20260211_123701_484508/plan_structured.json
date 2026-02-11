@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "豪华酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Nanjing to Guangzhou",
+      "number": "MU2807",
+      "time": "06:30",
+      "price": 800
+    },
+    {
+      "day": 3,
+      "mode": "Flight",
+      "route": "Guangzhou to Nanjing",
+      "number": "CZ3698",
+      "time": "20:00",
+      "price": 850
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-12:00",
+        "location": "长隆野生动物世界",
+        "price": 350,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "摩打食堂(北京路城壹汇店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "长隆欢乐世界-巨星秀",
+        "price": 250,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "福岛料理·烧鸟酒场(北京路店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "广州动物园",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大雄寿司(教育路店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "广州融创乐园",
+        "price": 228,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "粤菜餐厅",
+        "price": 250,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "广州大剧院",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "滨寿司(广州五月花店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "长隆飞鸟乐园",
+        "price": 100,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "火锅餐厅",
+        "price": 250,
+        "action": "dining"
+      }
+    ]
+  }
+}

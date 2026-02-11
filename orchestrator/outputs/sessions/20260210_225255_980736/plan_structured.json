@@ -1,0 +1,185 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "长沙君悦酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Guangzhou to Changsha",
+      "number": "G6112",
+      "time": "07:30",
+      "price": 314
+    },
+    {
+      "day": 6,
+      "mode": "Train",
+      "route": "Changsha to Guangzhou",
+      "number": "G1127",
+      "time": "17:00",
+      "price": 314
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "橘子洲风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "笨罗卜浏阳菜馆(黄兴铜像育英街店)",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "太平老街历史文化街区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "王品牛排(长沙橘洲全江景店)",
+        "price": 269,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "岳麓山风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "墨澜·人间味割烹料理",
+        "price": 278,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "咸嘉湖景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "熊猫烤串·精酿烤串小酒馆(郡原广场店)",
+        "price": 66,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-11:30",
+        "location": "古开福寺",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "四方坪三十栋饭店",
+        "price": 54,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "潮宗街区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "COMMUNE幻师(解放西路店)",
+        "price": 95,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "10:00-12:00",
+        "location": "杜甫江阁",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "秦皇食府(市府店)",
+        "price": 80,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "五一广场",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "牛家酒场(河西长沙王府井FAMILY PARK购物中心店)",
+        "price": 115,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "10:00-12:00",
+        "location": "湖南省博物馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "耕渔雅院·湖南鱼鲜(雨花店)",
+        "price": 96,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "梅溪湖国际文化艺术中心",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "HolyShift切幻·旋转餐厅(长沙春天店)",
+        "price": 132,
+        "action": "dining"
+      }
+    ],
+    "day_6": [
+      {
+        "time": "09:30-11:30",
+        "location": "天心阁",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "喜座·湖南美食村落(总店)",
+        "price": 133,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "坡子街",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:00",
+        "location": "茶颜悦色",
+        "price": 20,
+        "action": "dining"
+      }
+    ]
+  }
+}

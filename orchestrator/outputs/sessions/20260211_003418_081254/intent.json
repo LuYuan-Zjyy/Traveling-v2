@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 2-day trip from Beijing to Changsha, departing on Sunday morning and returning on Monday evening, with a budget of ¥4000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring historical landmarks, cultural districts, and scenic natural areas, along with enjoying diverse cuisines like traditional barbecue and refined Chinese dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Changsha",
+    "departure_city": "Beijing",
+    "start_date": "Sunday morning",
+    "end_date": "Monday evening",
+    "duration_days": 2,
+    "budget": 4000,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "自然风光"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，需平衡导游探索与自由时间；餐饮要求每餐费用超过200元，偏好传统烧烤和精致中餐；游览兴趣包括历史地标、文化街区和自然风景区"
+  }
+}

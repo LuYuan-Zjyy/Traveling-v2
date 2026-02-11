@@ -1,0 +1,133 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "加利利连锁酒店(西安钟鼓楼大差市地铁站店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Hangzhou to Xi'an",
+      "number": "G1882",
+      "time": "07:00",
+      "price": 600
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Xi'an to Hangzhou",
+      "number": "G1879",
+      "time": "18:00",
+      "price": 600
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "西安钟楼",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "爱骅裤带面馆(钟楼店)",
+        "price": 22,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "高家大院",
+        "price": 15,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "马洪小炒泡馍馆",
+        "price": 31,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "大雁塔",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "子午路张记肉夹馍(翠华路店)",
+        "price": 25,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "西安博物院",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "魏客咖啡(中铁西安中心店)",
+        "price": 65,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "大唐芙蓉园",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "虎子水盆羊肉(翠华路总店)",
+        "price": 43,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "永兴坊",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "COMMUNE(西安天品西岸店)",
+        "price": 107,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-12:00",
+        "location": "中国传统瓦作博物馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "志亮灌汤蒸饺·清真",
+        "price": 23,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "白鹿原·白鹿仓",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "魏家凉皮(西大街店)",
+        "price": 24,
+        "action": "dining"
+      }
+    ]
+  }
+}

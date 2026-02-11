@@ -1,0 +1,141 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "桂林漓江大瀑布饭店(象鼻山两江四湖店)",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Guangzhou to Guilin",
+      "number": "D2966",
+      "time": "10:30",
+      "price": 150
+    },
+    {
+      "day": 5,
+      "mode": "Train",
+      "route": "Guilin to Guangzhou",
+      "number": "D2967",
+      "time": "11:00",
+      "price": 150
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-17:00",
+        "location": "象鼻山景区",
+        "price": 55,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "棚源农家菜馆",
+        "price": 120,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-21:00",
+        "location": "两江四湖",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "芦笛岩",
+        "price": 90,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "月城桂林米粉",
+        "price": 15,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "靖江王府",
+        "price": 100,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "桂林香格里拉（餐厅）",
+        "price": 180,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "漓江古东景区-古东瀑布景区",
+        "price": 55,
+        "action": "sightseeing"
+      },
+      {
+        "time": "13:00-14:00",
+        "location": "万顺农家菜馆",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-18:00",
+        "location": "兴坪古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "阳朔西街（美食）",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-12:00",
+        "location": "世外桃源",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "鱼羊鲜土菜馆",
+        "price": 120,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "阳朔富里桥",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "20:00-21:30",
+        "location": "桂林千古情景区",
+        "price": 280,
+        "action": "sightseeing"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-10:00",
+        "location": "龙脊梯田风景名胜区",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "10:30-11:00",
+        "location": "样样香土菜馆",
+        "price": 80,
+        "action": "dining"
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "user_input": "I am looking for a 4-day trip from Guangzhou to Hong Kong, departing on Monday afternoon and returning on Thursday afternoon, with a budget of ¥17700. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic waterfront areas, and vibrant commercial hubs, along with enjoying diverse cuisines like Southeast Asian, Japanese-inspired dishes, and authentic Chinese seafood. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Hong Kong",
+    "departure_city": "Guangzhou",
+    "start_date": "Monday afternoon",
+    "end_date": "Thursday afternoon",
+    "duration_days": 4,
+    "budget": 17700,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "城市观光",
+      "海滨风光",
+      "购物"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮偏好：东南亚菜、日式料理、中式海鲜，每餐预算超过200元；兴趣点：文化地标、历史遗址、海滨景观、繁华商业区"
+  }
+}

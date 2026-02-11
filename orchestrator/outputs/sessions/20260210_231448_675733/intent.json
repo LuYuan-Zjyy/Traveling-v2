@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Hangzhou to Xi'an, departing on Tuesday early morning and returning on Friday evening, with a budget of ¥3000. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring cultural landmarks, historical sites, traditional architecture, and vibrant neighborhoods, along with enjoying diverse cuisines like local snacks, Western dishes, and barbecue. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Xi'an",
+    "departure_city": "Hangzhou",
+    "start_date": "Tuesday early morning",
+    "end_date": "Friday evening",
+    "duration_days": 4,
+    "budget": 3000,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "传统建筑",
+      "美食",
+      "街区探索"
+    ],
+    "accommodation_type": "中档酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮偏好：餐厅用餐，餐费50-100元，喜欢当地小吃、西餐和烧烤"
+  }
+}

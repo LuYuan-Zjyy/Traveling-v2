@@ -1,0 +1,19 @@
+{
+  "user_input": "I am looking for a 3-day trip from Xi'an to Suzhou, departing on Saturday late morning and returning on Monday evening, with a budget of ¥5500. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring classical gardens, historical landmarks, cultural museums, and ancient water towns, along with enjoying diverse cuisines like Korean, Jiangsu, Zhejiang, and fresh seafood dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Suzhou",
+    "departure_city": "Xi'an",
+    "start_date": "Saturday late morning",
+    "end_date": "Monday evening",
+    "duration_days": 3,
+    "budget": 5500,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮偏好：每餐成本超过200元的餐厅，喜欢韩国菜、江苏菜、浙江菜和新鲜海鲜；兴趣点：古典园林、历史地标、文化博物馆、古镇水乡"
+  }
+}

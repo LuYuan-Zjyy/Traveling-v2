@@ -1,0 +1,101 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "双宇商务主题酒店(开封鼓楼店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Xi'an to Kaifeng",
+      "number": "G2002",
+      "time": "07:30",
+      "price": 200
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Kaifeng to Xi'an",
+      "number": "G2210",
+      "time": "17:00",
+      "price": 200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-12:00",
+        "location": "清明上河园",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "东京食坊(清明上河园店)",
+        "price": 60,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "开封府",
+        "price": 65,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "黄家老店(徐府街店)",
+        "price": 55,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "万岁山武侠城",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "张记逍遥胡辣汤(大坑沿街店)",
+        "price": 15,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "大梁门",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "一品楼(西门大街)",
+        "price": 40,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-11:30",
+        "location": "皇宋大观文化园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "绿茶餐厅(开封万达店)",
+        "price": 65,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "汴梁小宋城",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

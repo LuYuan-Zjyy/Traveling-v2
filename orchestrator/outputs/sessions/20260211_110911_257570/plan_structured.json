@@ -1,0 +1,133 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "上海宝格丽酒店",
+      "price_per_night": 4000
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Wuhan to Shanghai",
+      "number": "G1726",
+      "time": "07:00",
+      "price": 260
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Shanghai to Wuhan",
+      "number": "G1778",
+      "time": "18:00",
+      "price": 260
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "万国建筑博览群",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "醉辉皇(爱琴海·缤纷里店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "外滩",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "廷盛饭店",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "上海野生动物园",
+        "price": 200,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大米先生(松花江路店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "武康路历史文化名街",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "大米先生(亿丰时代广场)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "上海朱家角古镇旅游区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大米先生(新天国际店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "放生桥",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "大米先生",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-12:00",
+        "location": "上海音乐谷",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "无名蹄花(上海首店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "popark艺术公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "大米先生(亿丰时代广场)",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

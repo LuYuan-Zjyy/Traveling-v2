@@ -1,0 +1,23 @@
+{
+  "user_input": "I am looking for a 3-day trip from Wuhan to Zhuhai, departing on Monday late morning and returning on Wednesday evening, with a budget of ¥6700. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring ocean-themed attractions, immersive shows, interstellar-themed parks, and scenic coastal views, along with enjoying diverse cuisines like seafood and international buffets. The itinerary should be packed with activities, maximizing my time while ensuring a memorable experience.",
+  "intent": {
+    "destination": "Zhuhai",
+    "departure_city": "Wuhan",
+    "start_date": "Monday late morning",
+    "end_date": "Wednesday evening",
+    "duration_days": 3,
+    "budget": 6700,
+    "travelers": null,
+    "preferences": [
+      "海洋主题景点",
+      "沉浸式演出",
+      "星际主题公园",
+      "海岸风光",
+      "海鲜美食",
+      "国际自助餐"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程安排紧凑，最大化利用时间；餐厅用餐标准每餐超过200元；希望获得难忘的旅行体验"
+  }
+}

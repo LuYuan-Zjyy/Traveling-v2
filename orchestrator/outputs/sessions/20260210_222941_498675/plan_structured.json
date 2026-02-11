@@ -1,0 +1,81 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "城市优选酒店(武汉汉口江滩江汉路步行街店)",
+      "price_per_night": 500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Shanghai to Wuhan",
+      "number": "G1726",
+      "time": "07:00",
+      "price": 300
+    },
+    {
+      "day": 2,
+      "mode": "Train",
+      "route": "Wuhan to Shanghai",
+      "number": "G1729",
+      "time": "18:00",
+      "price": 300
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "黄鹤楼",
+        "price": 70,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "烫锅鲜砂锅串串(江汉路总店)",
+        "price": 75,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "昙华林",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "KCOOKING概念韩餐(江汉路店)",
+        "price": 97,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "江汉关大楼",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "海底捞火锅(中心百货店)",
+        "price": 115,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "汉口江滩",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "NEED创意韩国料理(武商梦时代店)",
+        "price": 114,
+        "action": "dining"
+      }
+    ]
+  }
+}

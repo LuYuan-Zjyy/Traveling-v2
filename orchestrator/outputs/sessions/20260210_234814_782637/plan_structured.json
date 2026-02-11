@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "珠海长隆飞船酒店",
+      "price_per_night": 1500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Wuhan to Zhuhai",
+      "number": "CZ6587",
+      "time": "10:30",
+      "price": 1200
+    },
+    {
+      "day": 3,
+      "mode": "Flight",
+      "route": "Zhuhai to Wuhan",
+      "number": "CZ6588",
+      "time": "19:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "13:00-14:00",
+        "location": "长隆企鹅酒店·帝企鹅自助餐厅(长隆国际店)",
+        "price": 163,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-18:30",
+        "location": "长隆海洋王国",
+        "price": 450,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "俊兴海鲜大排档(横琴长隆宝兴路店)",
+        "price": 95,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "企鹅馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "珠海长隆飞船酒店·水手餐厅",
+        "price": 196,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "长隆海洋王国公园-海鸟世界",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "新澳海鲜大排档(横琴长隆总店)",
+        "price": 88,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-22:00",
+        "location": "红桃FM沉浸式互动剧场",
+        "price": 98,
+        "action": "sightseeing"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-11:30",
+        "location": "湾仔休闲公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "水禾轩·海鲜蒸汽主题餐厅(拱北店)",
+        "price": 119,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "珠海海湾大酒店",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-18:00",
+        "location": "万山楼海鲜酒家(总店)",
+        "price": 80,
+        "action": "dining"
+      }
+    ]
+  }
+}

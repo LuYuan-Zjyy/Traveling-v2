@@ -1,0 +1,141 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "深圳文华东方酒店",
+      "price_per_night": 1500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Wuhan to Shenzhen",
+      "number": "CZ3846",
+      "time": "07:30",
+      "price": 800
+    },
+    {
+      "day": 5,
+      "mode": "Flight",
+      "route": "Shenzhen to Wuhan",
+      "number": "CZ3845",
+      "time": "16:00",
+      "price": 800
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "11:30-12:30",
+        "location": "蘩楼(华强北总店)",
+        "price": 88,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "深圳人才公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "大鸽饭(福田COCO Park店)",
+        "price": 113,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "深圳仙湖植物园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "顺德公猪肚鸡(车公庙总店)",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-18:00",
+        "location": "锦绣中华民俗村",
+        "price": 220,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "小炳胜(卓悦中心店)",
+        "price": 115,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "大鹏所城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "光明乳鸽·凤凰酒楼(光明总店)",
+        "price": 89,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-18:00",
+        "location": "深圳湾公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "点都德(前海HOP店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-12:00",
+        "location": "东部华侨城",
+        "price": 200,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "蘩楼(深圳湾宝...",
+        "price": 88,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-18:00",
+        "location": "甘坑古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "顺德公猪肚鸡(车公庙总店)",
+        "price": 100,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-12:00",
+        "location": "天后博物馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大鸽饭(福田COCO Park店)",
+        "price": 113,
+        "action": "dining"
+      }
+    ]
+  }
+}

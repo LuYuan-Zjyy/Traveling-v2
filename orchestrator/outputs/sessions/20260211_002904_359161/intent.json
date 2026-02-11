@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Shenzhen to Wuhan, departing on Wednesday late morning and returning on Saturday afternoon, with a budget of ¥8500. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic natural areas, and architectural marvels, along with enjoying diverse cuisines like regional specialties and international buffets. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Wuhan",
+    "departure_city": "Shenzhen",
+    "start_date": "Wednesday late morning",
+    "end_date": "Saturday afternoon",
+    "duration_days": 4,
+    "budget": 8500,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食",
+      "建筑景观"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮偏好人均200元以上的餐厅，包括地方特色菜和国际自助餐"
+  }
+}

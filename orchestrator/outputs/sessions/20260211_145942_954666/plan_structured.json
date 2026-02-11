@@ -1,0 +1,109 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "住小叮连锁酒店(枣营地铁站店)",
+      "price_per_night": 600
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Guangzhou to Beijing",
+      "number": "CA1352",
+      "time": "10:30",
+      "price": 1200
+    },
+    {
+      "day": 4,
+      "mode": "Flight",
+      "route": "Beijing to Guangzhou",
+      "number": "CA1329",
+      "time": "18:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-17:00",
+        "location": "故宫博物院",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "四季民福烤鸭店(前门大栅栏店)",
+        "price": 134,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "慕田峪长城",
+        "price": 45,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "海泰食府(北京总店)",
+        "price": 158,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "恭王府博物馆",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "烤肉刘(天坛.前门总店)",
+        "price": 111,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "颐和园",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "紫光园(王府井店)",
+        "price": 78,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "天坛公园",
+        "price": 15,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "百年前门炙子烤肉(大栅栏店)",
+        "price": 80,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:30-12:00",
+        "location": "圆明园遗址公园",
+        "price": 25,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "汇贤府(万寿路店)",
+        "price": 94,
+        "action": "dining"
+      }
+    ]
+  }
+}

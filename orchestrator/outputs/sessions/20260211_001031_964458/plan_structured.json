@@ -1,0 +1,109 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "深圳文华东方酒店",
+      "price_per_night": 1800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Xi'an to Shenzhen",
+      "number": "ZH9215",
+      "time": "10:30",
+      "price": 1200
+    },
+    {
+      "day": 4,
+      "mode": "Flight",
+      "route": "Shenzhen to Xi'an",
+      "number": "CZ3228",
+      "time": "07:00",
+      "price": 1100
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-16:00",
+        "location": "南头古城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-18:00",
+        "location": "79号渔船海鲜饭店(深圳湾店)",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "欢乐港湾",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:30-12:00",
+        "location": "锦绣中华民俗村",
+        "price": 220,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大东海海鲜酒楼(福永总店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "深圳野生动物园",
+        "price": 240,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "深圳湾万丽酒店·燃自助餐厅·日落景观",
+        "price": 319,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "10:00-12:00",
+        "location": "甘坑古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "裕华海鲜·深圳粤菜(怀德万象汇店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "海上田园",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "深圳国际会展中心希尔顿酒店·厨艺餐厅",
+        "price": 241,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "05:00-06:00",
+        "location": "深圳机场凯悦酒店自助餐厅咖啡厅",
+        "price": 212,
+        "action": "dining"
+      }
+    ]
+  }
+}

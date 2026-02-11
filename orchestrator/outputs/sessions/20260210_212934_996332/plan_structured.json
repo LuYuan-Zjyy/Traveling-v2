@@ -1,0 +1,147 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "广州四季酒店",
+      "price_per_night": 1800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Hangzhou to Guangzhou",
+      "number": "CA1725",
+      "time": "06:30",
+      "price": 1200
+    },
+    {
+      "day": 5,
+      "mode": "Flight",
+      "route": "Guangzhou to Hangzhou",
+      "number": "CZ3802",
+      "time": "19:00",
+      "price": 1100
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-12:00",
+        "location": "越秀公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "餐厅",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "陈家祠",
+        "price": 10,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "餐厅",
+        "price": 300,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-17:00",
+        "location": "长隆野生动物世界",
+        "price": 350,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "餐厅",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "餐厅",
+        "price": 280,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-17:00",
+        "location": "长隆欢乐世界",
+        "price": 300,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "餐厅",
+        "price": 220,
+        "action": "dining"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "餐厅",
+        "price": 320,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "沙面岛",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "餐厅",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "天河公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "餐厅",
+        "price": 350,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-12:00",
+        "location": "广州塔",
+        "price": 150,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "餐厅",
+        "price": 280,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-16:30",
+        "location": "沙湾古镇",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-17:30",
+        "location": "餐厅",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

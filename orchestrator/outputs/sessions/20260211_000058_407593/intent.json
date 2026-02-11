@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Beijing to Harbin, departing on Thursday late morning and returning on Sunday evening, with a budget of ¥2900. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring cultural landmarks, historical sites, scenic urban areas, and enjoying winter sports like skiing. I’d also like to experience diverse cuisines, including hot pot, barbecue, and regional specialties. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Harbin",
+    "departure_city": "Beijing",
+    "start_date": "Thursday late morning",
+    "end_date": "Sunday evening",
+    "duration_days": 4,
+    "budget": 2900,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "户外运动",
+      "城市风光"
+    ],
+    "accommodation_type": "中档酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮预算每餐50-100元；体验火锅、烧烤和地方特色菜；参观文化地标、历史遗迹、城市景观；参与滑雪等冬季运动"
+  }
+}

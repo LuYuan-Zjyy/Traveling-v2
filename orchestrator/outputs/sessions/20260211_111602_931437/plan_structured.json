@@ -1,0 +1,121 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "汉庭酒店(中山路步行街鼓浪屿码头店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Guangzhou to Xiamen",
+      "number": "D2381",
+      "time": "10:30",
+      "price": 255
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Xiamen to Guangzhou",
+      "number": "D2388",
+      "time": "14:00",
+      "price": 255
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "鼓浪屿风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "那私厨(红砖老别墅餐厅)",
+        "price": 80,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "鼓浪屿风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "鼓浪海鲜餐厅(鼓浪屿笔山洞店)",
+        "price": 90,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "厦门园林植物园",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "南普陀素面馆",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "厦门山海健康步道",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "昕泉居酒屋(官任路店)",
+        "price": 120,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "厦门白鹭洲公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "鲤鱼门食府(珍珠湾店)",
+        "price": 130,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "海湾公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "豚珍とんかつ(汇禾新城店)",
+        "price": 50,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "中山公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "大方素食馆(思明南路店)",
+        "price": 60,
+        "action": "dining"
+      }
+    ]
+  }
+}

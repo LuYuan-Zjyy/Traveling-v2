@@ -1,0 +1,133 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "苏州太湖万豪酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Xi'an to Suzhou",
+      "number": "G1920",
+      "time": "07:30",
+      "price": 550
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Suzhou to Xi'an",
+      "number": "G1930",
+      "time": "18:00",
+      "price": 550
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "留园",
+        "price": 55,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "江南雅厨(李公堤店)",
+        "price": 236,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "网师园",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "苏城家宴(李公堤店)",
+        "price": 168,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "沧浪亭",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "凌轩阁·苏浙菜(李公堤店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "耦园",
+        "price": 25,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "二十八里太湖船菜(胥口吉祥路店)",
+        "price": 90,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "周庄古镇",
+        "price": 100,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "嘉乐苏乡宴苏帮菜(太仓店)",
+        "price": 124,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "木渎古镇",
+        "price": 78,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "吴越荣记(石湖景区店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "艺圃",
+        "price": 10,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "稻山村·苏州菜(石路店)",
+        "price": 63,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "鹤山书院-江苏巡抚衙门旧址",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "金鸡湖大酒店",
+        "price": 300,
+        "action": "dining"
+      }
+    ]
+  }
+}

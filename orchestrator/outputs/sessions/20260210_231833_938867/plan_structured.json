@@ -1,0 +1,95 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "金鸡湖大酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Nanjing to Suzhou",
+      "number": "G7001",
+      "time": "07:00",
+      "price": 100
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Suzhou to Nanjing",
+      "number": "G7010",
+      "time": "15:00",
+      "price": 100
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "虎丘山风景区",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "姑苏园臻品嘉宴",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "留园",
+        "price": 55,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "水晶饭店(科建大厦店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "寒山寺",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "醉仙楼餐厅(农家菜苏帮菜)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "平江路",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "丽群食府(吴淞商业广场店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "金鸡湖景区玫瑰园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "姑苏园臻品嘉宴",
+        "price": 250,
+        "action": "dining"
+      }
+    ]
+  }
+}

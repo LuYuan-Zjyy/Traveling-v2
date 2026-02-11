@@ -1,0 +1,147 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "中档酒店",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Shanghai to Changsha",
+      "number": "G1347",
+      "time": "07:00",
+      "price": 500
+    },
+    {
+      "day": 5,
+      "mode": "Train",
+      "route": "Changsha to Shanghai",
+      "number": "G1378",
+      "time": "14:00",
+      "price": 500
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "岳麓山风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "火宫殿(坡子街店)",
+        "price": 75,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "岳麓书院",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "火宫殿·湘菜首府(坡子街店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "橘子洲风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "火宫殿(五一路店)",
+        "price": 75,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "长沙湘江风光带",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "火宫殿(东塘分店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "太平老街历史文化街区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "火宫殿(华晨店)",
+        "price": 75,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "杜甫江阁",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "火宫殿(长沙西服务区店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "梅溪湖公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "火宫殿(坡子街店)",
+        "price": 75,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "天心阁",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "火宫殿·湘菜首府(坡子街店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-11:00",
+        "location": "橘子洲湘江游轮",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "火宫殿(五一路店)",
+        "price": 75,
+        "action": "dining"
+      }
+    ]
+  }
+}

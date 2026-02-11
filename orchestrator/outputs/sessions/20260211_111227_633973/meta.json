@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_111227_633973",
+  "user_input": "I am looking for a 5-day trip from Wuhan to Nanjing, departing on Wednesday afternoon and returning on Sunday morning, with a budget of ¥6700. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, natural attractions, and architectural marvels, along with enjoying diverse cuisines such as seafood, regional Chinese dishes, and international flavors. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T11:12:27.633973",
+  "duration_seconds": 212.26,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Nanjing",
+  "duration_days": 5
+}

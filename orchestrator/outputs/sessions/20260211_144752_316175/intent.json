@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 2-day trip from Xi'an to Lijiang, departing on Tuesday evening and returning on Thursday evening, with a budget of ¥2600. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic natural attractions like mountains and valleys, and enjoying diverse cuisines, including Western and local dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Lijiang",
+    "departure_city": "Xi'an",
+    "start_date": "Tuesday evening",
+    "end_date": "Thursday evening",
+    "duration_days": 2,
+    "budget": 2600,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮预算每餐100-200元，希望品尝西餐和当地菜肴；对文化地标、历史遗迹、山脉峡谷等自然景观感兴趣"
+  }
+}

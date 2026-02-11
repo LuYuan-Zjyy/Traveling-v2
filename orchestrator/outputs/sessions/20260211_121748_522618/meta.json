@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_121748_522618",
+  "user_input": "I am looking for a 4-day trip from Hangzhou to Guilin, departing on Friday morning and returning on Monday evening, with a budget of ¥5000. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring scenic river cruises, historic districts, cultural performances, natural landmarks like caves and mountains, and outdoor activities such as hiking, rafting, and hot air ballooning, along with enjoying diverse regional cuisines. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T12:17:48.523633",
+  "duration_seconds": 154.84,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Guilin",
+  "duration_days": 4
+}

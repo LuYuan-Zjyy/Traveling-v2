@@ -1,0 +1,81 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "豪华酒店（基于用户偏好，从真实数据中未找到具体名称，此为占位符）",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Beijing to Yantai",
+      "number": "G1085",
+      "time": "06:30",
+      "price": 350
+    },
+    {
+      "day": 2,
+      "mode": "Train",
+      "route": "Yantai to Beijing",
+      "number": "G1090",
+      "time": "18:00",
+      "price": 350
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "烟台山景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "鲁豫海鲜·鲁菜·四季烧烤(高新区店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "东炮台公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "蓬莱饭店",
+        "price": 250,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "养马岛",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "百盛烧烤(宁海大街)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "金沙滩海滨公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "时光塔",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

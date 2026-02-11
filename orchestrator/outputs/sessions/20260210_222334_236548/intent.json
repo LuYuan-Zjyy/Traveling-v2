@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 3-day trip from Chengdu to Nanjing, departing on Tuesday early morning and returning on Thursday evening, with a budget of ¥3500. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical landmarks, cultural heritage sites, serene natural settings, and scenic river views, along with enjoying diverse cuisines like Guangdong, Jiangsu, Zhejiang, and hot pot dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "南京",
+    "departure_city": "成都",
+    "start_date": "周二清晨",
+    "end_date": "周四晚上",
+    "duration_days": 3,
+    "budget": 3500,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮偏好：粤菜、江苏菜、浙江菜及火锅，每餐预算100-200元；兴趣点：历史地标、文化遗产、宁静自然景观、河景风光。"
+  }
+}

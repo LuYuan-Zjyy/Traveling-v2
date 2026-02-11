@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Beijing to Guangzhou, departing on Thursday early morning and returning on Sunday evening, with a budget of ¥4900. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic gardens, and architectural marvels, along with enjoying diverse cuisines like Guangdong, Hunan, and hot pot dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Guangzhou",
+    "departure_city": "Beijing",
+    "start_date": "Thursday early morning",
+    "end_date": "Sunday evening",
+    "duration_days": 4,
+    "budget": 4900,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "建筑景观",
+      "园林景观"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮预算每餐100-200元；希望品尝粤菜、湘菜和火锅"
+  }
+}

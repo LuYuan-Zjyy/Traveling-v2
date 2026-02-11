@@ -1,0 +1,19 @@
+{
+  "user_input": "I am looking for a 4-day trip from Shanghai to Xi'an, departing on Friday early morning and returning on Monday evening, with a budget of ¥4300. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical landmarks, cultural sites, and vibrant neighborhoods, along with enjoying diverse cuisines like seafood, hot pot, and local specialties. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Xi'an",
+    "departure_city": "Shanghai",
+    "start_date": "Friday early morning",
+    "end_date": "Monday evening",
+    "duration_days": 4,
+    "budget": 4300,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮预算每餐100-200元，喜欢海鲜、火锅和当地特色菜；喜欢探索历史地标、文化遗址和充满活力的街区"
+  }
+}

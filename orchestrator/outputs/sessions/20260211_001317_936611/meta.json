@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_001317_936611",
+  "user_input": "I am looking for a 3-day trip from Shanghai to Guiyang, departing on Friday early morning and returning on Sunday evening, with a budget of ¥4800. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, natural parks, and vibrant markets, along with enjoying diverse cuisines like Guizhou, Guangdong, and Sichuan dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T00:13:17.936611",
+  "duration_seconds": 153.93,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Guiyang",
+  "duration_days": 3
+}

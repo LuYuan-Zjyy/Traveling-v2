@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 3-day trip from Guangzhou to Wuxi, departing on Sunday morning and returning on Tuesday evening, with a budget of ¥7200. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring serene gardens, cultural landmarks, and scenic areas with natural beauty, along with enjoying diverse cuisines like Chinese and Japanese dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Wuxi",
+    "departure_city": "Guangzhou",
+    "start_date": "Sunday morning",
+    "end_date": "Tuesday evening",
+    "duration_days": 3,
+    "budget": 7200,
+    "travelers": null,
+    "preferences": [
+      "自然风光",
+      "历史文化",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮偏好人均200元以上餐厅；喜欢探索宁静花园、文化地标和自然美景区域；对中餐和日料等多样美食感兴趣。"
+  }
+}

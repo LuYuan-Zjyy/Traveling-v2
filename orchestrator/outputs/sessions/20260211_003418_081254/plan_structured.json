@@ -1,0 +1,81 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "长沙运达喜来登酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Beijing to Changsha",
+      "number": "CA1347",
+      "time": "08:00",
+      "price": 1200
+    },
+    {
+      "day": 2,
+      "mode": "Flight",
+      "route": "Changsha to Beijing",
+      "number": "CA1370",
+      "time": "20:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "11:30-12:30",
+        "location": "时间仓(泊富ICITY店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "岳麓山风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "双爷烤肉(华创店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "19:30-20:30",
+        "location": "太平老街历史文化街区",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "杜甫江阁",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "探崎精致餐厅(CFC富兴时代店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "月亮岛",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-18:00",
+        "location": "时间仓月湖公园店",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

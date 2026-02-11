@@ -1,0 +1,95 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "杭州西子湖四季酒店",
+      "price_per_night": 3000
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Shenzhen to Hangzhou",
+      "number": "ZH9876",
+      "time": "07:00",
+      "price": 1200
+    },
+    {
+      "day": 3,
+      "mode": "Flight",
+      "route": "Hangzhou to Shenzhen",
+      "number": "ZH9877",
+      "time": "19:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "11:00-13:00",
+        "location": "新滨安·地道江鲜",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "杭州西湖风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "西苑跨湖楼",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "灵隐寺",
+        "price": 75,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大宅院(西溪路)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "西溪国家湿地公园",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "湘湖大院(越王路)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-12:30",
+        "location": "杭州宋城",
+        "price": 320,
+        "action": "sightseeing"
+      },
+      {
+        "time": "13:00-14:00",
+        "location": "高老庄壹号宴(联合中心店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-17:00",
+        "location": "雷峰塔景区",
+        "price": 40,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

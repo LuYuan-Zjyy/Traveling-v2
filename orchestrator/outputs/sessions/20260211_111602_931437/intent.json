@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 4-day trip from Guangzhou to Xiamen, departing on Sunday late morning and returning on Wednesday afternoon, with a budget of ¥2900. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring cultural landmarks, serene temples, scenic viewpoints, and vibrant streets, along with enjoying diverse cuisines like Fujian, Japanese, and seafood dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Xiamen",
+    "departure_city": "Guangzhou",
+    "start_date": "Sunday late morning",
+    "end_date": "Wednesday afternoon",
+    "duration_days": 4,
+    "budget": 2900,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "自然风光"
+    ],
+    "accommodation_type": "中档酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮预算每餐50-100元；对福建菜、日本菜和海鲜感兴趣；喜欢文化地标、宁静寺庙、观景点和热闹街道"
+  }
+}

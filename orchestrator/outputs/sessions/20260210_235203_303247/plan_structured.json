@@ -1,0 +1,179 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "百顺万利酒店",
+      "price_per_night": 350
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Guangzhou to Zhengzhou",
+      "number": "G96",
+      "time": "08:00",
+      "price": 650
+    },
+    {
+      "day": 6,
+      "mode": "Train",
+      "route": "Zhengzhou to Guangzhou",
+      "number": "G847",
+      "time": "17:00",
+      "price": 650
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "少林寺",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "半闲斋羊肉铺总店",
+        "price": 93,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "嵩阳书院",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "海底捞火锅(华润万象城店)",
+        "price": 106,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "中原福塔",
+        "price": 98,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "米村拌饭(郑州万象城店)",
+        "price": 34,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "郑州市人民公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "双合园·海鲜水饺青岛菜(郑州经三路店)",
+        "price": 66,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "宋陵公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "那些年潮汕牛肉火锅(国贸店)",
+        "price": 63,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "紫荆山公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "大叹号烤肉·朝鲜族料理(金融岛店)",
+        "price": 74,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "偃月古城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "巴奴毛肚火锅(概念餐厅店)",
+        "price": 121,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "郑州龙湖湿地公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "尹珍珠·韩式无限烤肉(保利久街店)",
+        "price": 78,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-11:00",
+        "location": "碧沙岗公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "小螺号海鲜(楷林国际店)",
+        "price": 150,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "西流湖公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "二人烧(天下城店)",
+        "price": 82,
+        "action": "dining"
+      }
+    ],
+    "day_6": [
+      {
+        "time": "09:00-11:00",
+        "location": "迷厂沉浸式演绎剧场",
+        "price": 218,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "珂子珍味海鲜(经一路总店)",
+        "price": 101,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "浮生沉浸式推理馆(二七万达店)",
+        "price": 102,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

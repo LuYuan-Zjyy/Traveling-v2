@@ -1,0 +1,12 @@
+{
+  "session_id": "20260210_234445_615701",
+  "user_input": "I am looking for a 2-day trip from Nanjing to Shanghai, departing on Sunday morning and returning on Monday afternoon, with a budget of ¥2600. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring serene gardens, historic neighborhoods, creative art spaces, and iconic waterfront areas, along with enjoying diverse cuisines like Jiangsu, Zhejiang, and spicy hot pot dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-10T23:44:45.615701",
+  "duration_seconds": 206.12,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Shanghai",
+  "duration_days": 2
+}

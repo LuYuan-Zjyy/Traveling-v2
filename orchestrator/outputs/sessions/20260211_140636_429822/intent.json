@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 2-day trip from Shanghai to Guiyang, departing on Wednesday early morning and returning on Thursday late morning, with a budget of ¥3000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in relaxing activities like hot springs, exploring cultural cuisines, and enjoying a mix of Western and local flavors. The itinerary should be relaxed in intensity, allowing time for leisure and comfort during the short trip.",
+  "intent": {
+    "destination": "Guiyang",
+    "departure_city": "Shanghai",
+    "start_date": "Wednesday early morning",
+    "end_date": "Thursday late morning",
+    "duration_days": 2,
+    "budget": 3000,
+    "travelers": null,
+    "preferences": [
+      "美食",
+      "休闲放松",
+      "温泉",
+      "文化体验"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "餐饮偏好：餐厅人均消费超过200元，喜欢融合西方与本地风味的美食；行程强度要求轻松，有充足的休闲和舒适时间"
+  }
+}

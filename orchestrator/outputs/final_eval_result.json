@@ -1,0 +1,24 @@
+{
+  "plan_key": "final",
+  "total_score": 92.5377358490566,
+  "total_samples": 106,
+  "metrics": {
+    "completeness": 84.90566037735849,
+    "sandbox_hotel": 100.0,
+    "sandbox_transport": 100.0,
+    "sandbox_attraction": 91.50943396226415,
+    "sandbox_restaurant": 97.16981132075472,
+    "within_sandbox": 88.67924528301887,
+    "diverse_attractions": 94.33962264150944,
+    "diverse_restaurants": 98.11320754716981,
+    "within_budget": 100.0,
+    "reasonable_meal_prices": 100.0,
+    "appropriate_duration": 100.0,
+    "feasibility": 60.37735849056604,
+    "rationality": 92.45283018867924,
+    "fact_accuracy": 100.0,
+    "fact_checked_samples": 0,
+    "avg_route_distance": null
+  },
+  "timestamp": "2026-02-11T15:15:09.101355"
+}

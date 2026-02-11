@@ -1,0 +1,109 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "禧合酒店·宴会厅(文明店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Beijing to Harbin",
+      "number": "G901",
+      "time": "08:30",
+      "price": 550
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Harbin to Beijing",
+      "number": "G902",
+      "time": "16:00",
+      "price": 550
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-17:00",
+        "location": "哈尔滨中央大街",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "羊顺斋火锅",
+        "price": 95,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "太阳岛风景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "正阳楼学府店特色东北菜 (地标美食名店)",
+        "price": 57,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "哈尔滨极地公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "通海俄式烧烤(世茂店)",
+        "price": 81,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "东北虎林园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "外婆小厨",
+        "price": 60,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "天恒山冰雪运动大世界",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "老康火锅(黄河路总店)",
+        "price": 80,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "哈尔滨音乐公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "关里四姥爷-民间小馆总店",
+        "price": 42,
+        "action": "dining"
+      }
+    ]
+  }
+}

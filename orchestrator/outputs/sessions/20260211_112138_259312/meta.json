@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_112138_259312",
+  "user_input": "I am looking for a 3-day trip from Shenzhen to Chongqing, departing on Wednesday early morning and returning on Friday morning, with a budget of ¥6400. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring vibrant commercial areas, historic sites, cultural landmarks, and scenic river views, along with enjoying diverse cuisines like Sichuan, Western, and Guangdong dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T11:21:38.271104",
+  "duration_seconds": 400.54,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Chongqing",
+  "duration_days": 3
+}

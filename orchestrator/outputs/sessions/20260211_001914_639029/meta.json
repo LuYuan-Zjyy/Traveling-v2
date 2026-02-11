@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_001914_639029",
+  "user_input": "I am looking for a 2-day trip from Shanghai to Suzhou, departing on Friday early morning and returning on Saturday afternoon, with a budget of ¥2100. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring historical landmarks, classical gardens, ancient streets, and scenic waterways, along with enjoying regional cuisines like Jiangsu and Zhejiang dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T00:19:14.639029",
+  "duration_seconds": 385.08,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Suzhou",
+  "duration_days": 2
+}

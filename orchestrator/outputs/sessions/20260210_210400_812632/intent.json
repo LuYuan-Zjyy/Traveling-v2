@@ -1,0 +1,22 @@
+{
+  "user_input": "I am looking for a 4-day trip from Wuhan to Xi'an, departing on Thursday morning and returning on Sunday evening, with a budget of ¥4100. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical landmarks, cultural museums, scenic parks, and architectural marvels, along with enjoying diverse cuisines like barbecue, hot pot, Korean, and Japanese dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Xi'an",
+    "departure_city": "Wuhan",
+    "start_date": "Thursday morning",
+    "end_date": "Sunday evening",
+    "duration_days": 4,
+    "budget": 4100,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "建筑景观",
+      "博物馆",
+      "公园"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮预算每餐100-200元；喜欢烧烤、火锅、韩国菜、日本菜等多种美食"
+  }
+}

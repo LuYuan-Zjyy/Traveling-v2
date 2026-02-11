@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Nanjing to Lijiang, departing on Friday early morning and returning on Monday late morning, with a budget of ¥8100. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic natural areas, and architectural marvels, along with enjoying diverse cuisines like Western, Yunnan, and Guizhou dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Lijiang",
+    "departure_city": "Nanjing",
+    "start_date": "Friday early morning",
+    "end_date": "Monday late morning",
+    "duration_days": 4,
+    "budget": 8100,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食",
+      "建筑艺术"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮偏好人均200元以上餐厅；美食类型包括西餐、云南菜、贵州菜；兴趣点包括文化地标、历史遗迹、自然景观和建筑奇观"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 2-day trip from Shanghai to Wuhan, departing on Monday early morning and returning on Tuesday evening, with a budget of ¥1900. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical landmarks, scenic river views, cultural streets, and enjoying diverse cuisines like hot pot and Korean dishes. The itinerary should be relaxed in intensity, allowing time for leisurely exploration and comfortable travel between destinations.",
+  "intent": {
+    "destination": "Wuhan",
+    "departure_city": "Shanghai",
+    "start_date": "Monday early morning",
+    "end_date": "Tuesday evening",
+    "duration_days": 2,
+    "budget": 1900,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度轻松，允许悠闲探索和舒适交通；餐饮预算每餐100-200元；对火锅和韩国料理感兴趣；喜欢历史地标、河景、文化街区"
+  }
+}

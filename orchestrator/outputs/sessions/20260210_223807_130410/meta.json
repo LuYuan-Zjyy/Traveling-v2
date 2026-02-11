@@ -1,0 +1,12 @@
+{
+  "session_id": "20260210_223807_130410",
+  "user_input": "I am looking for a 4-day trip from Xi'an to Shenzhen, departing on Monday early morning and returning on Thursday late morning, with a budget of ¥8000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic coastal views, and themed entertainment areas, along with enjoying diverse cuisines like Guangdong and seafood dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-10T22:38:07.130410",
+  "duration_seconds": 160.99,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Shenzhen",
+  "duration_days": 4
+}

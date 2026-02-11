@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 4-day trip from Nanjing to Shenzhen, departing on Saturday early morning and returning on Tuesday afternoon, with a budget of ¥4000. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical sites, cultural landmarks, scenic coastal parks, and relaxing natural retreats, along with enjoying diverse cuisines like seafood, Chaoshan, Hakka, and Guangdong dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Shenzhen",
+    "departure_city": "Nanjing",
+    "start_date": "Saturday early morning",
+    "end_date": "Tuesday afternoon",
+    "duration_days": 4,
+    "budget": 4000,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮预算每餐100-200元；对海鲜、潮汕菜、客家菜、粤菜等多种美食感兴趣；喜欢历史遗迹、文化地标、海滨公园和自然休闲地"
+  }
+}

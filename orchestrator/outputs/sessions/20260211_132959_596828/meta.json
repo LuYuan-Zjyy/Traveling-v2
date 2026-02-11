@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_132959_596828",
+  "user_input": "I am looking for a 3-day trip from Guangzhou to Nanjing, departing on Thursday morning and returning on Saturday evening, with a budget of ¥3600. I prefer staying in an Upscale hotel and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring historical landmarks, cultural sites, scenic areas with natural beauty, and architectural marvels, along with enjoying diverse cuisines like Jiangsu and Zhejiang dishes and Japanese food. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T13:29:59.596828",
+  "duration_seconds": 791.31,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "南京",
+  "duration_days": 3
+}

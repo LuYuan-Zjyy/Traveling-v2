@@ -1,0 +1,95 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "香港文华东方酒店",
+      "price_per_night": 3500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Guangzhou to Hong Kong",
+      "number": "G6531",
+      "time": "14:00",
+      "price": 215
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Hong Kong to Guangzhou",
+      "number": "G6550",
+      "time": "16:00",
+      "price": 215
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "16:00-18:00",
+        "location": "金紫荆广场",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-20:00",
+        "location": "富临饭店",
+        "price": 1261,
+        "action": "dining"
+      },
+      {
+        "time": "20:30-21:30",
+        "location": "维多利亚港",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:30-11:30",
+        "location": "山顶缆车",
+        "price": 88,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:30",
+        "location": "朗廷酒店唐阁",
+        "price": 933,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "星光大道",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:30",
+        "location": "L'ATELIER de Joel Robuchon(告罗士打大厦店)",
+        "price": 680,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-11:30",
+        "location": "香港公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:30",
+        "location": "The Principal",
+        "price": 680,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-15:00",
+        "location": "天星小轮",
+        "price": 5,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

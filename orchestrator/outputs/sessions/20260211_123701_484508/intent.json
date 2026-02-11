@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 3-day trip from Nanjing to Guangzhou, departing on Wednesday early morning and returning on Friday evening, with a budget of ¥7200. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring wildlife parks, theme parks, cultural performances, and enjoying diverse cuisines like Japanese, Cantonese, and hotpot. The itinerary should be packed, maximizing my time with a mix of guided exploration and immersive experiences.",
+  "intent": {
+    "destination": "Guangzhou",
+    "departure_city": "Nanjing",
+    "start_date": "Wednesday early morning",
+    "end_date": "Friday evening",
+    "duration_days": 3,
+    "budget": 7200,
+    "travelers": null,
+    "preferences": [
+      "美食",
+      "主题公园",
+      "文化表演",
+      "野生动物"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程紧凑，最大化时间利用；包含导游探索和沉浸式体验；餐饮偏好：日料、粤菜、火锅，每餐预算超过200元；兴趣点：野生动物园、主题公园、文化表演"
+  }
+}

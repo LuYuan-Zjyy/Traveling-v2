@@ -1,0 +1,121 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "西安索菲特传奇酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Nanjing to Xi'an",
+      "number": "G360",
+      "time": "08:00",
+      "price": 500
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Xi'an to Nanjing",
+      "number": "G362",
+      "time": "14:00",
+      "price": 500
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "西安城墙",
+        "price": 54,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "奔跑吧陕菜(熙地港店)",
+        "price": 45,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "大雁塔",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "苏福记海鲜佬·粤菜海鲜茶点·家宴(凤城四路店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "秦始皇帝陵博物院",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "澄城水盆羊肉澄心澄意(凤城七路店)",
+        "price": 32,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "华清宫",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "秦人街西北菜(凤城九路店)",
+        "price": 56,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "大明宫国家遗址公园",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "合喜味道(凤城九路店)",
+        "price": 55,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "大唐芙蓉园",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "徐记海鲜(明德门店)",
+        "price": 145,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "临潼博物馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "薇酌饮(王府井百货熙地港店店)",
+        "price": 73,
+        "action": "dining"
+      }
+    ]
+  }
+}

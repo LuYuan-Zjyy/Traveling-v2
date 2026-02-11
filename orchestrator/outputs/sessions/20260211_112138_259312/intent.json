@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 3-day trip from Shenzhen to Chongqing, departing on Wednesday early morning and returning on Friday morning, with a budget of ¥6400. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring vibrant commercial areas, historic sites, cultural landmarks, and scenic river views, along with enjoying diverse cuisines like Sichuan, Western, and Guangdong dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Chongqing",
+    "departure_city": "Shenzhen",
+    "start_date": "Wednesday early morning",
+    "end_date": "Friday morning",
+    "duration_days": 3,
+    "budget": 6400,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "商业购物",
+      "城市景观"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮偏好人均200元以上餐厅；希望探索繁华商业区、历史遗迹、文化地标、江景风光；品尝川菜、西餐、粤菜等多种美食"
+  }
+}

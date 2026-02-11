@@ -1,0 +1,101 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "长沙运达喜来登酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Hangzhou to Changsha",
+      "number": "G1302",
+      "time": "10:30",
+      "price": 450
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Changsha to Hangzhou",
+      "number": "G1304",
+      "time": "18:00",
+      "price": 450
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-17:00",
+        "location": "岳麓书院",
+        "price": 50,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:30",
+        "location": "徐记海鲜(阳光100店)",
+        "price": 234,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-22:00",
+        "location": "黄兴南路步行商业街",
+        "price": 100,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "天心阁",
+        "price": 32,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "湘高记海鲜(市府店)",
+        "price": 250,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "杜甫江阁",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:30",
+        "location": "天宝兄弟(长沙汇景城店)",
+        "price": 350,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-22:00",
+        "location": "四方商贸城",
+        "price": 100,
+        "action": "sightseeing"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "岳麓山风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "你好大海海鲜超市餐厅(河西店)",
+        "price": 240,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "靖港古镇",
+        "price": 78,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

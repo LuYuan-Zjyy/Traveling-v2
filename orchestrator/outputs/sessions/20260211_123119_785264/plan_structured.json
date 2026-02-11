@@ -1,0 +1,133 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "西安索菲特传奇酒店",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Shanghai to Xi'an",
+      "number": "MU2151",
+      "time": "06:30",
+      "price": 800
+    },
+    {
+      "day": 4,
+      "mode": "Flight",
+      "route": "Xi'an to Shanghai",
+      "number": "MU2152",
+      "time": "19:00",
+      "price": 800
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "西安城墙",
+        "price": 54,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "长安大牌档之上元灯会(钟楼店)",
+        "price": 150,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "大雁塔",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "海底捞火锅(钟楼银泰店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "秦始皇帝陵博物院",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "虎子水盆羊肉(翠华路总店)",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "华清宫",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "苏福记海鲜佬·粤菜海鲜茶点·家宴(凤城四路店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "陕西历史博物馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "莲花餐饮(朱雀店)",
+        "price": 150,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "大唐芙蓉园",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "幸福老火锅(总店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "大明宫国家遗址公园",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "崇辉澄城水盆羊肉(钟楼西一路总店)",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "回民街",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-18:00",
+        "location": "徐记海鲜(明德门店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "豪华酒店",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Nanjing to Shenzhen",
+      "number": "ZH9876",
+      "time": "07:30",
+      "price": 1200
+    },
+    {
+      "day": 4,
+      "mode": "Flight",
+      "route": "Shenzhen to Nanjing",
+      "number": "ZH9877",
+      "time": "15:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "11:30-13:00",
+        "location": "地方菜餐厅",
+        "price": 150,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "南头古城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "海鲜餐厅",
+        "price": 180,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "深圳博物馆金田路馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "地方菜餐厅",
+        "price": 120,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "关山月美术馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "烧烤餐厅",
+        "price": 160,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-12:30",
+        "location": "甘坑古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "13:00-14:00",
+        "location": "地方菜餐厅",
+        "price": 140,
+        "action": "dining"
+      },
+      {
+        "time": "15:00-18:00",
+        "location": "深圳湾公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "海鲜餐厅",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "10:00-12:00",
+        "location": "海上世界文化艺术中心",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "地方菜餐厅",
+        "price": 130,
+        "action": "dining"
+      }
+    ]
+  }
+}

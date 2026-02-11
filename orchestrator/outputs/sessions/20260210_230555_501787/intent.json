@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 3-day trip from Beijing to Shenzhen, departing on Monday evening and returning on Thursday evening, with a budget of ¥4300. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic coastal areas, and marine-themed attractions, along with enjoying diverse cuisines like Hakka, Korean, and Western dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Shenzhen",
+    "departure_city": "Beijing",
+    "start_date": "Monday evening",
+    "end_date": "Thursday evening",
+    "duration_days": 3,
+    "budget": 4300,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮偏好：客家菜、韩国菜、西餐，餐费预算100-200元；兴趣点：文化地标、历史遗迹、海岸景区、海洋主题景点"
+  }
+}

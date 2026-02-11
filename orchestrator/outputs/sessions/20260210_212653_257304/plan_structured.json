@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "上海宝格丽酒店",
+      "price_per_night": 3000
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Wuhan to Shanghai",
+      "number": "G1726",
+      "time": "08:00",
+      "price": 260
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Shanghai to Wuhan",
+      "number": "G1778",
+      "time": "18:00",
+      "price": 260
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "万国建筑博览群",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "润苑·上海本帮菜(徐汇店)",
+        "price": 199,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "外滩-陈毅塑像",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "一绪寿喜烧(上海世茂广场店)",
+        "price": 209,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "上海朱家角古镇旅游区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "佬太公海鸭·上海菜(静安店)",
+        "price": 130,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "上海迪士尼度假区",
+        "price": 500,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "米禾良日料",
+        "price": 142,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "东方明珠广播电视塔",
+        "price": 200,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "三利音·浦之舟",
+        "price": 316,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "上海音乐谷",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "17:00-18:00",
+        "location": "牛New寿喜烧(人民广场店)",
+        "price": 174,
+        "action": "dining"
+      }
+    ]
+  }
+}

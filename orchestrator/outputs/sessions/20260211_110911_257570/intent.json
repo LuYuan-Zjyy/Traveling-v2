@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 4-day trip from Wuhan to Shanghai, departing on Tuesday early morning and returning on Friday evening, with a budget of ¥8000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic river cruises, artistic neighborhoods, and wildlife parks, along with enjoying diverse cuisines like Jiangsu, Zhejiang, Guangdong, Western dishes, and fresh seafood. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Shanghai",
+    "departure_city": "Wuhan",
+    "start_date": "Tuesday early morning",
+    "end_date": "Friday evening",
+    "duration_days": 4,
+    "budget": 8000,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食",
+      "艺术文化"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；餐饮偏好人均200元以上餐厅；兴趣点包括文化地标、历史遗迹、河上游船、艺术街区、野生动物园；美食偏好江苏菜、浙江菜、广东菜、西餐和新鲜海鲜"
+  }
+}

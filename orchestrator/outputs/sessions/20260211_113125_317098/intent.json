@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 3-day trip from Shenzhen to Hangzhou, departing on Friday early morning and returning on Sunday evening, with a budget of ¥6700. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, serene natural areas, and ancient ruins, along with enjoying diverse cuisines like Jiangsu and Zhejiang dishes and farmhouse-style meals. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Hangzhou",
+    "departure_city": "Shenzhen",
+    "start_date": "Friday early morning",
+    "end_date": "Sunday evening",
+    "duration_days": 3,
+    "budget": 6700,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "美食",
+      "乡村体验"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮偏好每餐超过200元的餐厅，品尝江苏菜、浙江菜和农家菜；兴趣点包括文化地标、历史遗迹、宁静自然区域和古代遗址"
+  }
+}

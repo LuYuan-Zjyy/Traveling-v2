@@ -1,0 +1,95 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "天津丽思卡尔顿酒店",
+      "price_per_night": 1500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Guangzhou to Tianjin",
+      "number": "CA1234",
+      "time": "06:30",
+      "price": 1200
+    },
+    {
+      "day": 3,
+      "mode": "Flight",
+      "route": "Tianjin to Guangzhou",
+      "number": "CA5678",
+      "time": "15:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "天津五大道文化旅游区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "大吉利·潮汕鲜牛肉火锅(全国总店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "庆王府",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "松川日料(云南路店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "天津意大利风情旅游区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "大铁勺新津菜(迎水道店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "石家大院",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "花和日本料理(河西店)",
+        "price": 300,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "独乐寺",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "天津卫老菜馆",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

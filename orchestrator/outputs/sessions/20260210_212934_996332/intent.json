@@ -1,0 +1,22 @@
+{
+  "user_input": "I am looking for a 5-day trip from Hangzhou to Guangzhou, departing on Wednesday early morning and returning on Sunday evening, with a budget of ¥7000. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring iconic towers, historic ancestral halls, serene parks, wildlife parks, theme parks, and cultural landmarks, along with enjoying diverse cuisines like seafood, Japanese, Korean, and local Cantonese dishes. The itinerary should be packed in intensity, maximizing guided exploration and activities throughout the trip.",
+  "intent": {
+    "destination": "Guangzhou",
+    "departure_city": "Hangzhou",
+    "start_date": "Wednesday early morning",
+    "end_date": "Sunday evening",
+    "duration_days": 5,
+    "budget": 7000,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "主题公园",
+      "自然风光",
+      "城市观光"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度高，最大化导游探索和活动；餐饮偏好人均200元以上餐厅；兴趣点包括标志性塔楼、历史祠堂、宁静公园、野生动物园、主题公园和文化地标；美食偏好海鲜、日料、韩餐和本地粤菜"
+  }
+}

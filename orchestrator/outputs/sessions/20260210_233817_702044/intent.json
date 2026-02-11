@@ -1,0 +1,19 @@
+{
+  "user_input": "I am looking for a 4-day trip from Hangzhou to Suzhou, departing on Wednesday morning and returning on Saturday morning, with a budget of ¥5400. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring historical temples, classical gardens, cultural museums, and vibrant streets, along with enjoying diverse cuisines like Jiangsu and Zhejiang dishes and creative cuisine. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Suzhou",
+    "departure_city": "Hangzhou",
+    "start_date": "Wednesday morning",
+    "end_date": "Saturday morning",
+    "duration_days": 4,
+    "budget": 5400,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "Dining at restaurants with meal costs over ¥200; interested in exploring historical temples, classical gardens, cultural museums, and vibrant streets; enjoying diverse cuisines like Jiangsu and Zhejiang dishes and creative cuisine; itinerary should be moderate in intensity, balancing guided exploration with some downtime."
+  }
+}

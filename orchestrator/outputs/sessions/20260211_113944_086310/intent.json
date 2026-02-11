@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 5-day trip from Wuhan to Shenzhen, departing on Sunday early morning and returning on Thursday afternoon, with a budget of ¥5100. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring coastal parks, botanical gardens, historical streets, cultural museums, and theme parks, along with enjoying diverse cuisines like Guangdong, Chaoshan, hot pot, seafood, and Hunan dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Shenzhen",
+    "departure_city": "Wuhan",
+    "start_date": "Sunday early morning",
+    "end_date": "Thursday afternoon",
+    "duration_days": 5,
+    "budget": 5100,
+    "travelers": null,
+    "preferences": [
+      "自然风光",
+      "历史文化",
+      "美食",
+      "主题公园"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮偏好：广东菜、潮汕菜、火锅、海鲜、湖南菜，每餐预算100-200元；兴趣点：海滨公园、植物园、历史街区、文化博物馆、主题公园"
+  }
+}

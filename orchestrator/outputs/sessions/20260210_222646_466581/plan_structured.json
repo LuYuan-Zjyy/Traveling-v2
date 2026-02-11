@@ -1,0 +1,103 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "哈尔滨融创施柏阁酒店",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Beijing to Harbin",
+      "number": "G901",
+      "time": "13:00",
+      "price": 550
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Harbin to Beijing",
+      "number": "G902",
+      "time": "08:00",
+      "price": 550
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "17:00-18:00",
+        "location": "哈尔滨融创施柏阁酒店",
+        "price": 0,
+        "action": "check-in"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "名岛家宴(鸿翔路店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "圣·索菲亚教堂",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "将军牛排·尔滨地标朝鲜族美食(总店)",
+        "price": 70,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "中华巴洛克历史文化街区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "隐和精致料理",
+        "price": 140,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "太阳岛风景区俄罗斯风情小镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "恩你小木屋·小韩料·火辣鸡爪(中央大街店)",
+        "price": 80,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "中东铁路公园(江南段)",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "庆赫隆海鲜酒楼(西城红场店)",
+        "price": 170,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "06:30-07:30",
+        "location": "酒店早餐",
+        "price": 0,
+        "action": "dining"
+      }
+    ]
+  }
+}

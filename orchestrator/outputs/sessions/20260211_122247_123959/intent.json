@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 3-day trip from Xi'an to Kaifeng, departing on Friday early morning and returning on Sunday evening, with a budget of ¥1600. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring cultural landmarks, historical sites, scenic parks, and architectural marvels, along with enjoying diverse cuisines like local snacks and regional Chinese dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Kaifeng",
+    "departure_city": "Xi'an",
+    "start_date": "Friday early morning",
+    "end_date": "Sunday evening",
+    "duration_days": 3,
+    "budget": 1600,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "建筑景观",
+      "公园休闲"
+    ],
+    "accommodation_type": "中档酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮预算每餐50-100元；偏好当地小吃和区域中式菜肴；关注文化地标、历史遗址、风景公园和建筑奇观"
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "天际酒店(南京溧水海乐城店)",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Xi'an to Nanjing",
+      "number": "G1976",
+      "time": "18:30",
+      "price": 500
+    },
+    {
+      "day": 4,
+      "mode": "Train",
+      "route": "Nanjing to Xi'an",
+      "number": "G1978",
+      "time": "18:00",
+      "price": 500
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "大报恩寺遗址景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "南京大牌档(夫子庙平江府店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "老门东牌坊",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "海底捞火锅(新街口新百店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "古鸡鸣寺",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "传湌家(慈悲社店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "总统府",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "宴誉恋海·活鲜刺身美学自助(新街口店)",
+        "price": 417,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "明孝陵景区-明孝陵",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "禾院餐厅(软件大道店)",
+        "price": 282,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "玄武湖景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "巴奴毛肚火锅(南京金鹰新街口店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "南京牛首山文化旅游区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "鱼满楼(汉中门大街店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "南京鱼嘴湿地公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "广东阿生鱼捞·斑鱼海鲜粥火锅(新街口店)",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

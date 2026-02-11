@@ -1,0 +1,135 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "南京东郊国宾馆",
+      "price_per_night": 1200
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Wuhan to Nanjing",
+      "number": "G1720",
+      "time": "14:30",
+      "price": 200
+    },
+    {
+      "day": 5,
+      "mode": "Train",
+      "route": "Nanjing to Wuhan",
+      "number": "G1763",
+      "time": "10:00",
+      "price": 200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "17:00-18:00",
+        "location": "南京东郊国宾馆",
+        "price": 0,
+        "action": "check-in"
+      },
+      {
+        "time": "19:00-20:00",
+        "location": "晶丽海鲜自助餐厅",
+        "price": 212,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "中山陵景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "广东阿生鱼捞·斑鱼海鲜粥火锅(新街口店)",
+        "price": 116,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "明孝陵景区",
+        "price": 70,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "台舟宴海鲜酒楼",
+        "price": 166,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "侵华日军南京大屠杀遇难同胞纪念馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "老虎滩大连海鲜烧烤(玄武1912店)",
+        "price": 105,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "总统府",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "国际青年会议酒店·鄉·全日餐厅(邺城路店)",
+        "price": 155,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "古鸡鸣寺",
+        "price": 10,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "溪涧别坊·淮粤融合菜(奥体大街店)",
+        "price": 152,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "钟山风景名胜区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "海鲨湾海鲜会馆(将军大道店)",
+        "price": 178,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "08:00-09:00",
+        "location": "南京东郊国宾馆",
+        "price": 0,
+        "action": "check-out"
+      },
+      {
+        "time": "09:30-10:00",
+        "location": "南京夫子庙",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

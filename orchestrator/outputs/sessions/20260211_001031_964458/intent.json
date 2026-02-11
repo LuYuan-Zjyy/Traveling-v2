@@ -1,0 +1,22 @@
+{
+  "user_input": "I am looking for a 4-day trip from Xi'an to Shenzhen, departing on Sunday late morning and returning on Wednesday early morning, with a budget of ¥6300. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring historical landmarks, cultural exhibitions, scenic parks, and coastal areas, along with enjoying diverse cuisines like seafood, Guangdong dishes, and international buffets. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Shenzhen",
+    "departure_city": "Xi'an",
+    "start_date": "Sunday late morning",
+    "end_date": "Wednesday early morning",
+    "duration_days": 4,
+    "budget": 6300,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "文化展览",
+      "自然风光",
+      "海滨风光",
+      "美食"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游探索与休息时间；餐饮偏好：餐厅单餐费用超过200元，喜欢海鲜、粤菜和国际自助餐"
+  }
+}

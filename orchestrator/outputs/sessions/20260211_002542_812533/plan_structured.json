@@ -1,0 +1,147 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "东源大酒店(世纪金源购物中心店)",
+      "price_per_night": 600
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Wuhan to Kunming",
+      "number": "MU2459",
+      "time": "07:30",
+      "price": 800
+    },
+    {
+      "day": 5,
+      "mode": "Flight",
+      "route": "Kunming to Wuhan",
+      "number": "MU2460",
+      "time": "08:00",
+      "price": 800
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "11:00-12:00",
+        "location": "东源大酒店(世纪金源购物中心店)",
+        "price": 0,
+        "action": "check-in"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "云南荟",
+        "price": 150,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "滇池海埂公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "菌小厨野生菌火锅(文明街传统老字号商街店)",
+        "price": 150,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "石林风景区",
+        "price": 130,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "自由探索/简餐",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "云南民族村-白族村",
+        "price": 90,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "德四家·云南傣味烧烤品牌(七彩云南店)",
+        "price": 120,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:30-12:00",
+        "location": "金殿风景名胜区",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "自由探索/简餐",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "昆明卧龙古渔村",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "版纳烧傣味烧烤(花千坊店)",
+        "price": 110,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "10:00-12:00",
+        "location": "斗南湿地公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "自由探索/简餐",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "自由探索时段 (建议翠湖公园/昆明老街)",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "菌姥爷野生菌火锅(昆明老街店)",
+        "price": 140,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "06:00-07:00",
+        "location": "酒店早餐/退房",
+        "price": 0,
+        "action": "check-out"
+      },
+      {
+        "time": "08:00",
+        "location": "前往机场",
+        "price": 0,
+        "action": "transportation"
+      }
+    ]
+  }
+}

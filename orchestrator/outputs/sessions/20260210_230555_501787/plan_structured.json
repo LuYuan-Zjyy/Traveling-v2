@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "豪华酒店",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Beijing to Shenzhen",
+      "number": "CA1307",
+      "time": "18:00",
+      "price": 1200
+    },
+    {
+      "day": 3,
+      "mode": "Flight",
+      "route": "Shenzhen to Beijing",
+      "number": "CA1308",
+      "time": "20:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-12:00",
+        "location": "南头古城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "客家汇·客家院子(云城店)",
+        "price": 91,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "深圳世界之窗",
+        "price": 220,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "NEED创意韩国料理(深圳万象城店)",
+        "price": 132,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "大鹏所城",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "光明乳鸽·凤凰客家酒楼(凤凰店)",
+        "price": 89,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "大梅沙海滨公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "COMMUNE·X幻师(福田COCOPark店)",
+        "price": 121,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "深圳仙湖植物园",
+        "price": 15,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "一个锅韩国料理",
+        "price": 64,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "欢乐港湾",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "pLeace Loft (华侨城创意文化园店)",
+        "price": 127,
+        "action": "dining"
+      }
+    ]
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "大研安缦",
+      "price_per_night": 3000
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Nanjing to Lijiang",
+      "number": "MU2701",
+      "time": "06:30",
+      "price": 1200
+    },
+    {
+      "day": 4,
+      "mode": "Flight",
+      "route": "Lijiang to Nanjing",
+      "number": "MU2702",
+      "time": "12:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "丽江古城大水车东山雅居客栈",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "古城区福宝餐饮店",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "狮子山万古楼景区",
+        "price": 50,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "茴香",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "玉龙雪山国家级风景名胜区",
+        "price": 200,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "大家小院·轻奢庭院美宿(丽江古城店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:00",
+        "location": "牦牛坪索道站",
+        "price": 120,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "央金汽锅鱼",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "束河古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "贵州刘一手烧烤(丽水路店)",
+        "price": 200,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "丽江拉市海湿地公园",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "纳味小吃",
+        "price": 200,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "丽江金塔景区",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "11:30-12:30",
+        "location": "九婆腊排骨",
+        "price": 200,
+        "action": "dining"
+      }
+    ]
+  }
+}

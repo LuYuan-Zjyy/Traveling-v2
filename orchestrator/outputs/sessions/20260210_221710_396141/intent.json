@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 6-day trip from Hangzhou to Suzhou, departing on Saturday morning and returning on Thursday morning, with a budget of ¥3600. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring classical gardens, historical temples, scenic lakes, and cultural landmarks, along with enjoying diverse cuisines like Japanese, hot pot, Jiangsu and Zhejiang dishes, Korean, and farmhouse meals. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Suzhou",
+    "departure_city": "Hangzhou",
+    "start_date": "Saturday morning",
+    "end_date": "Thursday morning",
+    "duration_days": 6,
+    "budget": 3600,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "自然风光"
+    ],
+    "accommodation_type": "中档酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮偏好：日料、火锅、江浙菜、韩餐、农家菜，每餐预算50-100元；兴趣点：古典园林、历史寺庙、湖泊景观、文化地标"
+  }
+}

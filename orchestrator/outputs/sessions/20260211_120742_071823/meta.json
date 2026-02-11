@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_120742_071823",
+  "user_input": "I am looking for a 3-day trip from Hangzhou to Changsha, departing on Saturday late morning and returning on Monday evening, with a budget of ¥6100. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring cultural landmarks, historical sites, scenic natural areas, and vibrant night markets, along with enjoying diverse cuisines like seafood, crayfish, and regional specialties. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T12:07:42.071823",
+  "duration_seconds": 126.7,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Changsha",
+  "duration_days": 3
+}

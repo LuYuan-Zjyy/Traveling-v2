@@ -1,0 +1,21 @@
+{
+  "user_input": "I am looking for a 5-day trip from Wuhan to Kunming, departing on Saturday early morning and returning on Wednesday early morning, with a budget of ¥4200. I prefer staying in upscale hotels and dining at restaurants with meal costs ranging from ¥100 to ¥200. I’m interested in exploring natural wonders like lakes and karst landscapes, visiting historical sites, and enjoying scenic parks, along with savoring diverse cuisines such as barbecue, hot pot, and regional specialties. The itinerary should be moderate in intensity, balancing guided exploration with some downtime, and should include free exploration periods for independent discovery, leisure, or flexible activities.",
+  "intent": {
+    "destination": "Kunming",
+    "departure_city": "Wuhan",
+    "start_date": "Saturday early morning",
+    "end_date": "Wednesday early morning",
+    "duration_days": 5,
+    "budget": 4200,
+    "travelers": null,
+    "preferences": [
+      "自然风光",
+      "历史文化",
+      "美食",
+      "休闲度假"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": "不限",
+    "special_requirements": "行程强度适中，平衡导游探索与自由时间；包含自由探索时段；餐饮预算每餐100-200元；喜欢烧烤、火锅和地方特色菜；对湖泊、喀斯特地貌、历史遗迹、风景公园感兴趣。"
+  }
+}

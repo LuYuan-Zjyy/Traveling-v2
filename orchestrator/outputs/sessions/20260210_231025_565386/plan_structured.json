@@ -1,0 +1,155 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "西双版纳瑞吉大酒店",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Nanjing to Xishuangbanna",
+      "number": "MU2789",
+      "time": "19:30",
+      "price": 1200
+    },
+    {
+      "day": 6,
+      "mode": "Flight",
+      "route": "Xishuangbanna to Nanjing",
+      "number": "MU2790",
+      "time": "15:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "21:00-22:00",
+        "location": "傣十二·四季云南菜(星光夜市店)",
+        "price": 100,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "西双版纳总佛寺",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "简朴寨云南菜手抓饭餐厅(泼水广场旗舰店)",
+        "price": 60,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "曼听御花园景区",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "泰椰天香·六国料理(二分店)",
+        "price": 105,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "中国科学院西双版纳热带植物园",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "傣王府·孔雀宴手抓饭主题餐厅(告庄店)",
+        "price": 53,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "西双版纳热带雨林国家公园望天树景区",
+        "price": 55,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "夏忘·东南亚餐厅",
+        "price": 108,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-12:00",
+        "location": "基诺山寨景区",
+        "price": 160,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "傣王妃·孔雀宴手抓饭江景餐厅(告庄店)",
+        "price": 81,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "曼掌村",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "青夏泰式空中花园餐厅",
+        "price": 98,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-12:00",
+        "location": "野象谷景区",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "傣十二·四季云南菜(孔雀城店)",
+        "price": 92,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "西双版纳原始森林公园",
+        "price": 45,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "湄南·江景日落餐厅",
+        "price": 114,
+        "action": "dining"
+      }
+    ],
+    "day_6": [
+      {
+        "time": "09:00-11:00",
+        "location": "告庄西双景",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "11:30-12:30",
+        "location": "森畔雨林瀑布餐厅",
+        "price": 97,
+        "action": "dining"
+      }
+    ]
+  }
+}

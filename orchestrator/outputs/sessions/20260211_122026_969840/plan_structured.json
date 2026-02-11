@@ -1,0 +1,75 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "景瑞时尚酒店(桂林甲天下会展中心店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Flight",
+      "route": "Beijing to Guilin",
+      "number": "CA1221",
+      "time": "08:00",
+      "price": 1200
+    },
+    {
+      "day": 2,
+      "mode": "Flight",
+      "route": "Guilin to Beijing",
+      "number": "CA1222",
+      "time": "20:00",
+      "price": 1200
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "12:00-13:00",
+        "location": "椿记烧鹅(中山店)",
+        "price": 56,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "象鼻山景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "阿甘酒家(解西店)",
+        "price": 85,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "漓江景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "味道制造·桂林菜(七星店)",
+        "price": 51,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "桂林市两江四湖景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "桂林粥城(杉湖店)",
+        "price": 60,
+        "action": "dining"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "session_id": "20260211_114356_458778",
+  "user_input": "I am looking for a 5-day trip from Shanghai to Changsha, departing on Sunday early morning and returning on Thursday afternoon, with a budget of ¥3200. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring historic streets, cultural landmarks, scenic natural areas, and local markets, along with enjoying diverse cuisines like Hunan dishes, barbecue, and fast food. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-11T11:43:56.458778",
+  "duration_seconds": 244.94,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Changsha",
+  "duration_days": 5
+}

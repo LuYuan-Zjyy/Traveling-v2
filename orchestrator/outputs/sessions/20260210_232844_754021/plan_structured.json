@@ -1,0 +1,83 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "香港四季酒店",
+      "price_per_night": 1500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "Shenzhen to Hong Kong",
+      "number": "",
+      "time": "14:00",
+      "price": 100
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "Hong Kong to Shenzhen",
+      "number": "",
+      "time": "10:00",
+      "price": 100
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "15:00-17:00",
+        "location": "尖沙咀钟楼",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "一风堂(德立街店)",
+        "price": 89,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-21:00",
+        "location": "幻彩咏香江",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-12:00",
+        "location": "孙中山纪念馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "元气寿司(远东金融中心店)",
+        "price": 128,
+        "action": "dining"
+      },
+      {
+        "time": "14:30-17:30",
+        "location": "金紫荆广场",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:30-19:30",
+        "location": "黑龙拉面",
+        "price": 143,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "08:00-09:00",
+        "location": "维多利亚港",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ]
+  }
+}

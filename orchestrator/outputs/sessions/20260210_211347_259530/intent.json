@@ -1,0 +1,20 @@
+{
+  "user_input": "I am looking for a 3-day trip from Nanjing to Xi'an, departing on Saturday morning and returning on Monday evening, with a budget of ¥8500. I prefer staying in luxury hotels and dining at restaurants with meal costs over ¥200. I’m interested in exploring historical landmarks, cultural sites, and scenic areas, along with enjoying diverse cuisines like Japanese, Western, and local specialties. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "intent": {
+    "destination": "Xi'an",
+    "departure_city": "Nanjing",
+    "start_date": "Saturday morning",
+    "end_date": "Monday evening",
+    "duration_days": 3,
+    "budget": 8500,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "美食",
+      "自然风光"
+    ],
+    "accommodation_type": "豪华酒店",
+    "transport_preference": null,
+    "special_requirements": "行程强度适中，平衡导游讲解与自由时间；餐饮偏好：日料、西餐、当地特色，单餐预算超过200元；兴趣点：历史地标、文化遗址、风景名胜区"
+  }
+}

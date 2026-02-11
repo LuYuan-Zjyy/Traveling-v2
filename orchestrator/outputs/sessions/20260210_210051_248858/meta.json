@@ -1,0 +1,12 @@
+{
+  "session_id": "20260210_210051_248858",
+  "user_input": "I am looking for a 4-day trip from Shanghai to Wuxi, departing on Friday afternoon and returning on Monday afternoon, with a budget of ¥2200. I prefer staying in midscale hotels and dining at restaurants with meal costs ranging from ¥50 to ¥100. I’m interested in exploring cultural landmarks, historical sites, scenic gardens, and natural attractions like bamboo forests and caves, along with enjoying diverse cuisines such as Chinese regional specialties and local dishes. The itinerary should be moderate in intensity, balancing guided exploration with some downtime.",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-10T21:00:51.248858",
+  "duration_seconds": 186.55,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "Wuxi",
+  "duration_days": 4
+}
