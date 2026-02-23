@@ -14,6 +14,8 @@
 import json
 import time
 from typing import Optional
+import sys
+from pathlib import Path
 
 from orchestrator.config import AgentConfig, load_config
 from orchestrator.deepseek_client import DeepSeekClient
@@ -25,7 +27,16 @@ from orchestrator.prompts import (
     TASK_DECOMPOSITION_PROMPT,
     PLAN_GENERATION_PROMPT,
     STRUCTURED_PLAN_PROMPT,
+    ROUTE_OPTIMIZATION_PROMPT,
 )
+
+# 添加Multi-agent路径，导入路由规划Agent
+sys.path.insert(0, str(Path(__file__).parent.parent / "Multi-agent" / "Route"))
+try:
+    from route_planning_agent import RouteOptimizationAgent, POI, POICategory
+except ImportError as e:
+    print(f"[WARN] 路由优化模块加载失败: {e}")
+    RouteOptimizationAgent = None
 
 
 class TravelOrchestrator:
@@ -116,9 +127,17 @@ class TravelOrchestrator:
             self._collected_data = collected_data
             print(f"   [OK] 数据收集完成, 共{len(collected_data)}条信息")
 
+            # Step 2.5: 地图规划 - 路由优化
+            print("\n[STEP 2.5/4] 地图规划 & 路由优化...")
+            route_optimization = self._optimize_route(intent, collected_data)
+            if route_optimization:
+                print(f"   [OK] 路由优化完成")
+            else:
+                print(f"   [WARN] 路由优化跳过 (Agent不可用)")
+
             # Step 3: 协调调度 - 生成规划 (Markdown 文本)
             print("\n[STEP 3/4] 协调调度 & 生成规划方案...")
-            plan_text = self._generate_plan(intent, collected_data)
+            plan_text = self._generate_plan(intent, collected_data, route_optimization)
             print("   [OK] 规划方案已生成")
 
             # Step 4: 生成结构化 JSON (供评测使用)
@@ -275,12 +294,144 @@ class TravelOrchestrator:
         return collected
 
     # ==============================================================
+    # Step 2.5: 地图规划 - 路由优化
+    # ==============================================================
+
+    def _optimize_route(self, intent: dict, collected_data: list[dict]) -> Optional[str]:
+        """
+        使用路由规划Agent进行地图规划和路由优化
+
+        Args:
+            intent: 结构化意图
+            collected_data: 收集到的POI和其他信息
+
+        Returns:
+            str: 路由优化的建议文本，失败时返回None
+        """
+        if RouteOptimizationAgent is None:
+            return None
+
+        try:
+            # 提取POI信息
+            pois = self._extract_pois_from_data(collected_data, intent)
+
+            if not pois:
+                print(f"   [INFO] 未提取到有效POI，跳过路由优化")
+                return None
+
+            # 创建路由规划Agent
+            agent = RouteOptimizationAgent()
+
+            # 调用规划（改用 plan 方法，传递约束条件）
+            duration_days = intent.get('duration_days', 3)
+            budget = intent.get('budget', None)
+
+            # 将 POI 对象转换为字典格式
+            pois_dicts = []
+            for poi in pois:
+                pois_dicts.append({
+                    "id": poi.id,
+                    "name": poi.name,
+                    "category": poi.category,
+                    "latitude": poi.latitude,
+                    "longitude": poi.longitude,
+                    "address": poi.address,
+                    "rating": poi.rating,
+                })
+
+            optimized_result = agent.plan(
+                pois=pois_dicts,
+                constraints={
+                    "duration_days": duration_days,  # ✅ runtime hours / day
+                    "budget": budget,
+                }
+            )
+
+            # 使用 DeepSeek 将优化结果转换成更友好的建议文本
+            optimization_json = json.dumps(optimized_result, ensure_ascii=False, indent=2)
+
+            route_suggestion = self.llm.chat(
+                messages=[
+                    {"role": "system", "content": "你是旅行路线规划专家。将优化结果转换为清晰的路线建议。"},
+                    {"role": "user", "content": f"""基于以下路由优化结果，生成面向旅行规划师的建议：
+
+{optimization_json}
+
+请生成1-2段的建议文本，包括：
+1. 推荐的景点分组方式（按天分配）
+2. 关键的地理位置优化建议
+3. 任何可行性问题或风险提示"""},
+                ],
+                temperature=0.7,
+            )
+
+            return route_suggestion
+
+        except Exception as e:
+            print(f"   [WARN] 路由优化失败: {e}")
+            return None
+
+    def _extract_pois_from_data(self, collected_data: list[dict], intent: dict) -> list:
+        """
+        从收集到的数据中提取POI信息
+
+        Returns:
+            list: POI对象列表
+        """
+        pois = []
+        poi_id_counter = 0
+
+        for item in collected_data:
+            tool_name = item.get("tool", "")
+            result = item.get("result", {})
+
+            if tool_name == "search_pois" and result.get("pois"):
+                for poi_data in result["pois"]:
+                    poi_id_counter += 1
+
+                    # 确定POI类别
+                    poi_type = poi_data.get("type", "").lower()
+                    if "景点" in poi_type or "风景" in poi_type or "寺" in poi_type or "公园" in poi_type:
+                        category = POICategory.ATTRACTION.value
+                    elif "餐" in poi_type or "饭" in poi_type or "菜" in poi_type:
+                        category = POICategory.RESTAURANT.value
+                    elif "酒" in poi_type or "宾馆" in poi_type or "旅舍" in poi_type:
+                        category = POICategory.HOTEL.value
+                    elif "购" in poi_type or "商" in poi_type:
+                        category = POICategory.SHOPPING.value
+                    else:
+                        category = POICategory.OTHER.value
+
+                    try:
+                        location = poi_data.get("location", "0,0").split(",")
+                        poi = POI(
+                            id=str(poi_id_counter),
+                            name=poi_data.get("name", ""),
+                            category=category,
+                            latitude=float(location[1]) if len(location) > 1 else 0,
+                            longitude=float(location[0]) if len(location) > 0 else 0,
+                            address=poi_data.get("address", ""),
+                            rating=float(poi_data.get("rating", 0)) if poi_data.get("rating") else None,
+                        )
+                        pois.append(poi)
+                    except (ValueError, IndexError):
+                        continue
+
+        return pois
+
+    # ==============================================================
     # Step 3: 协调调度 - 生成最终规划方案
     # ==============================================================
 
-    def _generate_plan(self, intent: dict, collected_data: list[dict]) -> str:
+    def _generate_plan(self, intent: dict, collected_data: list[dict], 
+                       route_optimization: Optional[str] = None) -> str:
         """
         基于意图和收集到的真实数据, 调用 DeepSeek 生成完整的规划方案
+
+        Args:
+            intent: 结构化意图
+            collected_data: 收集到的真实数据
+            route_optimization: 路由优化建议 (可选)
 
         Returns:
             str: Markdown格式的规划方案文本
@@ -290,14 +441,28 @@ class TravelOrchestrator:
         # 整理收集到的数据, 按类型分组
         data_summary = self._summarize_collected_data(collected_data)
 
+        # 构建路由优化部分的提示词
+        route_info = ""
+        if route_optimization:
+            route_info = f"""
+
+## 地图规划建议（重要！请参考）
+{route_optimization}
+
+**注意**：请在生成每日行程时，优先参考地图规划建议中的分组方式和路线优化建议，确保：
+- 地理位置相近的景点安排在同一天
+- 避免不必要的往返奔波
+- 合理分配各天的行程距度量和交通时间"""
+
         prompt = PLAN_GENERATION_PROMPT.format(
             intent_json=intent_json,
             collected_data=data_summary,
+            route_optimization=route_info,
         )
 
         plan = self.llm.chat(
             messages=[
-                {"role": "system", "content": "你是专业旅行规划师。请基于真实数据生成详细可执行的旅行方案。"},
+                {"role": "system", "content": "你是专业旅行规划师。请基于真实数据和地图规划建议生成详细可执行的旅行方案。"},
                 {"role": "user", "content": prompt},
             ],
             temperature=self.config.deepseek.planning_temperature,

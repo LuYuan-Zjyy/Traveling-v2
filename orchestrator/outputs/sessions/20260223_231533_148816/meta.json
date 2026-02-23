@@ -1,0 +1,12 @@
+{
+  "session_id": "20260223_231533_148816",
+  "user_input": "根据游戏仙剑奇侠传4的脚步，为我规划为期一个月的仙剑探索之旅。我将要从故事的主人公——云天河的故乡出发",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-23T23:15:33.148816",
+  "duration_seconds": 207.57,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "黄山及周边地区",
+  "duration_days": 30
+}

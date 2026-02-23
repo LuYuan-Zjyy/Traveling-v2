@@ -1,0 +1,12 @@
+{
+  "session_id": "20260223_233859_259113",
+  "user_input": "根据游戏仙剑奇侠传1的脚步，为我规划一条主角团的旅游路线图，我计划7天时间，和女朋友一起出行",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-23T23:38:59.259113",
+  "duration_seconds": 160.95,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "浙江省杭州市及周边地区",
+  "duration_days": 7
+}

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+*.env.local
+
+# Node
+node_modules/
+package-lock.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*.png
+*.jpg
+!TravelPlanner/images/*.png
+
+# Generated outputs (uncomment to ignore)
+# orchestrator/outputs/sessions/
+# orchestrator/outputs/*.json

@@ -1,0 +1,21 @@
+{
+  "user_input": "根据游戏仙剑奇侠传4的脚步，为我规划为期一个月的仙剑探索之旅。我将要从故事的主人公——云天河的故乡出发",
+  "intent": {
+    "destination": "黄山及周边地区",
+    "departure_city": "黄山市（或安徽省黄山地区，具体村庄未明确）",
+    "start_date": null,
+    "end_date": null,
+    "duration_days": 30,
+    "budget": null,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "乡村体验",
+      "主题探索（仙剑奇侠传）"
+    ],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": "根据游戏《仙剑奇侠传4》的故事路线和场景进行规划，需包含主人公云天河的故乡（黄山青鸾峰附近）作为起点，并追随游戏剧情中的关键地点展开为期一个月的探索之旅。"
+  }
+}

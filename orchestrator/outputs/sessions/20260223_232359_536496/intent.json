@@ -1,0 +1,19 @@
+{
+  "user_input": "黄山3天",
+  "intent": {
+    "destination": "黄山",
+    "departure_city": null,
+    "start_date": null,
+    "end_date": null,
+    "duration_days": 3,
+    "budget": null,
+    "travelers": null,
+    "preferences": [
+      "自然风光",
+      "户外运动"
+    ],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": ""
+  }
+}
