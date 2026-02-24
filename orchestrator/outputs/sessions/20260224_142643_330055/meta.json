@@ -1,0 +1,12 @@
+{
+  "session_id": "20260224_142643_330055",
+  "user_input": "我喜欢玩一款游戏叫仙剑奇侠传3，请你按照游戏剧情，为我规划一个为期7天的主题之旅",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-24T14:26:43.331053",
+  "duration_seconds": 122.64,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "重庆",
+  "duration_days": 7
+}

@@ -1,0 +1,205 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "洪崖洞大酒店",
+      "price_per_night": 500
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "出发地 to 重庆",
+      "number": "G1234",
+      "time": "08:00",
+      "price": 500
+    },
+    {
+      "day": 7,
+      "mode": "Train",
+      "route": "重庆 to 出发地",
+      "number": "G5678",
+      "time": "18:00",
+      "price": 500
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "14:00-17:00",
+        "location": "洪崖洞民俗风貌区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "洪崖洞夜市街区",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "20:00-21:00",
+        "location": "洪崖洞夜景观景台",
+        "price": 0,
+        "action": "sightseeing"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "罗汉寺",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "渝潮坊·渝州故事·重庆非遗文化体验基地(十八梯解放碑店)",
+        "price": 70,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "重庆十八梯传统风貌区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "重庆十八梯传统风貌区",
+        "price": 50,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "重庆市江津区唐家堡",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "重庆市江津区唐家堡",
+        "price": 40,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "重庆市江津区唐家堡",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "重庆市江津区唐家堡",
+        "price": 40,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "重庆·蜀山剑宗",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "重庆·蜀山剑宗",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "凉亭土地庙",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "重庆·蜀山剑宗",
+        "price": 50,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-11:00",
+        "location": "磁器口古镇",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "磁器口古镇",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "重庆长江索道",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "长嘉汇弹子石老街",
+        "price": 60,
+        "action": "dining"
+      }
+    ],
+    "day_6": [
+      {
+        "time": "09:00-11:00",
+        "location": "湖广会馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "湖广会馆",
+        "price": 50,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "红岩革命纪念馆",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "红岩革命纪念馆",
+        "price": 50,
+        "action": "dining"
+      }
+    ],
+    "day_7": [
+      {
+        "time": "09:00-11:00",
+        "location": "重庆动物园",
+        "price": 25,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "重庆动物园",
+        "price": 40,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "烟灯山公园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "烟灯山公园",
+        "price": 40,
+        "action": "dining"
+      }
+    ]
+  }
+}

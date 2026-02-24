@@ -1,0 +1,20 @@
+{
+  "user_input": "我喜欢玩一款游戏叫仙剑奇侠传3，请你按照游戏剧情，为我规划一个为期7天的主题之旅",
+  "intent": {
+    "destination": "重庆",
+    "departure_city": null,
+    "start_date": null,
+    "end_date": null,
+    "duration_days": 7,
+    "budget": null,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "主题体验",
+      "自然风光"
+    ],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": "按照《仙剑奇侠传3》游戏剧情规划主题之旅，希望包含游戏中的关键场景和元素（如渝州、唐家堡、蜀山、锁妖塔等），体验游戏世界观和氛围"
+  }
+}
