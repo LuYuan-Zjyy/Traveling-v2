@@ -21,12 +21,24 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 load_dotenv(os.path.join(PROJECT_ROOT, ".env"), override=True)
-sys.path.insert(0, PROJECT_ROOT)
-sys.path.insert(0, os.path.join(PROJECT_ROOT, "Multi-agent"))
 
-# ✅ 改用简化稳定的 Orchestrator (避免 Langchain 复杂版本的兼容性问题)
-from orchestrator.config import load_config
-from orchestrator.orchestrator import TravelOrchestrator
+# ✅ 配置 sys.path: 优先加载项目根目录，然后添加 Multi-agent 目录
+sys.path.insert(0, PROJECT_ROOT)
+multi_agent_path = os.path.join(PROJECT_ROOT, "Multi-agent")
+if multi_agent_path not in sys.path:
+    sys.path.insert(0, multi_agent_path)
+
+# ✅ 导入配置和编排器
+# 注：新系统 (Multi-agent/multi_agent_orchestrator.py) 是异步的，与同步Flask不兼容
+# 使用旧的同步系统 (orchestrator/orchestrator.py) 实现
+print("[INIT] 配置导入路径...")
+try:
+    from orchestrator.config import load_config
+    from orchestrator.orchestrator import TravelOrchestrator
+    print("[INIT] [OK] 使用 orchestrator 系统（同步模式）")
+except (ImportError, ModuleNotFoundError) as e:
+    print(f"[INIT] [ERROR] orchestrator 导入失败: {e}")
+    raise
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -330,25 +342,46 @@ def api_plan():
     data = request.json or {}
     query = data.get("query", "")
     if not query:
+        print(f"[ERROR] /api/plan: query is required")
         return jsonify({"error": "query is required"}), 400
 
+    print(f"\n{'='*60}")
+    print(f"[API] /api/plan: started processing user query")
+    print(f"[INPUT] query: {query[:100]}...")
+    
     try:
+        print(f"[STEP 1/5] Loading config...")
         config = load_config()
-        # ✅ 改用稳定的 TravelOrchestrator
+        print(f"  [OK] DeepSeek API Key: {bool(config.deepseek.api_key)}")
+        print(f"  [OK] AMap API Key: {bool(config.amap.api_key)}")
+        
+        print(f"[STEP 2/5] Creating TravelOrchestrator instance...")
         agent = TravelOrchestrator(config=config)
+        print(f"  [OK] Agent created successfully")
+        
+        print(f"[STEP 3/5] Calling agent.plan()...")
         plan_text = agent.plan(query)
+        print(f"  [OK] Planning completed, length: {len(plan_text)} chars")
 
+        print(f"[STEP 4/5] Extracting session data...")
         collected = agent.last_collected_data
         intent = agent.last_intent or {}
+        print(f"  [OK] Destination: {intent.get('destination', 'N/A')}")
+        print(f"  [OK] Days: {intent.get('duration_days', 'N/A')}")
+        print(f"  [OK] Tool calls: {len(collected)}")
 
+        print(f"[STEP 5/5] Processing map data...")
         attrs, rests, hotels = _extract_pois(collected)
         weather = _extract_weather(collected)
         journal = _auto_journal(intent, attrs, weather)
+        print(f"  [OK] Attractions: {len(attrs)}, Restaurants: {len(rests)}, Hotels: {len(hotels)}")
+        print(f"  [OK] Weather data: {bool(weather)}")
 
-        # 用景点坐标生成途经点连线路线 (含 polyline)
+        # Generate routes between attractions
         routes = []
         if len(attrs) >= 2:
             city = intent.get("destination", "")
+            print(f"[ROUTE] Generating routes between attractions...")
             for i in range(min(len(attrs) - 1, 8)):
                 a, b = attrs[i], attrs[i + 1]
                 seg = _route_with_polyline(
@@ -358,12 +391,10 @@ def api_plan():
                 seg["from"] = a["name"]
                 seg["to"] = b["name"]
                 
-                # ✅ 调试日志：验证polyline是否有效
                 polyline_valid = seg.get("polyline", [])
-                print(f"[ROUTE DEBUG] {a['name']} → {b['name']}: "
-                      f"distance={seg.get('distance')}m, "
-                      f"duration={seg.get('duration')}s, "
-                      f"polyline_points={len(polyline_valid)}")
+                print(f"  [{i+1}] {a['name']} -> {b['name']}: "
+                      f"{seg.get('distance')}m, {seg.get('duration')}s, "
+                      f"polyline={len(polyline_valid)}pts")
                 
                 routes.append(seg)
 
@@ -379,6 +410,9 @@ def api_plan():
             "journal": journal,
         })
 
+        print(f"[SUCCESS] /api/plan completed, returning data")
+        print(f"{'='*60}\n")
+        
         return jsonify({
             "plan_text": plan_text,
             "demands": intent,
@@ -390,9 +424,18 @@ def api_plan():
             "journal": journal,
         })
 
-    except Exception as e:
+    except ImportError as e:
+        print(f"[ERROR] Import error: {e}")
         import traceback
         traceback.print_exc()
+        print(f"{'='*60}\n")
+        return jsonify({"error": f"Import error: {str(e)}"}), 500
+        
+    except Exception as e:
+        print(f"[ERROR] Planning failed: {e}")
+        import traceback
+        traceback.print_exc()
+        print(f"{'='*60}\n")
         return jsonify({"error": str(e)}), 500
 
 
