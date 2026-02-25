@@ -30,7 +30,7 @@ class CultureAgent(TravelPlanningAgent):
         self.cultural_db = self._init_cultural_database()
     
     def _init_cultural_database(self) -> Dict[str, Any]:
-        """初始化文化数据库 (模拟)"""
+        """初始化文化数据库"""
         return {
             "安庆": {
                 "cultural_themes": ["黄梅戏", "乡村体验", "江南文化", "戏曲传承"],
@@ -57,7 +57,140 @@ class CultureAgent(TravelPlanningAgent):
                     "天柱山": {"heritage_priority": 2, "history_story": "道教文化圣地"},
                     "菱湖公园": {"heritage_priority": 3, "cultural_note": "江南园林风格"}
                 }
-            }
+            },
+            "上海": {
+                "cultural_themes": ["海派文化", "现代都市", "亲子科普", "工业遗存", "时尚艺术", "美食文化"],
+                "pref_theme_map": {
+                    "亲子": "亲子科普",
+                    "美食": "美食文化",
+                    "历史文化": "海派文化",
+                    "自然风光": "现代都市",
+                    "购物": "时尚艺术",
+                    "户外运动": "滨江都市探索",
+                },
+                "scenic_spots_cultural_value": {
+                    "外滩": {"heritage_priority": 1, "must_visit": True, "history_story": "万国建筑博览群，上海近代史缩影"},
+                    "豫园": {"heritage_priority": 1, "must_visit": True, "history_story": "明代古典园林，老城厢文化核心"},
+                    "上海博物馆": {"heritage_priority": 2, "history_story": "珍藏中国古代艺术珍品"},
+                    "田子坊": {"heritage_priority": 3, "cultural_note": "石库门建筑群，创意艺术聚集地"},
+                    "新天地": {"heritage_priority": 3, "cultural_note": "里弄文化与现代时尚融合"},
+                }
+            },
+            "北京": {
+                "cultural_themes": ["皇家文化", "四合院民俗", "历史文化", "胡同文化", "红色文化"],
+                "pref_theme_map": {
+                    "历史文化": "皇家文化",
+                    "亲子": "历史文化",
+                    "美食": "胡同文化",
+                    "乡村体验": "四合院民俗",
+                },
+                "scenic_spots_cultural_value": {
+                    "故宫": {"heritage_priority": 1, "must_visit": True},
+                    "天安门": {"heritage_priority": 1, "must_visit": True},
+                    "颐和园": {"heritage_priority": 2},
+                    "南锣鼓巷": {"heritage_priority": 3, "cultural_note": "胡同文化代表"},
+                }
+            },
+            "杭州": {
+                "cultural_themes": ["西湖文化", "江南园林", "丝绸文化", "茶道文化", "南宋历史"],
+                "pref_theme_map": {
+                    "自然风光": "西湖文化",
+                    "历史文化": "南宋历史",
+                    "美食": "茶道文化",
+                    "乡村体验": "江南园林",
+                },
+                "scenic_spots_cultural_value": {
+                    "西湖": {"heritage_priority": 1, "must_visit": True},
+                    "灵隐寺": {"heritage_priority": 2},
+                    "西溪湿地": {"heritage_priority": 3},
+                }
+            },
+            "成都": {
+                "cultural_themes": ["巴蜀文化", "熊猫文化", "川菜文化", "三国文化", "道教文化"],
+                "pref_theme_map": {
+                    "美食": "川菜文化",
+                    "亲子": "熊猫文化",
+                    "历史文化": "三国文化",
+                    "自然风光": "巴蜀文化",
+                },
+                "scenic_spots_cultural_value": {
+                    "大熊猫繁育研究基地": {"heritage_priority": 1, "must_visit": True},
+                    "宽窄巷子": {"heritage_priority": 2},
+                    "武侯祠": {"heritage_priority": 2, "history_story": "三国蜀汉文化圣地"},
+                    "锦里": {"heritage_priority": 3},
+                }
+            },
+            "西安": {
+                "cultural_themes": ["秦汉文化", "丝绸之路", "古城文化", "唐代文化", "关中民俗"],
+                "pref_theme_map": {
+                    "历史文化": "秦汉文化",
+                    "美食": "关中民俗",
+                    "自然风光": "古城文化",
+                    "亲子": "唐代文化",
+                },
+                "scenic_spots_cultural_value": {
+                    "兵马俑": {"heritage_priority": 1, "must_visit": True},
+                    "大雁塔": {"heritage_priority": 2},
+                    "回民街": {"heritage_priority": 2, "cultural_note": "西北美食文化地标"},
+                    "城墙": {"heritage_priority": 1},
+                }
+            },
+            "苏州": {
+                "cultural_themes": ["园林文化", "昆曲", "丝绸刺绣", "江南水乡", "吴文化"],
+                "pref_theme_map": {
+                    "历史文化": "园林文化",
+                    "美食": "江南水乡",
+                    "自然风光": "江南水乡",
+                    "亲子": "吴文化",
+                },
+                "scenic_spots_cultural_value": {
+                    "拙政园": {"heritage_priority": 1, "must_visit": True},
+                    "虎丘": {"heritage_priority": 2},
+                    "山塘街": {"heritage_priority": 2},
+                }
+            },
+            "黄山": {
+                "cultural_themes": ["徽文化", "山水文化", "茶道", "徽派建筑", "自然奇观"],
+                "pref_theme_map": {
+                    "自然风光": "山水文化",
+                    "历史文化": "徽文化",
+                    "美食": "茶道",
+                    "户外运动": "自然奇观",
+                },
+                "scenic_spots_cultural_value": {
+                    "黄山": {"heritage_priority": 1, "must_visit": True},
+                    "宏村": {"heritage_priority": 2},
+                    "西递": {"heritage_priority": 2},
+                }
+            },
+            "厦门": {
+                "cultural_themes": ["闽南文化", "骑楼建筑", "海洋文化", "侨乡文化", "海峡文化"],
+                "pref_theme_map": {
+                    "自然风光": "海洋文化",
+                    "历史文化": "骑楼建筑",
+                    "美食": "闽南文化",
+                    "亲子": "海洋文化",
+                },
+                "scenic_spots_cultural_value": {
+                    "鼓浪屿": {"heritage_priority": 1, "must_visit": True},
+                    "南普陀寺": {"heritage_priority": 2},
+                    "曾厝垵": {"heritage_priority": 3},
+                }
+            },
+            "桂林": {
+                "cultural_themes": ["山水文化", "喀斯特地貌", "壮族文化", "漓江文化"],
+                "pref_theme_map": {
+                    "自然风光": "山水文化",
+                    "历史文化": "壮族文化",
+                    "户外运动": "喀斯特地貌",
+                    "亲子": "漓江文化",
+                },
+                "scenic_spots_cultural_value": {
+                    "漓江": {"heritage_priority": 1, "must_visit": True},
+                    "象鼻山": {"heritage_priority": 2},
+                    "阳朔": {"heritage_priority": 2},
+                }
+            },
         }
     
     def _validate_input(self, context: PlanningContext) -> bool:
@@ -109,29 +242,34 @@ class CultureAgent(TravelPlanningAgent):
             # Step 1: 识别文化主题
             theme = self._identify_cultural_theme(destination, preferences)
             result["cultural_theme"] = theme
+            context.cultural_theme = theme  # 回写到共享上下文
             print(f"✓ 文化主题: {theme}")
-            
+
             # Step 2: 筛选和排序文化景点
             if context.pois:
                 cultural_pois = self._filter_cultural_pois(context.pois, destination, theme)
                 result["cultural_pois"] = cultural_pois
+                context.cultural_pois = cultural_pois  # 回写到共享上下文
                 print(f"✓ 文化景点: {len(cultural_pois)} 个")
-                
+
                 # Step 3: 为每个景点生成文化背景
                 for poi in context.pois:
                     if poi.name in [cp.get("name") for cp in cultural_pois]:
                         background = self._generate_cultural_background(destination, poi)
                         result["cultural_background"][poi.id] = background
+                context.cultural_background = result["cultural_background"]  # 回写
                 print(f"✓ 生成了 {len(result['cultural_background'])} 个文化背景")
-            
+
             # Step 4: 推荐文化活动
             activities = self._recommend_activities(destination, theme, preferences)
             result["activities"] = activities
+            context.cultural_activities = activities  # 回写到共享上下文
             print(f"✓ 推荐活动: {len(activities)} 个")
-            
+
             # Step 5: 设计特色体验
             experiences = self._design_special_experiences(destination, theme, preferences)
             result["special_experiences"] = experiences
+            context.special_experiences = experiences  # 回写到共享上下文
             print(f"✓ 设计体验: {len(experiences)} 个")
             
             # 学习新知识
@@ -156,28 +294,52 @@ class CultureAgent(TravelPlanningAgent):
     def _identify_cultural_theme(self, destination: str, preferences: List[str]) -> str:
         """
         识别文化主题
-        
-        基于：目的地特色 + 用户偏好
+
+        优先级：
+        1. 目的地+偏好的精确映射（pref_theme_map）
+        2. 可用主题列表的关键词模糊匹配
+        3. 基于用户偏好的通用主题
+        4. 目的地名 + 偏好的兜底组合
         """
-        # 从数据库获取目的地的文化主题
         db = self.cultural_db.get(destination, {})
         available_themes = db.get("cultural_themes", [])
-        
-        # 匹配用户偏好
+        pref_theme_map = db.get("pref_theme_map", {})
+
+        # 1. 精确映射：从 pref_theme_map 找与用户偏好匹配的主题
+        matched_via_map = []
+        for pref in preferences:
+            if pref in pref_theme_map:
+                matched_via_map.append(pref_theme_map[pref])
+        if matched_via_map:
+            return " + ".join(list(dict.fromkeys(matched_via_map))[:2])
+
+        # 2. 模糊匹配：用户偏好关键词 vs 可用主题列表
         matched_themes = []
         for theme in available_themes:
             for pref in preferences:
                 if pref.lower() in theme.lower() or theme.lower() in pref.lower():
                     matched_themes.append(theme)
-        
-        # 如果有匹配的偏好，使用它们；否则使用目的地的主要文化
         if matched_themes:
-            main_themes = list(set(matched_themes))[:2]  # 选择前2个
-            return " + ".join(main_themes)
-        elif available_themes:
+            return " + ".join(list(dict.fromkeys(matched_themes))[:2])
+
+        # 3. 没有偏好匹配但有目的地数据：用目的地主要前2个主题
+        if available_themes:
             return " + ".join(available_themes[:2])
-        else:
-            return f"{destination}文化体验"
+
+        # 4. 兜底：根据用户偏好动态生成描述
+        PREF_FALLBACK = {
+            "亲子": "亲子探索",
+            "历史文化": "历史文化探索",
+            "美食": "美食文化体验",
+            "自然风光": "自然风光游览",
+            "户外运动": "户外探险体验",
+            "乡村体验": "乡村民俗体验",
+            "购物": "都市休闲游",
+        }
+        fallback_labels = [PREF_FALLBACK[p] for p in preferences if p in PREF_FALLBACK]
+        if fallback_labels:
+            return f"{destination} · " + " + ".join(fallback_labels[:2])
+        return f"{destination}深度游"
     
     def _filter_cultural_pois(self, pois: List[POI], destination: str, 
                             theme: str) -> List[Dict[str, Any]]:
@@ -206,7 +368,8 @@ class CultureAgent(TravelPlanningAgent):
                     must_visit = cultural_values[poi.name].get("must_visit", False)
                 
                 # 检查与主题的相关性
-                if any(keyword in poi.description or keyword in poi.name or keyword in theme 
+                desc = poi.description or ""
+                if any(keyword in desc or keyword in poi.name or keyword in theme
                        for keyword in ["文化", "戏曲", "非遗", "历史", "乡村", "民俗"]):
                     priority -= 1  # 优先级提升
                 

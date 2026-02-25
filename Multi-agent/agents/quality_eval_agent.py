@@ -179,42 +179,91 @@ class QualityEvalAgent(TravelPlanningAgent):
         
         return min(1.0, score)
     
+    # 偏好关键词语义映射: 偏好标签 -> 相关关键词列表
+    _PREF_KEYWORDS = {
+        "美食": ["餐", "食", "美食", "restaurant", "dining", "food", "菜", "小吃", "饮食"],
+        "历史文化": ["历史", "文化", "博物馆", "museum", "古", "遗址", "temple", "寺", "祠", "故居", "纪念"],
+        "文化": ["文化", "culture", "历史", "博物馆", "戏曲", "非遗", "民俗", "艺术", "传统"],
+        "自然风光": ["自然", "nature", "山", "forest", "park", "公园", "湖", "river", "景区", "风景", "瀑布", "峡谷"],
+        "户外运动": ["户外", "outdoor", "hiking", "爬山", "山", "adventure", "攀岩", "徒步"],
+        "亲子": ["亲子", "family", "children", "游乐", "乐园", "儿童"],
+        "乡村体验": ["乡村", "农村", "田园", "农家", "村落", "古镇", "民居"],
+        "购物": ["购物", "shopping", "商场", "市场", "街", "店"],
+        "摄影": ["摄影", "photo", "风景", "景色", "观光"],
+    }
+
     def _evaluate_user_fit(self, context: PlanningContext) -> float:
         """
         评估用户匹配度：是否符合用户偏好
+
+        使用语义关键词映射 + 全文语料库匹配，避免直接字符串比较失败。
+        每个偏好只计一次（修复双重计数问题）。
         """
         score = 0.5  # 默认分数
-        
+
         if not context.user_intent:
             return score
-        
+
         preferences = context.user_intent.preferences or []
-        
-        # 检查是否包含用户想要的体验
-        cultural_pois = [poi.get("name", "") for poi in context.cultural_pois]
-        activities = [act.get("activity", "") for act in context.cultural_activities]
-        
-        # 计算匹配的偏好
-        matched_preferences = 0
+        if not preferences:
+            return score
+
+        # 构建全文语料库（主题 + POI名称/类别/描述 + 活动名称）
+        corpus_tokens: List[str] = []
+        if context.cultural_theme:
+            corpus_tokens.append(context.cultural_theme.lower())
+        for poi in context.cultural_pois:
+            if isinstance(poi, dict):
+                corpus_tokens.append(poi.get("name", "").lower())
+                corpus_tokens.append(poi.get("category", "").lower())
+                corpus_tokens.append((poi.get("description") or "").lower())
+            else:
+                corpus_tokens.append(getattr(poi, "name", "").lower())
+                corpus_tokens.append(getattr(poi, "category", "").lower())
+                corpus_tokens.append((getattr(poi, "description", "") or "").lower())
+        for act in context.cultural_activities:
+            if isinstance(act, dict):
+                corpus_tokens.append(act.get("activity", "").lower())
+                corpus_tokens.append(act.get("type", "").lower())
+                corpus_tokens.append(act.get("name", "").lower())
+        corpus_text = " ".join(corpus_tokens)
+
+        # 每个偏好只计一次匹配，修复双重计数问题
+        matched = 0
         for pref in preferences:
             pref_lower = pref.lower()
-            
-            # 检查POI
-            for poi_name in cultural_pois:
-                if pref_lower in poi_name.lower() or poi_name.lower() in pref_lower:
-                    matched_preferences += 1
-                    break
-            
-            # 检查活动
-            for act_name in activities:
-                if pref_lower in act_name.lower() or act_name.lower() in pref_lower:
-                    matched_preferences += 1
-                    break
-        
-        if preferences:
-            user_fit = matched_preferences / len(preferences)
-            score = 0.3 + (user_fit * 0.7)  # 权重为30% + 70%
-        
+            found = False
+
+            # 直接子串匹配
+            if pref_lower in corpus_text:
+                found = True
+
+            # 语义关键词映射匹配
+            if not found:
+                keywords = self._PREF_KEYWORDS.get(pref, [])
+                for kw in keywords:
+                    if kw in corpus_text:
+                        found = True
+                        break
+
+            # 类别占位匹配：美食类偏好 → 是否有餐厅POI；自然类 → 是否有景区
+            if not found:
+                if any(k in pref_lower for k in ["美食", "food", "餐"]):
+                    found = any(
+                        any(k in str(p).lower() for k in ["餐", "食", "restaurant"])
+                        for p in context.cultural_pois
+                    )
+                elif any(k in pref_lower for k in ["自然", "nature", "风光"]):
+                    found = any(
+                        any(k in str(p).lower() for k in ["山", "湖", "公园", "景区", "park"])
+                        for p in context.cultural_pois
+                    )
+
+            if found:
+                matched += 1
+
+        user_fit = matched / len(preferences)
+        score = 0.3 + (user_fit * 0.7)
         return min(1.0, score)
     
     def _evaluate_experience_quality(self, context: PlanningContext) -> float:
@@ -272,6 +321,14 @@ class QualityEvalAgent(TravelPlanningAgent):
         """为特定Agent生成反馈"""
         feedback = {}
         
+        # 给DataCollectionAgent的反馈（完整性低且非第一轮 → 扩大搜索）
+        if scores.get("completeness", 1.0) < 0.6 and context.iteration_count > 1:
+            feedback["data_collection_agent"] = {
+                "status": "feedback_needed",
+                "issue": "数据不足（完整性评分低），需要扩大搜索范围",
+                "expand_search": True,
+            }
+
         # 给CultureAgent的反馈
         if scores.get("user_fit", 1.0) < 0.75:
             feedback["culture_agent"] = {

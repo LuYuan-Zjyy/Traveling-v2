@@ -36,6 +36,8 @@ var routeLabels = [];
 var routeSegments = [];
 var routeLayerGroup = null;
 var waypoints = [];
+var itineraryDays = [];   // 每天景点列表（TSP排序），来自后端 itinerary_days
+var currentWpDay = 0;     // 当前途经点显示的天序号（0-indexed）
 var journalEntries = [];
 var targetCity = '';
 var dragSrcIdx = null;
@@ -127,8 +129,9 @@ function toggleSidebar() {
 
 // ========== Agent 规划 ==========
 function startPlan() {
-    var query = document.getElementById('queryInput').value.trim();
-    if (!query) return;
+    var baseQuery = document.getElementById('queryInput').value.trim();
+    var query = buildQueryWithChips(baseQuery);
+    if (!query) { alert('请输入旅行需求或选择上方选项'); return; }
     var btn = document.getElementById('planBtn');
     btn.disabled = true;
     showLoading('Agent 正在调用 12 项高德 MCP 服务...');
@@ -137,12 +140,22 @@ function startPlan() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: query })
     }).then(function (resp) {
-        if (!resp.ok) return resp.json().then(function (e) { throw new Error(e.error || 'error'); });
+        if (!resp.ok) return resp.json().then(function (e) {
+            var msg = e.error || 'error';
+            // 400 = 用户输入问题，直接显示消息；500 = 系统错误
+            var err = new Error(msg);
+            err.isUserError = (resp.status === 400);
+            throw err;
+        });
         return resp.json();
     }).then(function (data) {
         applyPlanResult(data);
     }).catch(function (e) {
-        alert('规划出错: ' + e.message);
+        if (e.isUserError) {
+            alert('⚠️ ' + e.message);
+        } else {
+            alert('规划出错: ' + e.message);
+        }
     }).finally(function () {
         btn.disabled = false;
         hideLoading();
@@ -157,6 +170,18 @@ function applyPlanResult(data) {
     var planHtml = md.render(data.plan_text || '');
     var planEl = document.getElementById('planContent');
     planEl.innerHTML = planHtml;
+
+    // 多城市提示横幅
+    var noticeEl = document.getElementById('planNotice');
+    if (data.notice) {
+        noticeEl.innerHTML =
+            '<span class="notice-icon">ℹ️</span>' +
+            '<span class="notice-text">' + esc(data.notice) + '</span>' +
+            '<span class="notice-close" onclick="this.parentNode.style.display=\'none\'">✕</span>';
+        noticeEl.style.display = 'flex';
+    } else {
+        noticeEl.style.display = 'none';
+    }
     
     // 为Markdown渲染后的内容添加样式类
     planEl.classList.add('markdown-body');
@@ -180,8 +205,12 @@ function applyPlanResult(data) {
     placeMarkers(hotels, 'hotel');
     updateCounts(attrs.length, rests.length, hotels.length);
 
-    // 途经点
-    waypoints = attrs.slice(0, 10);
+    // 途经点：用行程规划的分天数据，默认加载第1天
+    itineraryDays = data.itinerary_days || [];
+    currentWpDay = 0;
+    waypoints = (itineraryDays[0] || []).map(function(w, i) {
+        return { name: w.name, lat: w.lat, lng: w.lng, address: w.address || '', order: i + 1, type: 'attraction' };
+    });
     renderWaypoints();
 
     // 路线
@@ -199,6 +228,9 @@ function applyPlanResult(data) {
     
     // 【新功能】解析规划文本并重新编号景点
     reorderAttractionsBasedOnPlan(data.plan_text || '', data.attraction_markers || []);
+
+    // 填充"地点"侧边栏 Tab
+    renderPoiList(data);
 }
 
 // =========== 【新功能】根据规划文本重新编号景点 ===========
@@ -282,9 +314,25 @@ function renderItineraryFromPlan(planText, attrMarkers) {
             if (day.attractions.length > 0) {
                 html += '<div class="itinerary-pois">';
                 day.attractions.forEach(function(poi) {
-                    html += '<div class="itinerary-poi-item">';
+                    var isFullDay = allPoiData.attraction.some(function(a) {
+                        return a.is_full_day && (a.name === poi.name || a.name.includes(poi.name) || poi.name.includes(a.name));
+                    });
+                    // Look up lat/lng from attrMarkers so clicking opens the map popup
+                    var markerData = null;
+                    for (var j = 0; j < attrMarkers.length; j++) {
+                        var m = attrMarkers[j];
+                        if (m.name === poi.name || m.name.includes(poi.name) || poi.name.includes(m.name)) {
+                            markerData = m;
+                            break;
+                        }
+                    }
+                    var clickAttr = markerData
+                        ? ' onclick="flyToPoi(' + markerData.lat + ',' + markerData.lng + ',' + JSON.stringify(markerData.name) + ',\'attraction\')"'
+                        : '';
+                    html += '<div class="itinerary-poi-item"' + clickAttr + '>';
                     html += '<span class="poi-order">📍 ' + poi.order + '</span>';
                     html += '<span class="poi-name">' + esc(poi.name) + '</span>';
+                    if (isFullDay) html += '<span class="poi-fullday-badge">🎪 整天</span>';
                     html += '</div>';
                 });
                 html += '</div>';
@@ -308,11 +356,30 @@ function hideLoading() { document.getElementById('loadingOverlay').style.display
 // ========== 天气 ==========
 function renderWeather(w) {
     var el = document.getElementById('weatherContent');
-    el.innerHTML = '<div class="weather-card">' + (w.forecasts || []).map(function (f) {
-        return '<div class="weather-day"><div class="wd-date">' + (f.date ? f.date.slice(5) : '') +
-            '</div><div>' + (f.dayweather || '') + '</div><div class="wd-temp">' +
-            (f.nighttemp || '') + '~' + (f.daytemp || '') + '\u2103</div></div>';
-    }).join('') + '</div>';
+    var forecasts = w.forecasts || [];
+    var days = forecasts.length;
+
+    // 标题注释：几天预报 / 仅今日
+    var note = '';
+    if (days === 0) {
+        note = '<div class="weather-note">暂无天气数据</div>';
+    } else if (days === 1 && !forecasts[0].date) {
+        note = '<div class="weather-note"><i class="fas fa-info-circle"></i> 仅显示今日实况，预报数据暂不可用</div>';
+    } else {
+        note = '<div class="weather-note"><i class="fas fa-cloud-sun"></i> 未来 ' + days + ' 天预报</div>';
+    }
+
+    var cards = forecasts.map(function (f) {
+        var dateLabel = f.date ? f.date.slice(5) : '今日';
+        var tempRange = (f.nighttemp || f.nighttemp_float || '') + '~' + (f.daytemp || f.daytemp_float || '') + '\u2103';
+        return '<div class="weather-day">' +
+            '<div class="wd-date">' + dateLabel + '</div>' +
+            '<div>' + (f.dayweather || f.weather || '') + '</div>' +
+            '<div class="wd-temp">' + tempRange + '</div>' +
+            '</div>';
+    }).join('');
+
+    el.innerHTML = note + '<div class="weather-card">' + cards + '</div>';
 }
 
 // ========== 标记 ==========
@@ -354,20 +421,24 @@ function showPopup(marker, w, type) {
     var labels = { attraction: '景点', restaurant: '餐厅', hotel: '酒店' };
     var color = COLORS[type];
     var h = '<div class="popup-content">';
+    // 顶部图片（有图时展示，无图时不占位）
+    if (w.photo_url) {
+        h += '<div class="popup-photo" style="background-image:url(' + esc(w.photo_url) + ')"></div>';
+    }
     h += '<div class="popup-type" style="color:' + color + ';">' + labels[type] + '</div>';
     h += '<div class="popup-name">' + esc(w.name) + '</div>';
     if (w.address) h += '<div class="popup-row"><i class="fas fa-map-pin"></i> ' + esc(w.address) + '</div>';
     if (w.rating && w.rating !== 'None') h += '<div class="popup-row"><i class="fas fa-star" style="color:#F59E0B;"></i> ' + w.rating + '</div>';
+    if (w.price && w.price !== 'None') h += '<div class="popup-row"><i class="fas fa-yen-sign" style="color:#10B981;"></i> 人均 ¥' + w.price + '</div>';
     if (w.tel) h += '<div class="popup-row"><i class="fas fa-phone"></i> ' + esc(w.tel) + '</div>';
-    if (w.opening_time) h += '<div class="popup-row"><i class="fas fa-clock"></i> ' + esc(w.opening_time) + '</div>';
+    if (w.opening_hours) h += '<div class="popup-row"><i class="fas fa-clock"></i> ' + esc(w.opening_hours) + '</div>';
     if (w.distance) h += '<div class="popup-row"><i class="fas fa-ruler"></i> ' + w.distance + 'm</div>';
     h += '</div>';
 
-    marker.bindPopup(h, {
-        maxWidth: 280,
-        minWidth: 200,
-        className: 'custom-popup',
-    }).openPopup();
+    L.popup({ maxWidth: 280, minWidth: 200, className: 'custom-popup' })
+        .setLatLng(marker.getLatLng())
+        .setContent(h)
+        .openOn(map);
 }
 
 function toggleLayer(type) {
@@ -547,10 +618,36 @@ function planRoutes() {
 }
 
 // ========== 途经点 ==========
+function switchWpDay(dayIdx) {
+    if (!itineraryDays[dayIdx]) return;
+    currentWpDay = dayIdx;
+    waypoints = itineraryDays[dayIdx].map(function(w, i) {
+        return { name: w.name, lat: w.lat, lng: w.lng, address: w.address || '', order: i + 1, type: 'attraction' };
+    });
+    clearRoutes();
+    renderWaypoints();
+    saveWaypoints();
+}
+
 function renderWaypoints() {
     var el = document.getElementById('waypointList');
-    if (!waypoints.length) { el.innerHTML = '<p class="empty-hint">暂无途经点</p>'; return; }
-    el.innerHTML = waypoints.map(function (w, i) {
+    var html = '';
+
+    // 天数切换按钮（有多天且来自行程规划时显示）
+    if (itineraryDays.length > 1) {
+        html += '<div class="wp-day-tabs">';
+        for (var d = 0; d < itineraryDays.length; d++) {
+            var active = d === currentWpDay ? ' active' : '';
+            html += '<button class="wp-day-btn' + active + '" onclick="switchWpDay(' + d + ')">第' + (d + 1) + '天</button>';
+        }
+        html += '</div>';
+    }
+
+    if (!waypoints.length) {
+        el.innerHTML = html + '<p class="empty-hint">暂无途经点</p>';
+        return;
+    }
+    html += waypoints.map(function (w, i) {
         return '<div class="wp-item" draggable="true" ondragstart="wpDragStart(event,' + i + ')" ondragover="wpDragOver(event)" ondrop="wpDrop(event,' + i + ')">' +
             '<span class="wp-order">' + (i + 1) + '</span>' +
             '<span class="wp-name" title="' + esc(w.address || '') + '">' + esc(w.name) + '</span>' +
@@ -559,6 +656,7 @@ function renderWaypoints() {
             '<button title="删除" onclick="removeWp(' + i + ')"><i class="fas fa-trash"></i></button>' +
             '</span></div>';
     }).join('');
+    el.innerHTML = html;
 }
 function addWaypoint(wp) {
     waypoints.push(wp);
@@ -671,3 +769,136 @@ function exportJournal() {
 
 // ========== Utils ==========
 function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ========== 快选 Chip ==========
+var chipState = { days: null, budget: null, prefs: [] };
+
+function toggleChip(btn) {
+    var type = btn.dataset.type;
+    var val = btn.dataset.val;
+    if (type === 'pref') {
+        var idx = chipState.prefs.indexOf(val);
+        if (idx >= 0) {
+            chipState.prefs.splice(idx, 1);
+            btn.classList.remove('active');
+        } else {
+            chipState.prefs.push(val);
+            btn.classList.add('active');
+        }
+    } else {
+        // 单选：取消同类其他chip
+        document.querySelectorAll('.chip[data-type="' + type + '"]').forEach(function (s) {
+            s.classList.remove('active');
+        });
+        if (chipState[type] === val) {
+            chipState[type] = null;  // 再次点击取消
+        } else {
+            chipState[type] = val;
+            btn.classList.add('active');
+        }
+    }
+}
+
+function buildQueryWithChips(baseQuery) {
+    var parts = [];
+    if (baseQuery) parts.push(baseQuery);
+    if (chipState.days) parts.push(chipState.days + '天');
+    if (chipState.prefs.length) parts.push('偏好' + chipState.prefs.join('、'));
+    if (chipState.budget) parts.push('预算' + chipState.budget + '元');
+    return parts.join('，');
+}
+
+// ========== 侧边栏二级 Tab ==========
+function switchStab(stab) {
+    document.querySelectorAll('.stab').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.stab === stab);
+    });
+    document.getElementById('stabPlan').style.display = stab === 'plan' ? '' : 'none';
+    document.getElementById('stabPois').style.display = stab === 'pois' ? '' : 'none';
+}
+
+// ========== POI 卡片列表 ==========
+var allPoiData = { attraction: [], restaurant: [], hotel: [] };
+var currentPoiFilter = 'all';
+
+function renderPoiList(data) {
+    allPoiData.attraction = data.attraction_markers || [];
+    allPoiData.restaurant = data.restaurant_markers || [];
+    allPoiData.hotel = data.hotel_markers || [];
+    filterPoiList(currentPoiFilter);
+}
+
+function filterPoiList(filter) {
+    currentPoiFilter = filter;
+    document.querySelectorAll('.poi-filter').forEach(function (b) {
+        b.classList.toggle('active', b.dataset.pf === filter);
+    });
+
+    var items = [];
+    var typeColors = { attraction: '#4F6AF6', restaurant: '#F97316', hotel: '#10B981' };
+    var typeLabels = { attraction: '景点', restaurant: '餐厅', hotel: '酒店' };
+
+    if (filter === 'all' || filter === 'attraction')
+        allPoiData.attraction.forEach(function (p) { items.push(Object.assign({}, p, { _type: 'attraction' })); });
+    if (filter === 'all' || filter === 'restaurant')
+        allPoiData.restaurant.forEach(function (p) { items.push(Object.assign({}, p, { _type: 'restaurant' })); });
+    if (filter === 'all' || filter === 'hotel')
+        allPoiData.hotel.forEach(function (p) { items.push(Object.assign({}, p, { _type: 'hotel' })); });
+
+    var el = document.getElementById('poiListContent');
+    if (!items.length) {
+        el.innerHTML = '<p class="empty-hint" style="padding:16px;">暂无' + (filter === 'all' ? '' : typeLabels[filter]) + '数据</p>';
+        return;
+    }
+
+    var html = items.map(function (p) {
+        var color = typeColors[p._type];
+        var label = typeLabels[p._type];
+        var starsHtml = renderStars(p.rating);
+        var ratingNum = (p.rating && p.rating !== 'None') ? '<span class="poi-rating-num">' + p.rating + '</span>' : '';
+        var priceHtml = (p.price && p.price !== 'None') ? '<span class="poi-price">¥' + p.price + '</span>' : '';
+        var fullDayBadge = p.is_full_day ? '<span class="poi-fullday-badge">🎪 整天</span>' : '';
+        var addrHtml = p.address ? '<div class="poi-card-addr"><i class="fas fa-map-pin"></i>' + esc(p.address) + '</div>' : '';
+        var thumbHtml = p.photo_url ? '<div class="poi-card-thumb" style="background-image:url(' + esc(p.photo_url) + ')"></div>' : '';
+        return '<div class="poi-card' + (p.photo_url ? ' poi-card-has-photo' : '') + '" onclick="flyToPoi(' + p.lat + ',' + p.lng + ',' + JSON.stringify(p.name) + ',\'' + p._type + '\')">' +
+            (thumbHtml ? thumbHtml : '<div class="poi-card-dot" style="background:' + color + ';"></div>') +
+            '<div class="poi-card-body">' +
+            '<div class="poi-card-row1">' +
+            '<span class="poi-card-name">' + esc(p.name) + '</span>' +
+            '<span class="poi-card-type" style="color:' + color + ';">' + label + '</span>' +
+            '</div>' +
+            '<div class="poi-card-rating">' + starsHtml + ratingNum + priceHtml + '</div>' +
+            (fullDayBadge ? '<div>' + fullDayBadge + '</div>' : '') +
+            addrHtml +
+            '</div></div>';
+    }).join('');
+
+    el.innerHTML = html;
+}
+
+function renderStars(rating) {
+    if (!rating || rating === 'None') return '';
+    var r = parseFloat(rating);
+    if (isNaN(r)) return '';
+    var html = '';
+    for (var i = 1; i <= 5; i++) {
+        if (r >= i) html += '<i class="fas fa-star"></i>';
+        else if (r >= i - 0.5) html += '<i class="fas fa-star-half-alt"></i>';
+        else html += '<i class="far fa-star"></i>';
+    }
+    return '<span class="poi-stars" style="color:#F59E0B;">' + html + '</span>';
+}
+
+function flyToPoi(lat, lng, name, type) {
+    switchTab('map');
+    setTimeout(function () {
+        map.setView([lat, lng], 16);
+        var group = markerGroups[type] || [];
+        for (var i = 0; i < group.length; i++) {
+            if (group[i].data.name === name) {
+                group[i].marker.fire('click');
+                break;
+            }
+        }
+    }, 150);
+}

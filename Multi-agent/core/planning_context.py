@@ -22,6 +22,7 @@ class UserIntent:
     accommodation_type: Optional[str] = None
     transport_preference: Optional[str] = None
     special_requirements: Optional[str] = None
+    trip_type: Optional[str] = None  # cultural / adventure / food / nature
 
 
 @dataclass
@@ -55,10 +56,10 @@ class PlanningContext:
     多Agent共享的规划上下文
     用于存储整个规划过程中的所有数据
     """
-    
-    def __init__(self):
+
+    def __init__(self, user_intent: Optional[UserIntent] = None):
         # Step 0: 用户意图
-        self.user_intent: Optional[UserIntent] = None
+        self.user_intent: Optional[UserIntent] = user_intent
         
         # Step 1: 原始数据
         self.pois: List[POI] = []
@@ -85,17 +86,20 @@ class PlanningContext:
         self.final_itinerary: Optional[Dict[str, Any]] = None
         self.contingency_plans: List[Dict[str, Any]] = []
         self.rest_recommendations: List[Dict[str, Any]] = []
-        
+        self.special_experiences: List[Dict[str, Any]] = []  # 特色体验组合
+
         # Agent执行历史
         self.agent_outputs: List[AgentOutput] = []
         self.execution_log: List[str] = []
-        
+
         # 元数据
         self.created_at: str = datetime.now().isoformat()
         self.updated_at: str = datetime.now().isoformat()
         self.session_id: str = self._generate_session_id()
         self.quality_score: float = 0.0
         self.iteration_count: int = 0
+        self.iteration_result: Optional[str] = None  # "completed" / "max_iterations_reached"
+        self.improvement_suggestions: Optional[Dict[str, Any]] = None  # per-agent 改进建议
     
     def add_agent_output(self, output: AgentOutput):
         """添加Agent输出到上下文"""

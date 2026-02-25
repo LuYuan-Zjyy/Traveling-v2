@@ -4,6 +4,7 @@
 """
 
 import json
+import threading
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
@@ -23,7 +24,11 @@ class Knowledge:
     tags: List[str]
     confidence: float
     multimodal_data: Optional[Dict[str, Any]] = None
-    related_to: List[str] = None  # 关联的其他知识IDs
+    related_to: Optional[List[str]] = None  # 关联的其他知识IDs
+
+    def __post_init__(self):
+        if self.related_to is None:
+            self.related_to = []
 
 
 class KnowledgeBaseManager:
@@ -32,10 +37,13 @@ class KnowledgeBaseManager:
     def __init__(self, kb_path: str = "data/knowledge_base"):
         self.kb_path = Path(kb_path)
         self.kb_path.mkdir(parents=True, exist_ok=True)
-        
+
         # 索引文件路径
         self.index_path = self.kb_path / "index.json"
         self.knowledge_index: Dict[str, str] = self._load_index()
+
+        # 并发写保护锁
+        self._lock = threading.Lock()
     
     def learn_from_agent_output(self, agent_name: str, output: Dict[str, Any], 
                                knowledge_type: str = "artifact"):
@@ -55,23 +63,24 @@ class KnowledgeBaseManager:
             self.store_knowledge(learning)
     
     def store_knowledge(self, knowledge: Knowledge):
-        """存储知识项"""
-        # 生成知识ID
-        knowledge.id = self._generate_knowledge_id(knowledge)
-        
-        # 创建分类目录
-        category_dir = self.kb_path / knowledge.category
-        category_dir.mkdir(exist_ok=True)
-        
-        # 保存知识文件
-        file_path = category_dir / f"{knowledge.id}.json"
-        with open(file_path, "w", encoding="utf-8") as f:
-            json.dump(asdict(knowledge), f, ensure_ascii=False, indent=2)
-        
-        # 更新索引
-        self.knowledge_index[knowledge.id] = str(file_path)
-        self._save_index()
-        
+        """存储知识项（线程安全）"""
+        with self._lock:
+            # 生成知识ID
+            knowledge.id = self._generate_knowledge_id(knowledge)
+
+            # 创建分类目录
+            category_dir = self.kb_path / knowledge.category
+            category_dir.mkdir(exist_ok=True)
+
+            # 保存知识文件
+            file_path = category_dir / f"{knowledge.id}.json"
+            with open(file_path, "w", encoding="utf-8") as f:
+                json.dump(asdict(knowledge), f, ensure_ascii=False, indent=2)
+
+            # 更新索引
+            self.knowledge_index[knowledge.id] = str(file_path)
+            self._save_index()
+
         print(f"✓ 知识已保存: {knowledge.id} ({knowledge.knowledge_type})")
     
     def retrieve_knowledge(self, query: str, 
@@ -112,6 +121,40 @@ class KnowledgeBaseManager:
         results.sort(key=lambda k: k.timestamp, reverse=True)
         return results[:limit]
     
+    def get_destination_knowledge(self, destination: str,
+                                  knowledge_type: Optional[str] = None,
+                                  limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        供 Agent 在规划前检索已有目的地知识。
+
+        通过复用已积累的文化、路线、价格等知识，减少 LLM 重复调用
+        和幻觉风险。
+
+        Args:
+            destination: 目的地名称（关键词匹配）
+            knowledge_type: 知识类型过滤，如 "cultural_insight"、"price_info"、
+                            "route_pattern" 等；None 表示不过滤
+            limit: 返回数量上限
+
+        Returns:
+            匹配的知识列表，每项为 {"type", "content", "confidence", "timestamp"}
+        """
+        results = self.retrieve_knowledge(
+            query=destination,
+            knowledge_type=knowledge_type,
+            limit=limit,
+        )
+        return [
+            {
+                "type": k.knowledge_type,
+                "content": k.content,
+                "confidence": k.confidence,
+                "timestamp": k.timestamp,
+                "tags": k.tags,
+            }
+            for k in results
+        ]
+
     def learn_from_user_correction(self, original: Dict[str, Any], 
                                   correction: Dict[str, Any]):
         """从用户纠正中学习"""

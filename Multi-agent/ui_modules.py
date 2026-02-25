@@ -181,7 +181,7 @@ class UIResponseBuilder:
     """UI响应构建器 - 组织模块数据用于前端展示"""
     
     @staticmethod
-    def build_full_response(context: Any, kb_manager: Any) -> Dict[str, Any]:
+    def build_full_response(context: Any, kb_manager: Any = None) -> Dict[str, Any]:
         """
         构建完整的UI响应
         
@@ -217,44 +217,76 @@ class UIResponseBuilder:
             culture_output = context.get_agent_output("culture_agent")
             budget_output = context.get_agent_output("budget_agent")
             route_output = context.get_agent_output("route_agent")
-            
+
             # 创建各模块
             if operation_output:
                 response["modules"]["itinerary"] = UIModuleFactory.create_itinerary_module(
                     operation_output.result
                 ).__dict__
-            
-            if culture_output:
+
+            # culture 模块：优先使用 agent_output，回退用 context 字段
+            culture_data = culture_output.result if culture_output else {}
+            if not culture_data.get("cultural_theme") and hasattr(context, "cultural_theme"):
+                culture_data = {
+                    "cultural_theme": context.cultural_theme or "",
+                    "cultural_pois": context.cultural_pois or [],
+                    "activities": context.cultural_activities or [],
+                    "special_experiences": getattr(context, "special_experiences", []),
+                    "cultural_background": context.cultural_background or {},
+                }
+            if culture_data:
                 response["modules"]["culture"] = UIModuleFactory.create_culture_module(
-                    culture_output.result
+                    culture_data
                 ).__dict__
-            
+
             if budget_output:
                 response["modules"]["budget"] = UIModuleFactory.create_budget_module(
                     budget_output.result
                 ).__dict__
-            
-            if route_output:
-                response["modules"]["navigation"] = UIModuleFactory.create_navigation_module(
-                    route_output.result
-                ).__dict__
-            
+
+            # navigation 模块：优先 route_output，回退用 context
+            nav_data = route_output.result if route_output else {}
+            if not nav_data:
+                first_poi = context.pois[0] if context.pois else None
+                nav_data = {
+                    "map_center": first_poi.location if first_poi else {"lat": 30.5, "lng": 117.0},
+                    "pois": [
+                        {
+                            "id": p.id, "name": p.name, "category": p.category,
+                            "location": p.location, "rating": p.rating, "price": p.price
+                        }
+                        for p in context.pois
+                    ],
+                    "routes": context.routes or [],
+                    "total_distance_km": 0,
+                    "total_time_hours": 0,
+                }
+            response["modules"]["navigation"] = UIModuleFactory.create_navigation_module(
+                nav_data
+            ).__dict__
+
             # 知识库模块
             kb_stats = kb_manager.get_kb_statistics() if kb_manager else {}
             response["modules"]["knowledge"] = UIModuleFactory.create_knowledge_module(
                 kb_stats
             ).__dict__
-            
+
             # 执行详情模块
             response["modules"]["execution"] = UIModuleFactory.create_execution_module(
                 context
             ).__dict__
-            
+
             # 应急预案模块
-            if operation_output:
-                response["modules"]["contingency"] = UIModuleFactory.create_contingency_module(
-                    operation_output.result
-                ).__dict__
+            contingency_data = operation_output.result if operation_output else {}
+            if not contingency_data:
+                contingency_data = {
+                    "contingency_plans": context.contingency_plans or [],
+                    "alternatives": [],
+                    "emergency_contacts": {},
+                }
+            response["modules"]["contingency"] = UIModuleFactory.create_contingency_module(
+                contingency_data
+            ).__dict__
         
         except Exception as e:
             print(f"构建UI模块出错: {e}")

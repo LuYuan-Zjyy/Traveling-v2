@@ -13,6 +13,18 @@ class DataCollectionAgent(TravelPlanningAgent):
     数据采集Agent
     职责：获取和整理规划所需的基础数据
     """
+
+    # 偏好 → 高德关键词映射（在默认三类基础上追加搜索）
+    _PREF_KEYWORDS: Dict[str, List[str]] = {
+        "户外运动": ["爬山", "徒步", "登山公园"],
+        "亲子":    ["动物园", "游乐园", "儿童公园", "科技馆"],
+        "历史文化": ["博物馆", "历史遗址", "纪念馆", "古迹"],
+        "自然风光": ["风景区", "湿地公园", "自然保护区"],
+        "美食":    ["美食街", "老字号", "特色小吃"],
+        "购物":    ["商业街", "购物中心"],
+        "乡村体验": ["古镇", "民俗村"],
+        "文化遗产": ["博物馆", "历史遗址", "古迹"],
+    }
     
     def __init__(self, amap_client=None):
         super().__init__(name="data_collection_agent")
@@ -71,8 +83,32 @@ class DataCollectionAgent(TravelPlanningAgent):
             lat, lng = coordinates["lat"], coordinates["lng"]
             print(f"✓ 目的地坐标: ({lat}, {lng})")
             
-            # Step 2: 搜索POI (景点、餐厅、酒店)
-            pois = self._search_pois(destination, lat, lng)
+            # Step 2: 搜索POI (景点、餐厅、酒店 + 偏好关键词)
+            # 根据行程天数动态调整每次搜索的数量：每天约需5个景点
+            # 3天→15，5天→25，上限 50
+            duration_days = context.user_intent.duration_days or 3
+            poi_page_size = min(50, max(12, duration_days * 5))
+
+            # 质量评估反馈：若完整性偏低，扩展到最大搜索量
+            improvements = context.improvement_suggestions or {}
+            if improvements.get("data_collection_agent", {}).get("expand_search"):
+                poi_page_size = 50
+                print(f"✓ 质量反馈扩展搜索: page_size 提升至 50")
+
+            # 根据用户偏好扩展搜索关键词
+            preferences = context.user_intent.preferences or []
+            base_keywords = ["景点", "餐厅", "酒店"]
+            extra_keywords = []
+            for pref in preferences:
+                extra_keywords.extend(self._PREF_KEYWORDS.get(pref, []))
+            # 去重，且每类额外关键词最多追加 6 个（扩展模式下增加多样性）
+            max_extra = 6 if improvements.get("data_collection_agent", {}).get("expand_search") else 4
+            extra_keywords = list(dict.fromkeys(extra_keywords))[:max_extra]
+            poi_types = base_keywords + extra_keywords
+            if extra_keywords:
+                print(f"✓ 偏好扩展搜索: {extra_keywords}")
+
+            pois = self._search_pois(destination, lat, lng, poi_types=poi_types, page_size=poi_page_size)
             context.pois = pois
             result["pois"] = [self._poi_to_dict(poi) for poi in pois]
             result["execution_info"]["data_sources"].append("POI搜索")
@@ -146,11 +182,11 @@ class DataCollectionAgent(TravelPlanningAgent):
             self.cache[location] = result
         return result
     
-    def _search_pois(self, location: str, lat: float, lng: float, 
-                     poi_types: List[str] = None) -> List[POI]:
+    def _search_pois(self, location: str, lat: float, lng: float,
+                     poi_types: List[str] = None, page_size: int = 8) -> List[POI]:
         """
         搜索POI (景点、餐厅、酒店等)
-        
+
         模拟实现 - 实际需要调用高德API
         """
         if poi_types is None:
@@ -213,7 +249,7 @@ class DataCollectionAgent(TravelPlanningAgent):
         # 如果有真实API，调用它
         if self.amap_client:
             try:
-                pois = self.amap_client.search_pois(location, lat, lng, poi_types)
+                pois = self.amap_client.search_pois(location, lat, lng, poi_types, page_size)
                 return pois
             except Exception as e:
                 print(f"POI搜索API失败: {e}")

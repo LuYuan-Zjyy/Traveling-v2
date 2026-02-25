@@ -141,30 +141,23 @@ class TravelPlanningAgent(ABC):
         """验证输入数据是否充分"""
         pass
     
-    def _process_feedback(self, result: Dict[str, Any], 
-                         feedback_list: List[Dict[str, Any]], 
+    def _process_feedback(self, result: Dict[str, Any],
+                         feedback_list: List[Dict[str, Any]],
                          context: PlanningContext) -> Dict[str, Any]:
         """
         处理反馈并调整结果
-        默认实现：直接标记反馈为已处理
+        默认实现：将反馈建议合并到结果中
         子类可以覆盖此方法进行自定义反馈处理
         """
-        for i, feedback in enumerate(feedback_list):
-            # 如果反馈中包含建议，将其合并到结果中
+        for feedback in feedback_list:
             if "suggestions" in feedback:
                 result.setdefault("adjustments", []).append({
-                    "from": feedback.get("from_agent"),
+                    "from": feedback.get("from_agent", "unknown"),
                     "suggestion": feedback["suggestions"]
                 })
-            
             # 标记为已处理
-            idx = self.memory.feedback_history.index(
-                [f for f in self.memory.feedback_history 
-                 if f["content"] == feedback["feedback"]][0]
-            ) if feedback in [f["content"] for f in self.memory.feedback_history] else None
-            if idx is not None:
-                self.memory.mark_feedback_processed(idx)
-        
+            feedback["processed"] = True
+
         return result
     
     def _calculate_confidence(self, result: Dict[str, Any], 

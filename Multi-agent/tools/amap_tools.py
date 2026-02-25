@@ -119,9 +119,14 @@ class AmapTools:
     # ----------------------------------------------------------
     # 工具 1: 关键词搜索 POI
     # ----------------------------------------------------------
-    def search_pois(self, keywords: str, city: str, types: str = "", page_size: int = 10) -> dict:
+    def search_pois(self, keywords: str, city: str, types: str = "",
+                    page_size: int = 10, page: int = 1) -> dict:
         """关键词搜索 POI (景点/餐厅/酒店等)"""
-        params = {"keywords": keywords, "city": city, "citylimit": "true", "offset": page_size}
+        params = {
+            "keywords": keywords, "city": city,
+            "citylimit": "true", "offset": page_size, "page": page,
+            "extensions": "all",  # 获取图片、评分、营业时间等扩展信息
+        }
         if types:
             params["types"] = types
         raw = self._get("/v3/place/text", params)
@@ -130,6 +135,9 @@ class AmapTools:
 
         pois = []
         for p in raw.get("pois", []):
+            # 取第一张图片 URL（高德 extensions=all 返回 photos 列表）
+            photos = p.get("photos", [])
+            photo_url = photos[0].get("url", "") if photos else ""
             pois.append({
                 "name": p.get("name"),
                 "address": p.get("address"),
@@ -138,6 +146,8 @@ class AmapTools:
                 "tel": p.get("tel"),
                 "rating": p.get("biz_ext", {}).get("rating", ""),
                 "cost": p.get("biz_ext", {}).get("cost", ""),
+                "opening_time": p.get("biz_ext", {}).get("open_time", ""),
+                "photo_url": photo_url,
             })
         return {"count": len(pois), "pois": pois}
 

@@ -20,7 +20,7 @@
         </div>
         <div class="topbar-center">
             <div class="search-box">
-                <input id="queryInput" type="text" placeholder="输入旅行需求，如: 安庆两日游，预算2000，喜欢历史文化..." />
+                <input id="queryInput" type="text" placeholder="输入目的地，如: 安庆、黄山、西安..." />
                 <button id="planBtn" onclick="startPlan()"><i class="fas fa-magic"></i> AI 规划</button>
             </div>
         </div>
@@ -29,6 +29,35 @@
             <button class="tab-btn" data-tab="journal" onclick="switchTab('journal')"><i class="fas fa-book-open"></i> 游记</button>
         </div>
     </header>
+
+    <!-- 快捷选项栏 -->
+    <div class="quick-chips-bar" id="quickChipsBar">
+        <div class="chip-group">
+            <span class="chip-label"><i class="fas fa-calendar-alt"></i> 天数</span>
+            <button class="chip" data-type="days" data-val="1" onclick="toggleChip(this)">1天</button>
+            <button class="chip" data-type="days" data-val="2" onclick="toggleChip(this)">2天</button>
+            <button class="chip" data-type="days" data-val="3" onclick="toggleChip(this)">3天</button>
+            <button class="chip" data-type="days" data-val="5" onclick="toggleChip(this)">5天</button>
+            <button class="chip" data-type="days" data-val="7" onclick="toggleChip(this)">7天</button>
+        </div>
+        <div class="chip-group">
+            <span class="chip-label"><i class="fas fa-heart"></i> 偏好</span>
+            <button class="chip chip-multi" data-type="pref" data-val="历史文化" onclick="toggleChip(this)">历史文化</button>
+            <button class="chip chip-multi" data-type="pref" data-val="美食" onclick="toggleChip(this)">美食</button>
+            <button class="chip chip-multi" data-type="pref" data-val="自然风光" onclick="toggleChip(this)">自然风光</button>
+            <button class="chip chip-multi" data-type="pref" data-val="亲子" onclick="toggleChip(this)">亲子</button>
+            <button class="chip chip-multi" data-type="pref" data-val="户外运动" onclick="toggleChip(this)">户外</button>
+            <button class="chip chip-multi" data-type="pref" data-val="乡村体验" onclick="toggleChip(this)">乡村</button>
+            <button class="chip chip-multi" data-type="pref" data-val="购物" onclick="toggleChip(this)">购物</button>
+        </div>
+        <div class="chip-group">
+            <span class="chip-label"><i class="fas fa-yen-sign"></i> 预算</span>
+            <button class="chip" data-type="budget" data-val="1000" onclick="toggleChip(this)">¥1000</button>
+            <button class="chip" data-type="budget" data-val="3000" onclick="toggleChip(this)">¥3000</button>
+            <button class="chip" data-type="budget" data-val="5000" onclick="toggleChip(this)">¥5000</button>
+            <button class="chip" data-type="budget" data-val="10000" onclick="toggleChip(this)">¥万+</button>
+        </div>
+    </div>
 
     <div id="loadingOverlay" class="loading-overlay" style="display:none;">
         <div class="loading-content">
@@ -43,39 +72,74 @@
             <div class="layout-row">
                 <aside class="sidebar" id="sidebar">
                     <div class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></div>
-                    <div class="panel" id="panelPlan">
-                        <h3><i class="fas fa-clipboard-list"></i> AI 行程规划</h3>
-                        <div id="planContent" class="plan-content"><p class="empty-hint">输入需求，点击 "AI 规划" 开始</p></div>
+
+                    <!-- 侧边栏二级 Tab -->
+                    <div class="sidebar-tabs">
+                        <button class="stab active" data-stab="plan" onclick="switchStab('plan')">
+                            <i class="fas fa-clipboard-list"></i> 行程
+                        </button>
+                        <button class="stab" data-stab="pois" onclick="switchStab('pois')">
+                            <i class="fas fa-map-pin"></i> 地点
+                        </button>
                     </div>
-                    <div class="panel" id="panelWaypoints">
-                        <h3><i class="fas fa-route"></i> 途经点 <button class="btn-sm" onclick="addWaypointDialog()"><i class="fas fa-plus"></i></button></h3>
-                        <div id="waypointList" class="waypoint-list"><p class="empty-hint">暂无途经点</p></div>
-                        <div class="panel-actions">
-                            <select id="routeMode">
-                                <option value="driving">驾车</option><option value="walking">步行</option>
-                                <option value="bicycling">骑行</option><option value="transit">公交</option>
-                            </select>
-                            <button class="btn-primary" id="routePlanBtn" onclick="planRoutes()"><i class="fas fa-directions"></i> 规划路线</button>
+
+                    <!-- 行程面板组 -->
+                    <div id="stabPlan" class="stab-content">
+                        <div class="panel" id="panelPlan">
+                            <h3><i class="fas fa-clipboard-list"></i> AI 行程规划</h3>
+                            <div id="planNotice" style="display:none;"></div>
+                            <div id="planContent" class="plan-content"><p class="empty-hint">输入需求，点击 "AI 规划" 开始</p></div>
                         </div>
-                        <div id="routeInfoPanel" class="route-info-panel" style="display:none;"></div>
-                    </div>
-                    <div class="panel" id="panelLayers">
-                        <h3><i class="fas fa-layer-group"></i> 地图图层</h3>
-                        <div class="layer-controls">
-                            <label class="layer-toggle"><input type="checkbox" id="toggleAttractions" checked onchange="toggleLayer('attraction')"><span class="layer-dot" style="background:#4F6AF6;"></span> 景点 <span class="layer-count" id="countAttractions">0</span></label>
-                            <label class="layer-toggle"><input type="checkbox" id="toggleRestaurants" checked onchange="toggleLayer('restaurant')"><span class="layer-dot" style="background:#F97316;"></span> 餐厅 <span class="layer-count" id="countRestaurants">0</span></label>
-                            <label class="layer-toggle"><input type="checkbox" id="toggleHotels" checked onchange="toggleLayer('hotel')"><span class="layer-dot" style="background:#10B981;"></span> 酒店 <span class="layer-count" id="countHotels">0</span></label>
-                            <label class="layer-toggle"><input type="checkbox" id="toggleRoutes" checked onchange="toggleRouteLayer()"><span class="layer-dot" style="background:#8B5CF6;"></span> 路线</label>
+                        <div class="panel" id="panelWaypoints">
+                            <h3><i class="fas fa-route"></i> 途经点 <button class="btn-sm" onclick="addWaypointDialog()"><i class="fas fa-plus"></i></button></h3>
+                            <div id="waypointList" class="waypoint-list"><p class="empty-hint">暂无途经点</p></div>
+                            <div class="panel-actions">
+                                <select id="routeMode">
+                                    <option value="driving">驾车</option><option value="walking">步行</option>
+                                    <option value="bicycling">骑行</option><option value="transit">公交</option>
+                                </select>
+                                <button class="btn-primary" id="routePlanBtn" onclick="planRoutes()"><i class="fas fa-directions"></i> 规划路线</button>
+                            </div>
+                            <div id="routeInfoPanel" class="route-info-panel" style="display:none;"></div>
+                        </div>
+                        <div class="panel" id="panelLayers">
+                            <h3><i class="fas fa-layer-group"></i> 地图图层</h3>
+                            <div class="layer-controls">
+                                <label class="layer-toggle"><input type="checkbox" id="toggleAttractions" checked onchange="toggleLayer('attraction')"><span class="layer-dot" style="background:#4F6AF6;"></span> 景点 <span class="layer-count" id="countAttractions">0</span></label>
+                                <label class="layer-toggle"><input type="checkbox" id="toggleRestaurants" checked onchange="toggleLayer('restaurant')"><span class="layer-dot" style="background:#F97316;"></span> 餐厅 <span class="layer-count" id="countRestaurants">0</span></label>
+                                <label class="layer-toggle"><input type="checkbox" id="toggleHotels" checked onchange="toggleLayer('hotel')"><span class="layer-dot" style="background:#10B981;"></span> 酒店 <span class="layer-count" id="countHotels">0</span></label>
+                                <label class="layer-toggle"><input type="checkbox" id="toggleRoutes" checked onchange="toggleRouteLayer()"><span class="layer-dot" style="background:#8B5CF6;"></span> 路线</label>
+                            </div>
+                        </div>
+                        <div class="panel" id="panelWeather" style="display:none;">
+                            <h3><i class="fas fa-cloud-sun"></i> 天气预报</h3>
+                            <div id="weatherContent"></div>
+                        </div>
+                        <div class="panel" id="panelItinerary" style="display:none;">
+                            <h3><i class="fas fa-route"></i> 每日行程清单</h3>
+                            <div id="itineraryContent" class="itinerary-list"></div>
                         </div>
                     </div>
-                    <div class="panel" id="panelWeather" style="display:none;">
-                        <h3><i class="fas fa-cloud-sun"></i> 天气预报</h3>
-                        <div id="weatherContent"></div>
+
+                    <!-- 地点面板 -->
+                    <div id="stabPois" class="stab-content" style="display:none;">
+                        <div class="poi-filter-bar">
+                            <button class="poi-filter active" data-pf="all" onclick="filterPoiList('all')">全部</button>
+                            <button class="poi-filter" data-pf="attraction" onclick="filterPoiList('attraction')">
+                                <span class="pf-dot" style="background:#4F6AF6;"></span>景点
+                            </button>
+                            <button class="poi-filter" data-pf="restaurant" onclick="filterPoiList('restaurant')">
+                                <span class="pf-dot" style="background:#F97316;"></span>餐厅
+                            </button>
+                            <button class="poi-filter" data-pf="hotel" onclick="filterPoiList('hotel')">
+                                <span class="pf-dot" style="background:#10B981;"></span>酒店
+                            </button>
+                        </div>
+                        <div id="poiListContent" class="poi-list">
+                            <p class="empty-hint" style="padding:16px;">AI 规划后将显示推荐地点列表</p>
+                        </div>
                     </div>
-                    <div class="panel" id="panelItinerary" style="display:none;">
-                        <h3><i class="fas fa-route"></i> 每日行程清单</h3>
-                        <div id="itineraryContent" class="itinerary-list"></div>
-                    </div>
+
                 </aside>
                 <div class="map-container" id="mapContainer"></div>
             </div>
@@ -107,7 +171,6 @@
         </div>
     </div>
 
-    <!-- 地图底部高德版权标注 -->
     <div id="amapAttrib" class="amap-attrib">
         <img src="https://webapi.amap.com/theme/v1.3/logo@1x.png" alt="高德地图" style="height:16px;vertical-align:middle;" />
         <span>高德地图 &copy; AutoNavi</span>
