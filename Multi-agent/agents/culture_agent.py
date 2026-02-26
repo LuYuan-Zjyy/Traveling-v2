@@ -128,12 +128,24 @@ class CultureAgent(TravelPlanningAgent):
     def _llm_analyze_theme(self, destination, preferences, special_req, preset_tags):
         pref_str = "、".join(preferences) if preferences else "无"
         preset_str = "、".join(preset_tags) if preset_tags else "无"
+        # 判断用户是否明确表示亲子出行，避免仅凭"迪士尼"等词就贴亲子标签
+        explicit_family = any(
+            w in (special_req or "") for w in
+            ["亲子", "带孩子", "小孩", "儿童", "宝宝", "孩子", "family", "kid"]
+        )
+        family_hint = (
+            "用户明确表示是亲子出行，可适当融入亲子相关视角。"
+            if explicit_family else
+            "注意：用户未提到带孩子/亲子游，不要因为出现迪士尼、乐园等词就自动推断为亲子主题；"
+            "请从目的地文化特色与用户偏好出发规划主题。"
+        )
         prompt = f"""你是一名资深旅行策划师，请根据以下信息为用户的 {destination} 旅行规划文化主题。
 
 目的地：{destination}
 用户偏好标签：{pref_str}
 特殊需求/背景：{special_req if special_req else "无"}
 已提取主题标签（参考）：{preset_str}
+{family_hint}
 
 请以 JSON 格式返回（只输出 JSON，不要任何额外文字）：
 {{

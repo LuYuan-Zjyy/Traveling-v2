@@ -445,12 +445,24 @@ class RouteOptimizationAgent:
                 if poi.is_full_day:
                     if counts[d_i] == 0 and d_i not in full_day_blocked:
                         day_pois[d_i].append(poi)
-                        # 整日景区仍独占全天，但开放1个名额给周边晚间景点/观景台
+                        # 整日景区独占一天，但保留 1 个近邻名额（供晚间观景/夜市）
+                        # full_day_soft 用于区分：已有整日景点但还剩1格 vs 完全封锁
                         counts[d_i] = HARD_MAX_PER_DAY - 1
                         full_day_blocked.add(d_i)
                         return True
                 else:
                     if d_i in full_day_blocked:
+                        # 整日景区那天：只允许1个评分≥4.5的近邻景点（如迪士尼小镇、外滩夜景）
+                        # 条件：该天还剩1格 且 新景点与整日景点距离≤3km
+                        if counts[d_i] < HARD_MAX_PER_DAY and day_pois[d_i]:
+                            anchor = day_pois[d_i][0]  # 整日景点本身
+                            dist_to_anchor = self._haversine_km(
+                                a_lat, a_lng, anchor.latitude, anchor.longitude
+                            )
+                            if dist_to_anchor <= 3.0 and float(poi.rating or 0) >= 4.5:
+                                day_pois[d_i].append(poi)
+                                counts[d_i] += 1
+                                return True
                         continue
                     spread = self._day_spread_km(day_pois[d_i], poi)
                     cap = min(self._capacity_for_spread(spread), HARD_MAX_PER_DAY)

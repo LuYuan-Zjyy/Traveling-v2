@@ -370,6 +370,18 @@ class TravelPlanningOrchestrator:
         if any(w in special_req for w in geo_words):
             return  # 普通需求，不需要 IP 解析
 
+        # 如果 special_req 只是提到去某个知名景区/公园，跳过主题标签提取：
+        # 该景区由 _extract_user_mentioned_pois 单独处理，
+        # 若在此再提取主题标签，会让全程搜索词偏向该景区子景点，
+        # 导致其他天行程也被同一主题绑定（"一天去迪士尼"≠"全程迪士尼主题"）。
+        # 只有"IP/虚构世界 → 需要映射到真实地名"的情况才需要主题预处理。
+        known_venues = [
+            "迪士尼", "环球影城", "海昌", "欢乐谷", "长隆", "方特",
+            "乐高乐园", "动物园", "水上乐园", "宋城", "横店", "华侨城",
+        ]
+        if any(v in special_req for v in known_venues):
+            return  # 是真实景区直接访问，非虚构 IP，无需主题映射
+
         print(f"\n0. 主题预处理: 解析特殊需求 → '{special_req[:40]}...'")
         try:
             prompt = (
@@ -409,17 +421,17 @@ class TravelPlanningOrchestrator:
             resp = self._llm.chat(messages=[
                 {"role": "system", "content": "你是地名提取专家，只输出 JSON 数组。"},
                 {"role": "user", "content": (
-                    f"从以下旅行需求文本中提取用户明确点名啟远的具体地点。\n"
+                    f"从以下旅行需求文本中提取用户明确点名的具体地点。\n"
                     f"规则：\n"
-                    f"  - 只提取用户明确说想去的真实地名\n"
-                    f"  - 不要包含目的地城市本身（如'{destination}'不童）\n"
-                    f"  - 不要泛指描述（如'古镇'、'山景'不算）\n"
+                    f"  - 只提取用户明确说想去的真实地名或景区品牌名（如迪士尼、环球影城、故宫等均算）\n"
+                    f"  - 不要包含目的地城市本身（如'{destination}'不算）\n"
+                    f"  - 不要泛指描述（如'古镇'、'山景'不算，必须是具体地名）\n"
                     f"  - 每个地点标注类型: attraction/restaurant/hotel\n"
-                    f"周诟文本：{raw_text}\n"
+                    f"原始文本：{raw_text}\n"
                     f"目的地：{destination}\n"
                     f"只输出 JSON 数组，示例："
-                    f'[{{"name": "磁器口", "type": "attraction"}}, '
-                    f'{{"name": "老君洞", "type": "attraction"}}]'
+                    f'[{{"name": "迪士尼", "type": "attraction"}}, '
+                    f'{{"name": "磁器口", "type": "attraction"}}]'
                 )},
             ], max_tokens=256)
             items = self._llm.extract_json(resp)
@@ -457,14 +469,32 @@ class TravelPlanningOrchestrator:
             # 不在已有 POI 中：Amap 精确搜索并注入
             try:
                 res = self._amap_raw.search_pois(
-                    keywords=name, city=destination, page_size=3
+                    keywords=name, city=destination, page_size=5
                 )
                 pois_raw = res.get("pois", [])
             except Exception:
                 continue
             if not pois_raw:
                 continue
-            p = pois_raw[0]
+
+            # 优先选景区/公园类型，过滤掉商场店铺
+            # 高德 type 字段：旅游景点 > 主题公园 / 度假区 / 游乐场
+            # 零售店特征：type='购物服务' 或 name 包含'(xxx店)''旗舰店''专卖店'
+            _STORE_PATTERNS = re.compile(r'[\(（][^\)）]*[店铺馆][\)）]|旗舰店|专卖店|零售|商场店')
+            _PARK_TYPE_WORDS = {"旅游景点", "公园", "游乐", "度假", "主题", "景区"}
+
+            def _is_store(poi_dict: dict) -> bool:
+                poi_n = poi_dict.get("name", "")
+                poi_t = poi_dict.get("type", "")
+                if "购物" in poi_t and not any(w in poi_t for w in _PARK_TYPE_WORDS):
+                    return True
+                if _STORE_PATTERNS.search(poi_n):
+                    return True
+                return False
+
+            # 优先取非店铺结果；全是店铺则退回第一条
+            p = next((r for r in pois_raw if not _is_store(r)), pois_raw[0])
+
             loc = p.get("location", "")
             if not loc or "," not in loc:
                 continue
@@ -546,6 +576,32 @@ class TravelPlanningOrchestrator:
             return
 
         injected = []
+
+        # 收集「用户明确点名」POI 的坐标，用于拦截同园区子景点
+        # 背景：用户说"有一天去迪士尼" → CultureAgent 叙事会提到 奇幻童话城堡/探险岛 等
+        #       若把它们逐一注入为独立锚点，RouteAgent 会将子景点分配到不同天
+        # 修复：待注入锚点与 user_mentioned POI 距离 ≤ 1km → 视为同园区 → 跳过注入
+        import math as _math_mod
+        user_mentioned_locs: list = [
+            (p.location.get("lat", 0), p.location.get("lng", 0))
+            for p in context.pois
+            if getattr(p, "is_user_mentioned", False)
+            and p.location.get("lat") and p.location.get("lng")
+        ]
+
+        def _near_user_mentioned(lat: float, lng: float, threshold_km: float = 1.0) -> bool:
+            for ulat, ulng in user_mentioned_locs:
+                R = 6371.0
+                dlat = _math_mod.radians(lat - ulat)
+                dlng = _math_mod.radians(lng - ulng)
+                a = (_math_mod.sin(dlat/2)**2
+                     + _math_mod.cos(_math_mod.radians(ulat))
+                     * _math_mod.cos(_math_mod.radians(lat))
+                     * _math_mod.sin(dlng/2)**2)
+                if 2 * R * _math_mod.asin(_math_mod.sqrt(max(0.0, min(1.0, a)))) <= threshold_km:
+                    return True
+            return False
+
         # 用所有 POI 的坐标均值作为城市中心（比 pois[0] 更稳健）
         # pois[0] 可能是餐厅/酒店导致坐标偏移，且空列表时直接崩溃
         lats = [p.location.get("lat", 0) for p in context.pois if p.location.get("lat")]
@@ -571,6 +627,13 @@ class TravelPlanningOrchestrator:
             # 已存在：直接提升评分
             for ep in context.pois:
                 if ep.name == name or (len(name) >= 3 and name in ep.name):
+                    ep_lat = ep.location.get("lat", 0)
+                    ep_lng = ep.location.get("lng", 0)
+                    # 是 user_mentioned 景区的同园区子景点 → 跳过独立注入，
+                    # 避免「探险岛」「奇幻城堡」等被分配到与主景区不同的天
+                    if user_mentioned_locs and ep_lat and ep_lng \
+                            and _near_user_mentioned(ep_lat, ep_lng):
+                        break
                     if float(ep.rating or 0) < 5.0:
                         ep.rating = 5.0
                     ep.is_narrative_anchor = True  # type: ignore[attr-defined]
@@ -593,6 +656,9 @@ class TravelPlanningOrchestrator:
                     lng_s, lat_s = loc.split(",", 1)
                     lat, lng = float(lat_s), float(lng_s)
                 except ValueError:
+                    continue
+                # 同园区子景点（在 user_mentioned 1km 内）→ 不作为独立锚点注入
+                if user_mentioned_locs and _near_user_mentioned(lat, lng):
                     continue
                 # 距离过滤：超过 80km 的地点跳过（如武隆/仙女山距主城>100km）
                 if city_center_lat and city_center_lng:
@@ -1073,7 +1139,12 @@ destination 只填写第一个/主要城市（如"上海"），
     "transport_preference": "交通偏好: 自驾/高铁/飞机/公共交通/不限",
     "special_requirements": "其他特殊需求(字符串)"
 }}
-```""".replace("{user_input}", text)
+```
+
+【preferences 填写规则】
+- 只根据用户明确表达的偏好填写，不要从景点/活动名称反向推断
+- 例如：用户提到迪士尼/环球影城/游乐园，不代表"亲子"（除非用户说了"带孩子"/"亲子游"）
+- 用户没有表达偏好时，preferences 填 []""".replace("{user_input}", text)
 
             try:
                 response = self._llm.chat(
@@ -1175,14 +1246,16 @@ destination 只填写第一个/主要城市（如"上海"），
         }
 
         # 检测多城市输入 → 给前端提示
-        city_chunk_match = re.search(r'([\u4e00-\u9fff\s、，,/＋+&]+)', query.strip())
-        if city_chunk_match and _CITY_SEP.search(city_chunk_match.group(1)):
-            all_cities = [p.strip() for p in _CITY_SEP.split(city_chunk_match.group(1)) if p.strip()]
+        # 只用 LLM 已解析的 destination 来判断，避免把句子里的逗号误判为城市分隔符
+        # （如"上海三日游，有一天想去迪士尼"不应触发多城市提示）
+        raw_dest = user_intent.destination or ""
+        if _CITY_SEP.search(raw_dest):
+            all_cities = [p.strip() for p in _CITY_SEP.split(raw_dest) if p.strip()]
             if len(all_cities) > 1:
                 others = " / ".join(all_cities[1:])
                 self._last_intent["notice"] = (
                     f"检测到多城市行程（{'、'.join(all_cities)}），本次将为您规划"
-                    f" {user_intent.destination}。"
+                    f" {all_cities[0]}。"
                     f"其他城市（{others}）可单独输入规划。"
                 )
 

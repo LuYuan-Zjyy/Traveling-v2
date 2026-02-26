@@ -588,34 +588,25 @@ def _route_output_to_day_attrs(response: dict, attrs: list, days: int) -> list:
                     "photo_url": "",
                 })
 
-    # ── 稀疏天补充：空白天或只有 1 个 is_full_day 景点的天补充周边景点 ──
+    # ── 稀疏天补充：仅对【完全空白天】补充景点 ──
+    # 注意：整日景区那天（is_full_day=True）即使只有1个景点，也不补充额外景点。
+    # 整日景点（迪士尼/环球影城等）需要游客花整天时间，强行追加其他景点会导致行程不可行。
+    # RouteAgent 已经做了精确分天决策，此处只处理 RouteAgent 完全未分配景点的空白天。
     used_names: set = {a["name"] for day in day_attrs for a in day}
-    # 按评分从高到底排序的备用景点池（已排除已分配的）
     pool = sorted(
         [a for a in attrs if a["name"] not in used_names],
         key=lambda a: -float(a.get("rating") or 0),
     )
     for d_i in range(days):
         day_list = day_attrs[d_i]
-        # 仅有1个整天景点的天，尝试补充 1~2 个普通景点（留足整天游览空间）
-        if len(day_list) == 1 and day_list[0].get("is_full_day"):
-            # 找距该全天景点最近的2个补充景点
-            anchor = day_list[0]
-            nearby_pool = sorted(
-                pool,
-                key=lambda a: (a.get("lat", 0) - anchor.get("lat", 0)) ** 2
-                              + (a.get("lng", 0) - anchor.get("lng", 0)) ** 2,
-            )
-            for extra in nearby_pool[:2]:
-                day_attrs[d_i].append(extra)
-                used_names.add(extra["name"])
-                pool.remove(extra)
-        # 完全空白天（RouteAgent 未分配景点）：从池里取最近的 3 个
-        elif len(day_list) == 0 and pool:
+        # 完全空白天（RouteAgent 未分配景点）：从池里取评分最高的 3 个
+        if len(day_list) == 0 and pool:
             for extra in pool[:3]:
                 day_attrs[d_i].append(extra)
                 used_names.add(extra["name"])
             pool = pool[3:]
+        # 整日景点那天：保持 RouteAgent 的分配结果，不追加任何景点
+        # （只有迪士尼一个景点这天是正确的，游客整天都在园区内）
 
     return day_attrs
 
@@ -786,25 +777,35 @@ def api_plan():
         print(f"  [OK] 天气数据: {bool(weather)}")
 
         print(f"[STEP 4/4] 计算景点间路线（含 polyline）...")
-        # 按行程规划顺序（逐天、天内TSP排序）计算路线，和途经点保持一致
-        itinerary_flat = [a for day in day_attrs for a in day]
+        # 只计算每天天内相邻景点的路线，跳过跨天连接
+        # （如 Day2末尾→Day3开头 可能30km+，在地图上形成误导性长线）
         routes = []
-        if len(itinerary_flat) >= 2:
-            city = intent.get("destination", "")
-            for i in range(min(len(itinerary_flat) - 1, 8)):
-                a, b = itinerary_flat[i], itinerary_flat[i + 1]
+        city = intent.get("destination", "")
+        route_count = 0
+        for day_idx, day_list in enumerate(day_attrs):
+            if len(day_list) < 2:
+                continue
+            for i in range(len(day_list) - 1):
+                if route_count >= 8:
+                    break
+                a, b = day_list[i], day_list[i + 1]
                 seg = _route_with_polyline(
                     a["lng"], a["lat"], b["lng"], b["lat"],
                     mode="driving", city=city,
                 )
                 seg["from"] = a["name"]
                 seg["to"] = b["name"]
+                seg["day"] = day_idx + 1
                 polyline_pts = seg.get("polyline", [])
-                print(f"  [{i+1}] {a['name']} → {b['name']}: "
+                print(f"  [{route_count+1}] Day{day_idx+1}: {a['name']} → {b['name']}: "
                       f"{seg.get('distance')}m, polyline={len(polyline_pts)}pts")
                 routes.append(seg)
+                route_count += 1
+            if route_count >= 8:
+                break
 
         with _state_lock:
+            itinerary_flat = [a for day in day_attrs for a in day]
             _state.update({
                 "plan_text": plan_text,
                 "demands": intent,
