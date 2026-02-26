@@ -63,14 +63,38 @@ class BudgetAgent(TravelPlanningAgent):
         total_budget = float(intent.budget or days * 800)
         people = max(1, int(intent.people_count or 1))
 
-        # ── 1. 景点门票（仅统计非餐厅/酒店 POI 有明确 price 的条目）
-        attraction_cost = 0.0
+        # ── 1. 景点门票（仅统计最终行程中景点的门票，而不是全部 381 个候选 POI）
+        # 旧逻辑：遍历 context.pois 全集 → 会把所有候选POI的price加总，导致虚假超预算
+        # 修复：先从 final_itinerary.routes 取出行程内的POI名称，只统计这些POI的ticket
+        itinerary_names: set = set()
+        if context.final_itinerary:
+            for day_route in context.final_itinerary.get("routes", []):
+                for p in day_route.get("pois", []):
+                    n = p.get("name", "")
+                    if n:
+                        itinerary_names.add(n)
+
+        # 建立 name → price 映射（context.pois 是带 price 的完整 POI 对象）
+        poi_price_map: Dict[str, float] = {}
         for poi in context.pois:
             cat = (poi.category or "").lower()
             if "餐" in cat or "hotel" in cat or "酒店" in cat or "住宿" in cat:
                 continue
             if poi.price and poi.price > 0:
-                attraction_cost += float(poi.price)
+                poi_price_map[poi.name] = float(poi.price)
+
+        attraction_cost = 0.0
+        if itinerary_names:
+            # 优先：只统计行程内的景点
+            for name in itinerary_names:
+                attraction_cost += poi_price_map.get(name, 0.0)
+        else:
+            # 降级：行程未生成时（极少发生），用所有候选景点 price 均值 × 天数 × 3
+            # 避免全量加总导致虚假超预算
+            prices = list(poi_price_map.values())
+            if prices:
+                avg_price = sum(prices) / len(prices)
+                attraction_cost = round(avg_price * days * 3, 0)  # 每天约3个付费景点
         attraction_cost = round(attraction_cost, 0)
 
         # ── 2. 住宿（按天数-1晚，以免计算出发/返回日）

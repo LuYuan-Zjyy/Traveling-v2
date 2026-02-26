@@ -124,9 +124,10 @@ class DeepSeekClient:
     # ----------------------------------------------------------
     # 工具: 从 LLM 回复中提取 JSON
     # ----------------------------------------------------------
-    def extract_json(self, text: str) -> Optional[dict]:
-        """从 LLM 回复中提取 JSON 对象"""
+    def extract_json(self, text: str):
+        """从 LLM 回复中提取 JSON 对象或数组（支持 dict / list）"""
         import re
+        # 优先：代码块 ```json ... ```（LLM 常用格式，可能是 dict 也可能是 array）
         match = re.search(r'```(?:json)?\s*\n?(.*?)\n?\s*```', text, re.DOTALL)
         if match:
             try:
@@ -134,6 +135,15 @@ class DeepSeekClient:
             except json.JSONDecodeError:
                 pass
 
+        # 其次：独立 JSON 数组 [...]（_preprocess_thematic_tags 等场景）
+        match = re.search(r'\[.*?\]', text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except json.JSONDecodeError:
+                pass
+
+        # 最后：独立 JSON 对象 {...}
         match = re.search(r'\{.*\}', text, re.DOTALL)
         if match:
             try:

@@ -23,6 +23,7 @@ class UserIntent:
     transport_preference: Optional[str] = None
     special_requirements: Optional[str] = None
     trip_type: Optional[str] = None  # cultural / adventure / food / nature
+    raw_query: Optional[str] = None  # 原始用户输入文本，供地点提取使用
 
 
 @dataclass
@@ -72,6 +73,12 @@ class PlanningContext:
         self.cultural_pois: List[POI] = []
         self.cultural_activities: List[Dict[str, Any]] = []
         self.cultural_background: Dict[str, str] = {}  # {poi_id: story}
+        # 主题标签（从抽象偏好/特殊需求中提取，供 DataCollection 扩展搜索关键词）
+        self.thematic_tags: List[str] = []
+        # 文化叙事：LLM 生成的行程主题介绍段落（直接展示在前端文化主题栏）
+        self.cultural_narrative: Optional[str] = None
+        # 用户在原始输入中明确点名的地点列表（比叙事锚点优先级更高）
+        self.user_mentioned_pois: List[str] = []
         
         # Step 3: 路由优化
         self.optimized_routes: List[Dict[str, Any]] = []

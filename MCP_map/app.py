@@ -293,12 +293,15 @@ def _is_full_day_poi(name: str) -> bool:
     return any(kw in name for kw in _FULL_DAY_KEYWORDS)
 
 
-def _extract_street_number(address: str) -> str:
+def _extract_street_number(address) -> str:
     """
     从地址字符串里提取"路/街+门牌号"关键部分作为位置唯一键。
     例："虹桥路2381号上海动物园内(西南角)" → "虹桥路2381号"
+    address 可能为 None（高德返回 null），统一转 str 处理。
     """
-    m = re.search(r'[\u4e00-\u9fff]{2,}(?:路|街道?|大道|大街|弄|巷)\d+号?', address)
+    if not address:
+        return ""
+    m = re.search(r'[\u4e00-\u9fff]{2,}(?:路|街道?|大道|大街|弄|巷)\d+号?', str(address))
     return m.group(0) if m else ""
 
 
@@ -585,6 +588,35 @@ def _route_output_to_day_attrs(response: dict, attrs: list, days: int) -> list:
                     "photo_url": "",
                 })
 
+    # ── 稀疏天补充：空白天或只有 1 个 is_full_day 景点的天补充周边景点 ──
+    used_names: set = {a["name"] for day in day_attrs for a in day}
+    # 按评分从高到底排序的备用景点池（已排除已分配的）
+    pool = sorted(
+        [a for a in attrs if a["name"] not in used_names],
+        key=lambda a: -float(a.get("rating") or 0),
+    )
+    for d_i in range(days):
+        day_list = day_attrs[d_i]
+        # 仅有1个整天景点的天，尝试补充 1~2 个普通景点（留足整天游览空间）
+        if len(day_list) == 1 and day_list[0].get("is_full_day"):
+            # 找距该全天景点最近的2个补充景点
+            anchor = day_list[0]
+            nearby_pool = sorted(
+                pool,
+                key=lambda a: (a.get("lat", 0) - anchor.get("lat", 0)) ** 2
+                              + (a.get("lng", 0) - anchor.get("lng", 0)) ** 2,
+            )
+            for extra in nearby_pool[:2]:
+                day_attrs[d_i].append(extra)
+                used_names.add(extra["name"])
+                pool.remove(extra)
+        # 完全空白天（RouteAgent 未分配景点）：从池里取最近的 3 个
+        elif len(day_list) == 0 and pool:
+            for extra in pool[:3]:
+                day_attrs[d_i].append(extra)
+                used_names.add(extra["name"])
+            pool = pool[3:]
+
     return day_attrs
 
 
@@ -619,10 +651,16 @@ def _build_plan_text_from_markers(intent: dict, day_attrs: list, rests: list,
             lines.append(f"- 气温: {lo}~{hi}℃")
         lines.append("")
 
-    # 文化主题
+    # 文化主题（主题名 + LLM 生成的叙事介绍）
     theme = final_plan.get("cultural_theme")
-    if theme:
-        lines.append(f"## 🎭 文化主题\n{theme}\n")
+    narrative = final_plan.get("cultural_narrative")
+    if theme or narrative:
+        lines.append("## 🎭 文化主题")
+        if theme:
+            lines.append(f"**✦ {theme}**\n")
+        if narrative:
+            lines.append(narrative)
+        lines.append("")
 
     # 餐厅就近分配（不重复跨天）
     used_rest: set = set()

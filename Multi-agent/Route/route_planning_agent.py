@@ -281,14 +281,15 @@ class RouteOptimizationAgent:
 
     def _kmeans_centers(self, pts: List[Tuple[float, float]], k: int,
                         max_iter: int = 20) -> List[Tuple[float, float]]:
-        """K-means++ 聚类，返回 k 个中心坐标。固定种子保证可重现。"""
-        import random as _rng_mod
+        """K-means++ 聚类，返回 k 个中心坐标。使用时间随机种子，每次结果不同。"""
+        import random as _rng_mod, time as _time
         if not pts or k <= 0:
             return []
         if len(pts) <= k:
             return list(pts)
 
-        rng = _rng_mod.Random(42)
+        # 用毫秒时间戳作种子，保证每次规划结果不重复
+        rng = _rng_mod.Random(int(_time.time() * 1000))
         centers: List[Tuple[float, float]] = [pts[rng.randint(0, len(pts) - 1)]]
         while len(centers) < k:
             dists = [min(self._dist2(p[0], p[1], c[0], c[1]) for c in centers) for p in pts]
@@ -444,7 +445,8 @@ class RouteOptimizationAgent:
                 if poi.is_full_day:
                     if counts[d_i] == 0 and d_i not in full_day_blocked:
                         day_pois[d_i].append(poi)
-                        counts[d_i] = HARD_MAX_PER_DAY
+                        # 整日景区仍独占全天，但开放1个名额给周边晚间景点/观景台
+                        counts[d_i] = HARD_MAX_PER_DAY - 1
                         full_day_blocked.add(d_i)
                         return True
                 else:

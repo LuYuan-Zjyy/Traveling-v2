@@ -264,26 +264,68 @@ class QualityEvalAgent(TravelPlanningAgent):
 
         user_fit = matched / len(preferences)
         score = 0.3 + (user_fit * 0.7)
+
+        # ── 额加检查：用户明确点名的地点是否实际出现在行程中 ──
+        # 反馈逻辑：每个未安排的用户点名地点扣 0.2（上限拣去 0.4）
+        user_mentioned = getattr(context, 'user_mentioned_pois', []) or []
+        if user_mentioned and context.final_itinerary:
+            itinerary_text = " ".join(
+                p.get("name", "")
+                for day_route in context.final_itinerary.get("routes", [])
+                for p in day_route.get("pois", [])
+            )
+            missing = [
+                name for name in user_mentioned
+                if not any(name[:3] in wp for wp in itinerary_text.split())
+                and name not in itinerary_text
+            ]
+            if missing:
+                penalty = min(0.4, len(missing) * 0.2)
+                score = max(0.0, score - penalty)
+                print(f"  用户点名地点未安排: {missing} → user_fit -{penalty:.1f}")
+
         return min(1.0, score)
     
     def _evaluate_experience_quality(self, context: PlanningContext) -> float:
         """
         评估体验质量：规划的体验质量如何
+        增加对实际行程的检验（丢天、公共设施缺少等）
         """
         score = 0.5  # 默认分数
-        
+
         # 检查是否有特色体验设计
         if context.cultural_background:
-            score += 0.2  # 有文化背景说明
-        
+            score += 0.1  # 有文化背景说明（权重从 0.2 降至 0.1）
+
         # 检查是否有多样化活动
         if len(context.cultural_activities) >= 3:
-            score += 0.2  # 活动丰富
-        
+            score += 0.1  # 活动丰富（权重从 0.2 降至 0.1）
+
+        # ── 新增：检查实际行程天数是否匹配 ──
+        expected_days = context.user_intent.duration_days if context.user_intent else 0
+        if expected_days and context.optimized_routes:
+            actual_days = len(context.optimized_routes)
+            if actual_days >= expected_days:
+                score += 0.2  # 天数充足
+            elif actual_days >= expected_days - 1:
+                score += 0.1  # 少一天还可接受
+            # 否则：行程天数不足， experience_quality 不加分 → 干预迭代
+
+        # ── 新增：检查每天景点数量（若某天少于 2 个，认为偶尔行程稀疏） ──
+        if context.optimized_routes:
+            sparse_days = sum(
+                1 for r in context.optimized_routes
+                if len(r.get("pois", [])) < 2
+            )
+            if sparse_days == 0:
+                score += 0.1  # 每天景点充实
+            elif sparse_days <= 1:
+                score += 0.05  # 仅一天稀疏
+
         # 检查是否有应急预案
         if context.contingency_plans and len(context.contingency_plans) > 0:
-            score += 0.1  # 有备选方案
-        
+            score += 0.05  # 有备选方案（权重从 0.1 降至 0.05）
+
         return min(1.0, score)
     
     def _generate_suggestions(self, context: PlanningContext, 
@@ -316,12 +358,48 @@ class QualityEvalAgent(TravelPlanningAgent):
         
         return suggestions[:3]  # 返回前3个建议
     
-    def _generate_agent_feedback(self, context: PlanningContext, 
+    def _generate_agent_feedback(self, context: PlanningContext,
                                 scores: Dict[str, float]) -> Dict[str, Dict[str, Any]]:
-        """为特定Agent生成反馈"""
+        """为特定Agent生成可执行反馈（修复：之前反馈触发条件与实际评分脱节，导致死代码）"""
         feedback = {}
-        
-        # 给DataCollectionAgent的反馈（完整性低且非第一轮 → 扩大搜索）
+
+        # ── 1. 用户明确点名的地点遗漏 → 触发路线重新规划 ──
+        user_mentioned = getattr(context, 'user_mentioned_pois', []) or []
+        if user_mentioned and context.final_itinerary:
+            itinerary_text = " ".join(
+                p.get("name", "")
+                for day_route in context.final_itinerary.get("routes", [])
+                for p in day_route.get("pois", [])
+            )
+            missing = [
+                name for name in user_mentioned
+                if not any(name[:3] in wp for wp in itinerary_text.split())
+                and name not in itinerary_text
+            ]
+            if missing:
+                feedback["route_agent"] = {
+                    "status": "feedback_needed",
+                    "issue": f"用户明确点名的地点未在行程中出现: {missing}",
+                    "missing_pois": missing,
+                    "suggestions": [
+                        f"确保 {', '.join(missing)} 必须出现在至少一天的行程中",
+                        "这些地点已被标记为 rating=5.5，路线规划时应优先分配",
+                    ]
+                }
+
+        # ── 2. 行程天数不足 → 触发路线重新规划 ──
+        expected_days = context.user_intent.duration_days if context.user_intent else 0
+        actual_days = len(context.optimized_routes or [])
+        if expected_days and actual_days < expected_days - 1:
+            existing = feedback.get("route_agent", {})
+            existing.update({
+                "status": "feedback_needed",
+                "issue": existing.get("issue", "") + f" | 行程天数不足({actual_days}/{expected_days}天)",
+                "day_shortage": expected_days - actual_days,
+            })
+            feedback["route_agent"] = existing
+
+        # ── 3. 完整性不足 → 扩大数据采集（仅第二轮以后避免第一轮就立刻重搜） ──
         if scores.get("completeness", 1.0) < 0.6 and context.iteration_count > 1:
             feedback["data_collection_agent"] = {
                 "status": "feedback_needed",
@@ -329,44 +407,19 @@ class QualityEvalAgent(TravelPlanningAgent):
                 "expand_search": True,
             }
 
-        # 给CultureAgent的反馈
-        if scores.get("user_fit", 1.0) < 0.75:
-            feedback["culture_agent"] = {
-                "status": "feedback_needed",
-                "issue": "文化景点选择不够符合用户偏好",
-                "suggestions": [
-                    "检查用户偏好列表",
-                    "确保至少包含1个用户特别想要的体验",
-                    "增加更多相关的特色活动"
-                ]
-            }
-        
-        # 给RouteAgent的反馈
-        if scores.get("feasibility", 1.0) < 0.75:
-            feedback["route_agent"] = {
-                "status": "feedback_needed",
-                "issue": "路线规划不够合理或时间紧张",
-                "suggestions": [
-                    "检查每个景点的停留时间",
-                    "优化景点间的路线",
-                    "考虑删除时间消耗最多但用户不感兴趣的景点"
-                ]
-            }
-        
-        # 给BudgetAgent的反馈
-        if context.budget_allocation:
+        # ── 4. 预算超支 → 触发预算重新规划 ──
+        if context.budget_allocation and context.user_intent:
             total_budget = sum(context.budget_allocation.values())
             if total_budget > context.user_intent.budget * 1.05:
                 feedback["budget_agent"] = {
                     "status": "feedback_needed",
                     "issue": f"总预算超支¥{(total_budget - context.user_intent.budget):.0f}",
                     "suggestions": [
-                        "检查每项成本是否合理",
-                        "考虑使用折扣或优惠",
-                        "调整住宿或餐饮等级"
+                        "检查门票数据是否来自行程内景点（应已修复）",
+                        "考虑降低住宿等级或减少餐饮预算",
                     ]
                 }
-        
+
         return feedback
     
     def generate_summary(self, context: PlanningContext) -> str:

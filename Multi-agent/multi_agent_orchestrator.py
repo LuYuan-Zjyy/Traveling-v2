@@ -39,6 +39,7 @@ from Route.route_planning_agent import RouteOptimizationAgent
 from ui_modules import UIResponseBuilder
 from tools.amap_tools import AmapTools
 from tools.deepseek_client import DeepSeekClient
+from tools.search_tools import get_search_tool
 
 
 # ================================================================
@@ -221,7 +222,9 @@ class TravelPlanningOrchestrator:
         """初始化编排器，自动加载真实 API 客户端"""
         # 初始化真实 Amap 客户端
         amap_key = os.environ.get("AMAP_API_KEY", "")
-        amap_client = AmapClientAdapter(AmapTools(api_key=amap_key)) if amap_key else None
+        _amap_raw = AmapTools(api_key=amap_key) if amap_key else None
+        amap_client = AmapClientAdapter(_amap_raw) if _amap_raw else None
+        self._amap_raw = _amap_raw   # 保留原始 AmapTools 用于精确名称搜索
         if amap_client:
             print("[Orchestrator] Amap API 已接入（真实数据模式）")
         else:
@@ -241,8 +244,14 @@ class TravelPlanningOrchestrator:
         else:
             print("[Orchestrator] 未配置 DEEPSEEK_API_KEY，意图解析降级为关键词提取")
 
+        # 搜索引擎工具（优先 Bing，没有 Key 则 DuckDuckGo）
+        self._search_tool = get_search_tool()
+
         self.data_collection_agent = DataCollectionAgent(amap_client=amap_client)
-        self.culture_agent = CultureAgent()
+        self.culture_agent = CultureAgent(
+            llm_client=self._llm,
+            search_tool=self._search_tool,
+        )
         self.route_agent = RouteOptimizationAgent()
         self.quality_eval_agent = QualityEvalAgent()
         self.budget_agent = BudgetAgent()
@@ -345,8 +354,277 @@ class TravelPlanningOrchestrator:
                 "execution_log": self.execution_history,
             }
 
+    def _preprocess_thematic_tags(self, context: PlanningContext) -> None:
+        """
+        预处理步骤（DataCollection 之前执行）：
+        当用户输入包含游戏/影视/IP/非地理主题（如"仙剑奇侠传3"）时，
+        调用 LLM 快速提取实地景观特征标签存入 context.thematic_tags，
+        供 DataCollectionAgent 扩展高德搜索关键词。
+        """
+        special_req = (context.user_intent.special_requirements or "").strip()
+        if not special_req or not self._llm:
+            return
+
+        # 只在 special_requirements 中含有非地理性信息时才处理
+        geo_words = ["住宿", "酒店", "民宿", "交通", "预算", "自驾", "高铁", "航班"]
+        if any(w in special_req for w in geo_words):
+            return  # 普通需求，不需要 IP 解析
+
+        print(f"\n0. 主题预处理: 解析特殊需求 → '{special_req[:40]}...'")
+        try:
+            prompt = (
+                f"用户要去{context.user_intent.destination}旅行，特殊需求/背景是：{special_req}\n"
+                f"请提取4~6个能用于高德地图搜索的实地景观特征关键词（如：古镇、溶洞、悬崖、道观、山地森林）。"
+                f"只输出 JSON 数组，例如：[\"古镇\", \"道观\", \"溶洞\"]"
+            )
+            resp = self._llm.chat(messages=[
+                {"role": "system", "content": "你是旅行地理专家，只输出 JSON 数组。"},
+                {"role": "user", "content": prompt},
+            ])
+            tags = self._llm.extract_json(resp)
+            if isinstance(tags, list) and tags:
+                context.thematic_tags = [str(t) for t in tags if t]
+                print(f"   主题标签: {context.thematic_tags}")
+        except Exception as e:
+            print(f"   主题预处理失败（不影响主流程）: {e}")
+
+    def _extract_user_mentioned_pois(self, context: PlanningContext) -> None:
+        """
+        Step 1.5: 从用户原始输入中提取明确点名的具体地点（敏感级最高）。
+        比 _inject_narrative_anchors（AI叙事推断）优先级更高，rating=5.5。
+        应在 DataCollectionAgent 之后、CultureAgent 之前执行。
+        """
+        # 优先用原始查询文本，其次用 special_requirements
+        raw_text = (
+            (context.user_intent.raw_query or "") or
+            (context.user_intent.special_requirements or "")
+        ).strip()
+        if not raw_text or not self._amap_raw or not self._llm:
+            return
+
+        destination = _first_city(context.user_intent.destination)
+        print(f"\n1.5 用户点名地点提取: 从 '{raw_text[:50]}' 提取具体地点...")
+
+        try:
+            resp = self._llm.chat(messages=[
+                {"role": "system", "content": "你是地名提取专家，只输出 JSON 数组。"},
+                {"role": "user", "content": (
+                    f"从以下旅行需求文本中提取用户明确点名啟远的具体地点。\n"
+                    f"规则：\n"
+                    f"  - 只提取用户明确说想去的真实地名\n"
+                    f"  - 不要包含目的地城市本身（如'{destination}'不童）\n"
+                    f"  - 不要泛指描述（如'古镇'、'山景'不算）\n"
+                    f"  - 每个地点标注类型: attraction/restaurant/hotel\n"
+                    f"周诟文本：{raw_text}\n"
+                    f"目的地：{destination}\n"
+                    f"只输出 JSON 数组，示例："
+                    f'[{{"name": "磁器口", "type": "attraction"}}, '
+                    f'{{"name": "老君洞", "type": "attraction"}}]'
+                )},
+            ], max_tokens=256)
+            items = self._llm.extract_json(resp)
+            if not isinstance(items, list) or not items:
+                print("   未识别到明确地点")
+                return
+        except Exception as e:
+            print(f"   用户地点提取失败（非致命）: {e}")
+            return
+
+        existing_names = {p.name for p in context.pois}
+        injected = []
+
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("name", "")).strip()
+            poi_type = item.get("type", "attraction")
+            if len(name) < 2:
+                continue
+
+            # 检查是否已在 context.pois：直接提升评分
+            matched = next(
+                (ep for ep in context.pois
+                 if ep.name == name or (len(name) >= 3 and name in ep.name)),
+                None
+            )
+            if matched:
+                matched.rating = 5.5
+                matched.is_user_mentioned = True   # type: ignore[attr-defined]
+                matched.is_narrative_anchor = True  # 复用锚点保护标记
+                injected.append(f"{matched.name}(已有↑5.5)")
+                continue
+
+            # 不在已有 POI 中：Amap 精确搜索并注入
+            try:
+                res = self._amap_raw.search_pois(
+                    keywords=name, city=destination, page_size=3
+                )
+                pois_raw = res.get("pois", [])
+            except Exception:
+                continue
+            if not pois_raw:
+                continue
+            p = pois_raw[0]
+            loc = p.get("location", "")
+            if not loc or "," not in loc:
+                continue
+            try:
+                lng_s, lat_s = loc.split(",", 1)
+                lat, lng = float(lat_s), float(lng_s)
+            except ValueError:
+                continue
+
+            poi_name = p.get("name", name)
+            if poi_name in existing_names:
+                # 已经在集合中，提升评分
+                for ep in context.pois:
+                    if ep.name == poi_name:
+                        ep.rating = 5.5
+                        ep.is_user_mentioned = True  # type: ignore[attr-defined]
+                        ep.is_narrative_anchor = True  # type: ignore[attr-defined]
+                        injected.append(f"{poi_name}(已有↑5.5)")
+                        break
+                continue
+
+            category = (
+                "餐厅" if poi_type == "restaurant" else
+                ("酒店" if poi_type == "hotel" else "景点")
+            )
+            new_poi = POI(
+                id=f"user_{len(injected)}",
+                name=poi_name,
+                category=category,
+                location={"lat": lat, "lng": lng},
+                rating=5.5,
+                price=0,
+            )
+            new_poi.is_user_mentioned = True   # type: ignore[attr-defined]
+            new_poi.is_narrative_anchor = True  # 复用锚点保护标记
+            new_poi.address = p.get("address", "")  # type: ignore[attr-defined]
+            context.pois.append(new_poi)
+            existing_names.add(poi_name)
+            injected.append(poi_name)
+
+        if injected:
+            context.user_mentioned_pois = [
+                s.split("(")[0] for s in injected
+            ]
+            print(f"   用户点名地点: {injected}")
+        else:
+            print("   未识别到需强制安排的具体地点")
+
+    def _inject_narrative_anchors(self, context: PlanningContext) -> None:
+        """
+        叙事锚点注入（CultureAgent 执行之后调用）：
+        从 cultural_narrative 中用 LLM 提取具体地名，精确 Amap 搜索后
+        注入 context.pois（rating=5.0），确保叙事提到的地方出现在行程里。
+        """
+        narrative = context.cultural_narrative or ""
+        if not narrative or not self._amap_raw or not self._llm:
+            return
+
+        destination = _first_city(context.user_intent.destination)
+        existing_names = {p.name for p in context.pois}
+
+        # 用 LLM 精确提取地名（区分真实景点 vs 虚构/泛指描述词）
+        try:
+            resp = self._llm.chat(messages=[
+                {"role": "system", "content": "你是地名识别专家，只输出 JSON 数组，不要解释。"},
+                {"role": "user", "content": (
+                    f"从以下旅行叙事中提取所有【真实可搜索】的景点地名。\n"
+                    f"规则：只选现实中存在的地名；去掉游戏虚构地名（如'锁妖塔'）和泛指描述（如'古镇集市'）。\n"
+                    f"目的地：{destination}\n"
+                    f"叙事：{narrative}\n"
+                    f"输出 JSON 字符串数组，例如：[\"磁器口古镇\", \"长江索道\", \"老君洞\"]"
+                )},
+            ], max_tokens=256)
+            names = self._llm.extract_json(resp)
+            if not isinstance(names, list) or not names:
+                return
+        except Exception as e:
+            print(f"   叙事锚点提取失败: {e}")
+            return
+
+        injected = []
+        # 用所有 POI 的坐标均值作为城市中心（比 pois[0] 更稳健）
+        # pois[0] 可能是餐厅/酒店导致坐标偏移，且空列表时直接崩溃
+        lats = [p.location.get("lat", 0) for p in context.pois if p.location.get("lat")]
+        lngs = [p.location.get("lng", 0) for p in context.pois if p.location.get("lng")]
+        city_center_lat = sum(lats) / len(lats) if lats else 0
+        city_center_lng = sum(lngs) / len(lngs) if lngs else 0
+        MAX_ANCHOR_KM = 80.0   # 超过80km认为无法纳入市区游程
+
+        def _km_dist(lat1, lon1, lat2, lon2):
+            """快速 Haversine 距离（km）"""
+            import math
+            R = 6371
+            dlat = math.radians(lat2 - lat1)
+            dlon = math.radians(lon2 - lon1)
+            a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1))*math.cos(math.radians(lat2))*math.sin(dlon/2)**2
+            return R * 2 * math.asin(math.sqrt(a))
+
+        for raw_name in names:
+            name = str(raw_name).strip()
+            if len(name) < 2:
+                continue
+
+            # 已存在：直接提升评分
+            for ep in context.pois:
+                if ep.name == name or (len(name) >= 3 and name in ep.name):
+                    if float(ep.rating or 0) < 5.0:
+                        ep.rating = 5.0
+                    ep.is_narrative_anchor = True  # type: ignore[attr-defined]
+                    injected.append(f"{ep.name}(↑5.0)")
+                    break
+            else:
+                # 不存在：Amap 精确搜索并注入
+                try:
+                    res = self._amap_raw.search_pois(keywords=name, city=destination, page_size=3)
+                    pois_raw = res.get("pois", [])
+                except Exception:
+                    continue
+                if not pois_raw:
+                    continue
+                p = pois_raw[0]
+                loc = p.get("location", "")
+                if not loc or "," not in loc:
+                    continue
+                try:
+                    lng_s, lat_s = loc.split(",", 1)
+                    lat, lng = float(lat_s), float(lng_s)
+                except ValueError:
+                    continue
+                # 距离过滤：超过 80km 的地点跳过（如武隆/仙女山距主城>100km）
+                if city_center_lat and city_center_lng:
+                    dist = _km_dist(city_center_lat, city_center_lng, lat, lng)
+                    if dist > MAX_ANCHOR_KM:
+                        print(f"   叙事锚点跳过 '{name}'（距城市中心 {dist:.0f}km，超过 {MAX_ANCHOR_KM}km 限制）")
+                        continue
+                poi_name = p.get("name", name)
+                if poi_name in existing_names:
+                    continue
+                anchor = POI(
+                    id=f"anchor_{len(injected)}",
+                    name=poi_name,
+                    category=p.get("type", "景点"),
+                    location={"lat": lat, "lng": lng},
+                    rating=5.0,
+                    price=0,
+                )
+                anchor.address = p.get("address", "")          # type: ignore[attr-defined]
+                anchor.is_narrative_anchor = True               # type: ignore[attr-defined]
+                context.pois.append(anchor)
+                existing_names.add(poi_name)
+                injected.append(poi_name)
+
+        if injected:
+            print(f"   叙事锚点注入: {injected}")
+
     async def _execute_first_iteration(self, context: PlanningContext) -> None:
-        """第一轮迭代：数据采集 + 文化分析 + 路线优化"""
+        """第一轮迭代：主题预处理 + 数据采集 + 文化分析 + 路线优化"""
+
+        # Step 0: 主题标签预处理（IP/游戏/影视 → 地理特征词）
+        self._preprocess_thematic_tags(context)
 
         print("\n1. 数据采集Agent执行...")
         try:
@@ -359,6 +637,12 @@ class TravelPlanningOrchestrator:
             print(f"   数据采集失败: {e}")
             raise
 
+        # Step 1.5: 用户明确点名的地点（DataCollection 之后提取，可检查已有 POI 并覆写）
+        try:
+            self._extract_user_mentioned_pois(context)
+        except Exception as e:
+            print(f"   用户地点提取失败（非致命）: {e}")
+
         print("\n2. 文化体验Agent执行...")
         try:
             culture_result = self.culture_agent.execute(context)
@@ -369,6 +653,13 @@ class TravelPlanningOrchestrator:
         except Exception as e:
             print(f"   文化分析失败: {e}")
             raise
+
+        # Step 2.5：从叙事中提取地名，确保叙事提到的景点出现在行程
+        print("\n2.5 叙事锚点注入...")
+        try:
+            self._inject_narrative_anchors(context)
+        except Exception as e:
+            print(f"   锚点注入失败（非致命）: {e}")
 
         print("\n3. 路线优化Agent执行...")
         try:
@@ -427,8 +718,17 @@ class TravelPlanningOrchestrator:
         pois_for_route = []
         for poi in attraction_pois:
             base_rating = float(poi.rating or 3.0)
-            # 文化 POI 提权：让 RouteAgent 在分组和排序时优先保留
-            effective_rating = min(5.0, base_rating + 1.0) if poi.name in cultural_names else base_rating
+            is_anchor = bool(getattr(poi, "is_narrative_anchor", False))
+            is_user_poi = bool(getattr(poi, "is_user_mentioned", False))
+            # 优先级: 用户明确点名(5.5) > 叙事锚点(5.0) > 文化POI(+1.0)
+            if is_user_poi:
+                effective_rating = 5.5  # 用户明确意图，最高优先级
+            elif is_anchor:
+                effective_rating = 5.0
+            elif poi.name in cultural_names:
+                effective_rating = min(5.0, base_rating + 1.0)
+            else:
+                effective_rating = base_rating
             pois_for_route.append({
                 "id": poi.id,
                 "name": poi.name,
@@ -439,14 +739,79 @@ class TravelPlanningOrchestrator:
                 "rating": effective_rating,
                 "visit_duration": 120,
                 "cost": poi.price,
+                "is_anchor": is_anchor or is_user_poi,  # 用户点名也受戏截断保护
             })
 
-        # 按评分排序后限制输入量：避免传入过多POI导致 RouteAgent 产生无效计划
+        # ── 名称前缀去重：同地点多 POI 只保留评分最高一个 ──
+        # 场景：高德常把"洪崖洞-大桥对面拍照打卡点"、"洪崖洞民俗风貌区"、"洪崖洞夜景观景台"
+        # 作为3条独立 POI 返回，K-means 把它们分到不同天形成大量重复
+        # 陷阱1："洪崖洞" 只有3字，s[:4] 取不到4字 → 与"洪崖洞民俗风貌区"的"洪崖洞民"不同
+        # 陷阱2："重庆十八梯"以城市名开头 → 与"十八梯观景台"前缀不对齐
+        # 修复：先剥城市名前缀，再统一取前3字作为地点指纹
+        _CITY_PREFIXES_RE = re.compile(
+            r'^(重庆市?|北京市?|上海市?|成都市?|西安市?|广州市?|深圳市?|'
+            r'南京市?|杭州市?|武汉市?|天津市?|苏州市?|厦门市?|青岛市?)'
+        )
+        def _name_prefix(name: str) -> str:
+            """取地点名称指纹：
+            1. 去掉'-'后的副名称（高德常加拍照打卡点等描述）
+            2. 去掉常见后缀
+            3. 去掉城市名前缀
+            4. 取前3字作为地点代表（3字足以区分不同景点，又能合并同景点变体）
+            """
+            s = re.sub(r'[-—·(（].*$', '', name).strip()          # 去副标题
+            s = re.sub(r'(拍照打卡点|观景台|夜景|风貌区|大桥对面'
+                       r'|入口处?|正门|附近|停车场|景区店|旗舰店)$', '', s).strip()
+            s = _CITY_PREFIXES_RE.sub('', s).strip()               # 去城市名前缀
+            return s[:3] if len(s) >= 3 else s                     # 取前3字
+
+        seen_pfx: dict = {}          # prefix → 在 deduped_pois 中的 index
+        deduped_pois: list = []
+        for p in pois_for_route:
+            pfx = _name_prefix(p["name"])
+            if not pfx or len(pfx) < 2:      # 极短名称直接保留，不做合并
+                deduped_pois.append(p)
+                continue
+            if pfx in seen_pfx:
+                idx = seen_pfx[pfx]
+                # 保留评分最高的那个
+                if float(p["rating"] or 0) > float(deduped_pois[idx]["rating"] or 0):
+                    deduped_pois[idx] = p
+            else:
+                seen_pfx[pfx] = len(deduped_pois)
+                deduped_pois.append(p)
+        removed_dup = len(pois_for_route) - len(deduped_pois)
+        if removed_dup:
+            print(f"   名称去重: {len(pois_for_route)} → {len(deduped_pois)} 个景点（合并 {removed_dup} 个重名 POI）")
+        pois_for_route = deduped_pois
+
+        # ── 主题过滤：有文化主题时，直接移除不相关的游乐场/猫猫公园 ──
+        # 注意：之前只"降权"，但 RouteAgent Pass1 对 is_full_day 景点优先分配且不看评分，
+        # 导致降权后的"萤火虫港湾猫猫主题公园"仍独占一天 → 改为直接从候选池删除
+        thematic_tags = context.thematic_tags or []
+        fun_park_kws = {"游乐", "主题公园", "动物园", "萤火虫", "猫猫", "欢乐谷",
+                        "水上乐园", "嘉年华", "卡通", "方特", "宋城"}
+        geo_kws = {"古镇", "寺", "道观", "洞", "峡", "山", "瀑布", "遗址", "博物馆",
+                   "纪念馆", "码头", "老街", "古城", "城墙", "陵墓", "悬崖", "湿地", "湖", "森林"}
+        is_niche_theme = bool(thematic_tags) and any(kw in " ".join(thematic_tags) for kw in geo_kws)
+        if is_niche_theme:
+            before_filter = len(pois_for_route)
+            pois_for_route = [p for p in pois_for_route
+                              if not any(kw in p["name"] for kw in fun_park_kws)]
+            cnt_removed = before_filter - len(pois_for_route)
+            if cnt_removed:
+                print(f"   主题过滤: 直接移除 {cnt_removed} 个非主题游乐景点")
+
+        # 按评分排序后限制输入量：叙事锚点强制保留，其余取高评分景点
         pois_for_route.sort(key=lambda p: -(p["rating"] or 0))
         max_input = max(12, context.user_intent.duration_days * 6)
         if len(pois_for_route) > max_input:
-            print(f"   POI精简: {len(pois_for_route)} → {max_input}（保留高评分景点）")
-            pois_for_route = pois_for_route[:max_input]
+            anchors = [p for p in pois_for_route if p.get("is_anchor")]
+            non_anchors = [p for p in pois_for_route if not p.get("is_anchor")]
+            non_anchors = non_anchors[:max(0, max_input - len(anchors))]
+            pois_for_route = anchors + non_anchors
+            pois_for_route.sort(key=lambda p: -(p["rating"] or 0))  # 重新排序合并后列表
+            print(f"   POI精简: → {len(pois_for_route)}（含锚点 {len(anchors)} 个）")
 
         # 餐厅数据供后续就近匹配
         restaurants_data = [
@@ -643,6 +1008,7 @@ class TravelPlanningOrchestrator:
             ],
             "weather": context.weather,
             "cultural_theme": context.cultural_theme,
+            "cultural_narrative": context.cultural_narrative,
             "cultural_background": context.cultural_background,
             "cultural_pois": context.cultural_pois,
             "activities": context.cultural_activities,
@@ -790,6 +1156,8 @@ destination 只填写第一个/主要城市（如"上海"），
 
         print(f"\n[plan_sync] 解析意图: {query[:60]}...")
         user_intent = self.parse_intent(query)
+        # 将原始查询文本存入 UserIntent，供 _extract_user_mentioned_pois 使用
+        user_intent.raw_query = query
         print(f"[plan_sync] 目的地={user_intent.destination}, "
               f"天数={user_intent.duration_days}, 预算={user_intent.budget}")
 
@@ -848,10 +1216,16 @@ destination 只填写第一个/主要城市（如"上海"），
                 lines.append(f"- 气温: {weather.get('low_temp', '')}~{weather.get('high_temp', '')}℃")
             lines.append("")
 
-        # 文化主题
+        # 文化主题（narrative 优先，兜底展示 theme 名称）
         theme = fp.get("cultural_theme")
-        if theme:
-            lines.append(f"## 🎭 文化主题\n{theme}\n")
+        narrative = fp.get("cultural_narrative")
+        if theme or narrative:
+            lines.append(f"## 🎭 文化主题")
+            if theme:
+                lines.append(f"**✦ {theme}**\n")
+            if narrative:
+                lines.append(narrative)
+            lines.append("")
 
         # 每日路线
         routes = fp.get("optimized_routes") or []

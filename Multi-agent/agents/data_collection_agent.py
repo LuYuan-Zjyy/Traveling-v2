@@ -98,15 +98,27 @@ class DataCollectionAgent(TravelPlanningAgent):
             # 根据用户偏好扩展搜索关键词
             preferences = context.user_intent.preferences or []
             base_keywords = ["景点", "餐厅", "酒店"]
-            extra_keywords = []
+
+            # 【优先1】主题标签（实地特征词，如"古镇"/"道观"/"溶洞"）──必须排偏好词之前
+            # 原因：偏好词如"历史文化"会贡献4词（博物馆/历史遗址/纪念馆/古迹），
+            # 若与主题词共享配额，主题词会被截断，导致高德搜不到磁器口/老君洞等
+            thematic_tags = getattr(context, "thematic_tags", []) or []
+            priority_kws = list(dict.fromkeys(thematic_tags[:5]))  # 最多5个主题词
+
+            # 【优先2】用户偏好关键词
+            pref_kws: list = []
             for pref in preferences:
-                extra_keywords.extend(self._PREF_KEYWORDS.get(pref, []))
-            # 去重，且每类额外关键词最多追加 6 个（扩展模式下增加多样性）
-            max_extra = 6 if improvements.get("data_collection_agent", {}).get("expand_search") else 4
-            extra_keywords = list(dict.fromkeys(extra_keywords))[:max_extra]
+                pref_kws.extend(self._PREF_KEYWORDS.get(pref, []))
+            pref_kws = list(dict.fromkeys(pref_kws))
+
+            # 主题词在前，偏好词在后；统一去重后上限提升到8（扩展模式）/ 6（正常）
+            max_extra = 8 if improvements.get("data_collection_agent", {}).get("expand_search") else 6
+            extra_keywords = list(dict.fromkeys(priority_kws + pref_kws))[:max_extra]
             poi_types = base_keywords + extra_keywords
+            if priority_kws:
+                print(f"✓ 主题标签搜索词（优先）: {priority_kws}")
             if extra_keywords:
-                print(f"✓ 偏好扩展搜索: {extra_keywords}")
+                print(f"✓ 完整扩展搜索词: {extra_keywords}")
 
             pois = self._search_pois(destination, lat, lng, poi_types=poi_types, page_size=poi_page_size)
             context.pois = pois
