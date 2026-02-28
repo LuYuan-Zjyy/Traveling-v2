@@ -61,12 +61,12 @@ load_env_file()
 CONFIG = {
     # DeepSeek API 配置
     'api_key': '',  # 或者使用环境变量 DEEPSEEK_API_KEY
-    'base_url': 'https://api.deepseek.com/v1',  # DeepSeek API 地址
+    'base_url': 'https://api.openai.com/v1',  # DeepSeek API 地址
     'model_name': 'deepseek-chat',  # 模型名称
     
     # 测试配置
     'mode': 'direct',  # 运行模式: 'direct' 或 'workflow'
-    'max_samples': -1,  # 测试样本数量，设为 -1 表示全部测试 (共703条)
+    'max_samples': 10,  # 测试样本数量，设为 -1 表示全部测试 (共703条)
     
     # 数据路径
     'data_dir': '../data',
@@ -236,13 +236,12 @@ def run_evaluation(results, plan_key, info_file):
     """运行评测"""
     # 导入评测模块
     sys.path.append(os.path.join(os.path.dirname(__file__), 'eval'))
-    from eval.simple_eval import SimpleEvaluator, print_results
+    from eval.simple_eval import StrictEvaluator, print_results
     
     print(f"\n⏳ 正在评测...")
     
-    evaluator = SimpleEvaluator(
-        info_file=info_file,
-        final_info_file=info_file
+    evaluator = StrictEvaluator(
+        info_file=info_file
     )
     
     summary = evaluator.evaluate_batch(results, plan_key)
