@@ -1,0 +1,211 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "杭州西湖风景名胜区附近酒店",
+      "price_per_night": 400
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "出发地 to 杭州",
+      "number": "G1234",
+      "time": "08:00",
+      "price": 300
+    },
+    {
+      "day": 7,
+      "mode": "Train",
+      "route": "杭州 to 出发地",
+      "number": "G5678",
+      "time": "18:00",
+      "price": 300
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "杭州西湖风景名胜区-风篁岭",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "西湖附近餐厅",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "雷峰塔景区-雷峰夕照",
+        "price": 40,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "西湖附近餐厅",
+        "price": 120,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "灵隐寺",
+        "price": 30,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "灵隐寺附近餐厅",
+        "price": 80,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "飞来峰",
+        "price": 45,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "灵隐寺附近餐厅",
+        "price": 100,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "西溪国家湿地公园",
+        "price": 80,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "西溪湿地附近餐厅",
+        "price": 90,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "西溪国家湿地公园洪园",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "西溪湿地附近餐厅",
+        "price": 110,
+        "action": "dining"
+      }
+    ],
+    "day_4": [
+      {
+        "time": "09:00-11:00",
+        "location": "河坊街景区",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "河坊街餐厅",
+        "price": 70,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "鼓楼",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "河坊街餐厅",
+        "price": 90,
+        "action": "dining"
+      }
+    ],
+    "day_5": [
+      {
+        "time": "09:00-11:00",
+        "location": "杭州宋城",
+        "price": 300,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "宋城附近餐厅",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "杭州动物园",
+        "price": 20,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "宋城附近餐厅",
+        "price": 120,
+        "action": "dining"
+      }
+    ],
+    "day_6": [
+      {
+        "time": "09:00-11:00",
+        "location": "千岛湖风景区",
+        "price": 130,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "千岛湖附近餐厅",
+        "price": 110,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "千岛湖森林氧吧",
+        "price": 60,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "千岛湖附近餐厅",
+        "price": 130,
+        "action": "dining"
+      }
+    ],
+    "day_7": [
+      {
+        "time": "09:00-11:00",
+        "location": "乌镇西栅景区-白莲塔",
+        "price": 150,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "乌镇附近餐厅",
+        "price": 80,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "水上戏台",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "乌镇附近餐厅",
+        "price": 100,
+        "action": "dining"
+      }
+    ]
+  }
+}

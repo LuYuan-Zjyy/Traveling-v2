@@ -1,0 +1,16 @@
+{
+  "user_input": "?????,????????",
+  "intent": {
+    "destination": null,
+    "departure_city": null,
+    "start_date": null,
+    "end_date": null,
+    "duration_days": null,
+    "budget": null,
+    "travelers": null,
+    "preferences": [],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": null
+  }
+}

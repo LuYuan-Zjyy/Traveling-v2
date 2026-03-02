@@ -104,9 +104,12 @@ CONSTRAINT_TOTALS = {
 # 依赖检查
 # ============================================================
 
-def check_dependencies():
+def check_dependencies(skip_generation=False):
     """检查依赖"""
-    required = ['openai', 'pandas', 'tqdm', 'datasets']
+    if skip_generation:
+        required = ['pandas', 'tqdm']
+    else:
+        required = ['openai', 'pandas', 'tqdm', 'datasets']
     missing = []
     for pkg in required:
         try:
@@ -379,9 +382,22 @@ def create_submission(parsed_file, output_dir, set_type, model_name, strategy):
 # 评测
 # ============================================================
 
-def run_evaluation(submission_file, set_type):
-    """运行评测"""
+def run_evaluation(submission_file, set_type, standalone=False):
+    """运行评测
+
+    Args:
+        submission_file: 提交文件路径
+        set_type: 数据集类型
+        standalone: 是否独立评测 (不依赖 HuggingFace 数据集)
+    """
     print(f"\n  Running evaluation on {set_type} set...")
+
+    # ★ 关键修复: 先将 submission_file 转为绝对路径, 防止后续 chdir 导致路径断裂
+    submission_file = os.path.abspath(submission_file)
+
+    if standalone:
+        # 独立评测模式: 不需要 HuggingFace 数据集, 只做结构化检查
+        return _run_standalone_evaluation(submission_file)
 
     # 尝试使用完整评测模块
     eval_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'evaluation')
@@ -404,8 +420,9 @@ def run_evaluation(submission_file, set_type):
         from simple_eval import TravelPlannerEvaluator, print_results as simple_print
         evaluator = TravelPlannerEvaluator(set_type=set_type)
         if not evaluator.load_data():
-            print("  ERROR: Cannot load query data")
-            return None, None
+            print("  ERROR: Cannot load query data, falling back to standalone mode...")
+            os.chdir(orig_cwd)
+            return _run_standalone_evaluation(submission_file)
 
         tested_plans = load_line_json_data(submission_file)
         summary = evaluator.evaluate_batch(tested_plans)
@@ -425,73 +442,277 @@ def run_evaluation(submission_file, set_type):
     except Exception as e2:
         os.chdir(orig_cwd)
         print(f"  Simple evaluation also failed: {e2}")
-        import traceback
-        traceback.print_exc()
+        print(f"  Falling back to standalone evaluation...")
+        return _run_standalone_evaluation(submission_file)
+
+
+def _run_standalone_evaluation(submission_file):
+    """
+    独立评测模式: 不需要 HuggingFace 数据集或沙盒数据库.
+    对自定义 Agent 生成的方案做结构化质量检查.
+
+    检查项:
+        - Delivery Rate: 成功生成计划的比例
+        - Completeness: 信息完整性 (天数/餐饮/景点/住宿/交通)
+        - Diversity: 餐厅和景点是否重复
+        - Format: 格式正确性
+    """
+    print("  [Standalone] Running structural evaluation (no sandbox/HuggingFace needed)...")
+    tested_plans = load_line_json_data(submission_file)
+    total = len(tested_plans)
+
+    if total == 0:
+        print("  ERROR: No plans found in submission file")
         return None, None
+
+    delivery_count = 0
+    completeness_scores = []
+    diversity_scores = []
+    format_scores = []
+
+    detail_results = []
+
+    for item in tested_plans:
+        plan = item.get('plan')
+        result = {
+            'idx': item.get('idx', '?'),
+            'has_plan': False,
+            'completeness': 0.0,
+            'diversity': 0.0,
+            'format': 0.0,
+            'issues': []
+        }
+
+        if not plan or not isinstance(plan, list) or len(plan) == 0:
+            detail_results.append(result)
+            completeness_scores.append(0.0)
+            diversity_scores.append(0.0)
+            format_scores.append(0.0)
+            continue
+
+        delivery_count += 1
+        result['has_plan'] = True
+
+        # --- Completeness Check ---
+        required_fields = ['days', 'current_city', 'transportation', 'breakfast',
+                           'attraction', 'lunch', 'dinner', 'accommodation']
+        total_fields = len(required_fields) * len(plan)
+        present_fields = 0
+
+        for day_plan in plan:
+            if not isinstance(day_plan, dict):
+                result['issues'].append(f"Day plan is not a dict: {type(day_plan)}")
+                continue
+            for field in required_fields:
+                if field in day_plan and day_plan[field] and day_plan[field] != '-':
+                    present_fields += 1
+
+        completeness = present_fields / max(total_fields, 1)
+        result['completeness'] = completeness
+        completeness_scores.append(completeness)
+
+        # --- Diversity Check ---
+        restaurants = []
+        attractions_list = []
+        restaurant_dup = 0
+        attraction_dup = 0
+
+        for day_plan in plan:
+            if not isinstance(day_plan, dict):
+                continue
+            for meal in ['breakfast', 'lunch', 'dinner']:
+                val = day_plan.get(meal, '-')
+                if val and val != '-':
+                    if val in restaurants:
+                        restaurant_dup += 1
+                        result['issues'].append(f"Duplicate restaurant: {val}")
+                    restaurants.append(val)
+
+            attr_val = day_plan.get('attraction', '-')
+            if attr_val and attr_val != '-':
+                for attr in attr_val.split(';'):
+                    attr = attr.strip()
+                    if attr:
+                        if attr in attractions_list:
+                            attraction_dup += 1
+                            result['issues'].append(f"Duplicate attraction: {attr}")
+                        attractions_list.append(attr)
+
+        total_items = len(restaurants) + len(attractions_list)
+        dup_items = restaurant_dup + attraction_dup
+        diversity = 1.0 - (dup_items / max(total_items, 1))
+        result['diversity'] = diversity
+        diversity_scores.append(diversity)
+
+        # --- Format Check ---
+        format_ok = True
+        for day_idx, day_plan in enumerate(plan):
+            if not isinstance(day_plan, dict):
+                format_ok = False
+                break
+            if 'days' not in day_plan and 'current_city' not in day_plan:
+                result['issues'].append(f"Day {day_idx+1}: missing 'days' and 'current_city'")
+                format_ok = False
+
+        fmt_score = 1.0 if format_ok else 0.5
+        result['format'] = fmt_score
+        format_scores.append(fmt_score)
+
+        detail_results.append(result)
+
+    # Aggregate scores
+    delivery_rate = delivery_count / total
+    avg_completeness = sum(completeness_scores) / max(len(completeness_scores), 1)
+    avg_diversity = sum(diversity_scores) / max(len(diversity_scores), 1)
+    avg_format = sum(format_scores) / max(len(format_scores), 1)
+
+    # Map to TravelPlanner-style scores (approximate)
+    scores = {
+        'Delivery Rate': delivery_rate,
+        'Commonsense Constraint Micro Pass Rate': avg_completeness * avg_diversity,
+        'Commonsense Constraint Macro Pass Rate': avg_completeness * avg_diversity * avg_format,
+        'Hard Constraint Micro Pass Rate': 0.0,   # Cannot check without sandbox
+        'Hard Constraint Macro Pass Rate': 0.0,    # Cannot check without sandbox
+        'Final Pass Rate': 0.0,                    # Cannot check without sandbox
+    }
+
+    summary = {
+        'mode': 'standalone',
+        'total_samples': total,
+        'metrics': {
+            'delivery_rate': delivery_rate,
+            'completeness': avg_completeness,
+            'diversity': avg_diversity,
+            'format': avg_format,
+        },
+        'detail_results': detail_results,
+        'note': ('Standalone mode: Hard Constraint and Final Pass Rate require '
+                 'TravelPlanner sandbox database (CSV files). '
+                 'Run check_database.py for details.')
+    }
+
+    return scores, summary
 
 
 def print_results(scores, set_type, detailed_scores=None):
     """打印评测结果"""
-    total_samples = DATASET_SIZES.get(set_type, '?')
+
+    if scores is None:
+        print("\n" + "=" * 65)
+        print(f"  TravelPlanner Evaluation Results - {set_type}")
+        print("=" * 65)
+        print("\n  ERROR: Evaluation failed")
+        print("=" * 65)
+        return None
+
+    # 判断是否为独立评测模式
+    is_standalone = (isinstance(detailed_scores, dict) and
+                     detailed_scores.get('mode') == 'standalone')
+
+    total_samples = (detailed_scores.get('total_samples', '?')
+                     if is_standalone
+                     else DATASET_SIZES.get(set_type, '?'))
 
     print("\n" + "=" * 65)
     print(f"  TravelPlanner Evaluation Results - {set_type}")
+    if is_standalone:
+        print("  (Standalone Mode - no sandbox database)")
     print("=" * 65)
-    print(f"\n  Dataset: {set_type} ({total_samples} samples)")
+    print(f"\n  Samples: {total_samples}")
 
-    if scores is None:
-        print("\n  ERROR: Evaluation failed")
-        print("=" * 65)
-        return
-
-    print("\n" + "-" * 65)
-    print("  Core Metrics")
-    print("-" * 65)
-    for key, value in scores.items():
-        print(f"  {key:50s} {value*100:6.2f}%")
-
-    # 计算总分
-    m = scores
-    total_score = (
-        m.get('Delivery Rate', 0) * 10 +
-        m.get('Commonsense Constraint Micro Pass Rate', 0) * 20 +
-        m.get('Commonsense Constraint Macro Pass Rate', 0) * 20 +
-        m.get('Hard Constraint Micro Pass Rate', 0) * 15 +
-        m.get('Hard Constraint Macro Pass Rate', 0) * 15 +
-        m.get('Final Pass Rate', 0) * 20
-    )
-    print(f"\n  {'Total Score':50s} {total_score:6.2f} / 100")
-
-    if detailed_scores and isinstance(detailed_scores, dict):
+    if is_standalone:
+        # --- 独立评测结果 ---
+        sm = detailed_scores.get('metrics', {})
         print("\n" + "-" * 65)
-        print("  Detailed Constraint Breakdown")
+        print("  Structural Quality Metrics")
         print("-" * 65)
+        print(f"  {'Delivery Rate':50s} {scores.get('Delivery Rate', 0)*100:6.2f}%")
+        print(f"  {'Completeness':50s} {sm.get('completeness', 0)*100:6.2f}%")
+        print(f"  {'Diversity (no duplicates)':50s} {sm.get('diversity', 0)*100:6.2f}%")
+        print(f"  {'Format Correctness':50s} {sm.get('format', 0)*100:6.2f}%")
 
-        # Commonsense 详情
-        if 'Commonsense Constraint' in detailed_scores:
-            print("\n  [Commonsense Constraints]")
-            cc = detailed_scores['Commonsense Constraint']
-            for level in cc:
-                for day in cc[level]:
-                    for constraint_name, stats in cc[level][day].items():
-                        if isinstance(stats, dict) and 'true' in stats:
-                            total = stats.get('total', stats['true'] + stats['false'])
-                            if total > 0:
-                                rate = stats['true'] / total * 100
-                                print(f"    {level}/{day}d {constraint_name:35s} {stats['true']}/{total} ({rate:.1f}%)")
+        print("\n" + "-" * 65)
+        print("  TravelPlanner-Compatible Scores (partial)")
+        print("-" * 65)
+        for key, value in scores.items():
+            print(f"  {key:50s} {value*100:6.2f}%")
 
-        # Hard 详情
-        if 'Hard Constraint' in detailed_scores:
-            print("\n  [Hard Constraints]")
-            hc = detailed_scores['Hard Constraint']
-            for level in hc:
-                for day in hc[level]:
-                    for constraint_name, stats in hc[level][day].items():
-                        if isinstance(stats, dict) and 'true' in stats:
-                            total = stats.get('total', stats['true'] + stats['false'])
-                            if total > 0:
-                                rate = stats['true'] / total * 100
-                                print(f"    {level}/{day}d {constraint_name:35s} {stats['true']}/{total} ({rate:.1f}%)")
+        # 总分
+        total_score = (
+            scores.get('Delivery Rate', 0) * 10 +
+            scores.get('Commonsense Constraint Micro Pass Rate', 0) * 20 +
+            scores.get('Commonsense Constraint Macro Pass Rate', 0) * 20 +
+            scores.get('Hard Constraint Micro Pass Rate', 0) * 15 +
+            scores.get('Hard Constraint Macro Pass Rate', 0) * 15 +
+            scores.get('Final Pass Rate', 0) * 20
+        )
+        print(f"\n  {'Total Score (partial)':50s} {total_score:6.2f} / 100")
+
+        if detailed_scores.get('note'):
+            print(f"\n  Note: {detailed_scores['note']}")
+
+        # 显示每个样本的问题
+        details = detailed_scores.get('detail_results', [])
+        issues_found = [d for d in details if d.get('issues')]
+        if issues_found:
+            print("\n" + "-" * 65)
+            print("  Issues Found")
+            print("-" * 65)
+            for d in issues_found[:10]:  # 最多显示10个
+                print(f"  Sample {d.get('idx', '?')}:")
+                for issue in d['issues'][:5]:
+                    print(f"    - {issue}")
+
+    else:
+        # --- 标准评测结果 ---
+        print("\n" + "-" * 65)
+        print("  Core Metrics")
+        print("-" * 65)
+        for key, value in scores.items():
+            print(f"  {key:50s} {value*100:6.2f}%")
+
+        # 计算总分
+        m = scores
+        total_score = (
+            m.get('Delivery Rate', 0) * 10 +
+            m.get('Commonsense Constraint Micro Pass Rate', 0) * 20 +
+            m.get('Commonsense Constraint Macro Pass Rate', 0) * 20 +
+            m.get('Hard Constraint Micro Pass Rate', 0) * 15 +
+            m.get('Hard Constraint Macro Pass Rate', 0) * 15 +
+            m.get('Final Pass Rate', 0) * 20
+        )
+        print(f"\n  {'Total Score':50s} {total_score:6.2f} / 100")
+
+        if detailed_scores and isinstance(detailed_scores, dict):
+            print("\n" + "-" * 65)
+            print("  Detailed Constraint Breakdown")
+            print("-" * 65)
+
+            # Commonsense 详情
+            if 'Commonsense Constraint' in detailed_scores:
+                print("\n  [Commonsense Constraints]")
+                cc = detailed_scores['Commonsense Constraint']
+                for level in cc:
+                    for day in cc[level]:
+                        for constraint_name, stats in cc[level][day].items():
+                            if isinstance(stats, dict) and 'true' in stats:
+                                total = stats.get('total', stats['true'] + stats['false'])
+                                if total > 0:
+                                    rate = stats['true'] / total * 100
+                                    print(f"    {level}/{day}d {constraint_name:35s} {stats['true']}/{total} ({rate:.1f}%)")
+
+            # Hard 详情
+            if 'Hard Constraint' in detailed_scores:
+                print("\n  [Hard Constraints]")
+                hc = detailed_scores['Hard Constraint']
+                for level in hc:
+                    for day in hc[level]:
+                        for constraint_name, stats in hc[level][day].items():
+                            if isinstance(stats, dict) and 'true' in stats:
+                                total = stats.get('total', stats['true'] + stats['false'])
+                                if total > 0:
+                                    rate = stats['true'] / total * 100
+                                    print(f"    {level}/{day}d {constraint_name:35s} {stats['true']}/{total} ({rate:.1f}%)")
 
     print("\n" + "=" * 65)
     return total_score
@@ -523,8 +744,19 @@ def main():
                         help='Skip parsing, use already parsed plans')
     parser.add_argument('--input_file', type=str, default='',
                         help='Existing submission file for evaluation (with --skip_generation)')
+    parser.add_argument('--standalone', action='store_true',
+                        help='Standalone evaluation mode (no HuggingFace/sandbox needed)')
 
     args = parser.parse_args()
+
+    # 如果指定了 --skip_generation + --input_file 但没有 HuggingFace/数据库, 自动启用 standalone
+    if args.skip_generation and args.input_file:
+        try:
+            __import__('datasets')
+        except ImportError:
+            if not args.standalone:
+                print("  [INFO] 'datasets' package not found, enabling standalone mode")
+                args.standalone = True
 
     print("\n" + "=" * 65)
     print("  TravelPlanner Evaluation Pipeline")
@@ -546,7 +778,7 @@ def main():
         print(f"  API Key loaded (length: {len(api_key)})")
 
     # 检查依赖
-    if not check_dependencies():
+    if not check_dependencies(skip_generation=args.skip_generation or args.standalone):
         sys.exit(1)
 
     # 路径
@@ -607,21 +839,28 @@ def main():
 
     # Step 5: 评测
     print(f"\n--- Step 5: Evaluate ---")
-    scores, detailed_scores = run_evaluation(submission_file, set_type)
+    scores, detailed_scores = run_evaluation(submission_file, set_type,
+                                             standalone=args.standalone)
     total_score = print_results(scores, set_type, detailed_scores)
 
     # 保存结果
     if scores:
-        eval_output = os.path.join(output_dir, f'{set_type}_{model_name}_{strategy}_eval_result.json')
+        mode_tag = '_standalone' if args.standalone else ''
+        eval_output = os.path.join(output_dir, f'{set_type}_{model_name}_{strategy}{mode_tag}_eval_result.json')
+        save_data = {
+            'set_type': set_type,
+            'model': args.model,
+            'strategy': strategy,
+            'total_score': total_score,
+            'scores': {k: round(v * 100, 4) for k, v in scores.items()},
+            'timestamp': datetime.now().isoformat()
+        }
+        if isinstance(detailed_scores, dict) and detailed_scores.get('mode') == 'standalone':
+            save_data['mode'] = 'standalone'
+            save_data['structural_metrics'] = detailed_scores.get('metrics', {})
+
         with open(eval_output, 'w', encoding='utf-8') as f:
-            json.dump({
-                'set_type': set_type,
-                'model': args.model,
-                'strategy': strategy,
-                'total_score': total_score,
-                'scores': {k: round(v * 100, 4) for k, v in scores.items()},
-                'timestamp': datetime.now().isoformat()
-            }, f, ensure_ascii=False, indent=2)
+            json.dump(save_data, f, ensure_ascii=False, indent=2)
         print(f"\n  Results saved to: {eval_output}")
 
     print("\n  Pipeline complete!\n")

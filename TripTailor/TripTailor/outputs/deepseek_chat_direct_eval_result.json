@@ -1,23 +1,23 @@
 {
   "plan_key": "deepseek_chat_direct",
-  "total_score": 66.57,
+  "total_score": 64.60000000000001,
   "metrics": {
-    "completeness": 78.6,
+    "completeness": 88.00000000000001,
     "sandbox_hotel": 100.0,
     "sandbox_transport": 100.0,
-    "sandbox_attraction": 70.0,
-    "sandbox_restaurant": 66.0,
-    "within_sandbox": 51.0,
-    "diverse_attractions": 74.0,
-    "diverse_restaurants": 68.0,
-    "within_budget": 52.0,
-    "reasonable_meal_prices": 91.0,
-    "appropriate_duration": 91.0,
-    "feasibility": 18.0,
-    "rationality": 24.0,
+    "sandbox_attraction": 50.0,
+    "sandbox_restaurant": 40.0,
+    "within_sandbox": 20.0,
+    "diverse_attractions": 90.0,
+    "diverse_restaurants": 90.0,
+    "within_budget": 40.0,
+    "reasonable_meal_prices": 90.0,
+    "appropriate_duration": 90.0,
+    "feasibility": 10.0,
+    "rationality": 30.0,
     "fact_accuracy": 100.0,
     "fact_checked_samples": 0,
     "avg_route_distance": null
   },
-  "timestamp": "2026-02-09T16:19:07.632009"
+  "timestamp": "2026-03-02T12:39:13.568468"
 }

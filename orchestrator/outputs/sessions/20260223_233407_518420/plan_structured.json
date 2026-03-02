@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "黄山排云型旅酒店",
+      "price_per_night": 800
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Bus",
+      "route": "出发地 to 黄山风景区",
+      "number": "",
+      "time": "08:00",
+      "price": 100
+    },
+    {
+      "day": 3,
+      "mode": "Bus",
+      "route": "黄山风景区 to 出发地",
+      "number": "",
+      "time": "17:00",
+      "price": 100
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-12:00",
+        "location": "黄山风景区",
+        "price": 190,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "黄山西海饭店",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "排云亭",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "黄山西海饭店",
+        "price": 100,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "08:00-11:00",
+        "location": "黄山风景区-光明顶",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "黄山白云宾馆",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "黄山九龙峰",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "黄山狮林大酒店",
+        "price": 100,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-12:00",
+        "location": "宏村",
+        "price": 104,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:30-13:30",
+        "location": "画景楼餐厅",
+        "price": 74,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-16:00",
+        "location": "宏村-水圳",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "16:30-17:30",
+        "location": "屯溪老街聚贤楼(徽菜名店)",
+        "price": 59,
+        "action": "dining"
+      }
+    ]
+  }
+}

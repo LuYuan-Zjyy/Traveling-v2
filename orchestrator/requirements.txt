@@ -1,0 +1,12 @@
+# 主控Agent (Orchestrator) 依赖
+# 安装: pip install -r orchestrator/requirements.txt
+
+# DeepSeek LLM (OpenAI-compatible SDK)
+openai>=1.0.0
+
+# HTTP 请求 (高德API)
+requests>=2.31.0
+
+# 环境变量管理
+python-dotenv>=1.0.0
+

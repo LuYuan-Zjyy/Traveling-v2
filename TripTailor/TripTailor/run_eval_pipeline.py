@@ -34,7 +34,7 @@ def load_env_file():
     
     for env_path in env_paths:
         if os.path.exists(env_path):
-            print(f"📄 加载环境变量: {env_path}")
+            print(f"  [ENV] Loading: {env_path}")
             with open(env_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
@@ -59,10 +59,10 @@ load_env_file()
 # ============================================================
 
 CONFIG = {
-    # DeepSeek API 配置
-    'api_key': '',  # 或者使用环境变量 DEEPSEEK_API_KEY
-    'base_url': 'https://api.openai.com/v1',  # DeepSeek API 地址
-    'model_name': 'deepseek-chat',  # 模型名称
+    # API 配置
+    'api_key': '',  # 留空自动读取环境变量
+    'base_url': 'https://api.deepseek.com/v1',  # 确保路径结尾正确，通常需要 /v1
+    'model_name': 'deepseek-chat',  # 尝试更换为 gpt-4o-mini，比 3.5 更稳定且便宜
     
     # 测试配置
     'mode': 'direct',  # 运行模式: 'direct' 或 'workflow'
@@ -76,22 +76,25 @@ CONFIG = {
 # ============================================================
 
 
-def check_dependencies():
+def check_dependencies(skip_generation=False):
     """检查依赖"""
-    required = ['openai', 'pandas', 'fuzzywuzzy', 'tqdm']
+    # 评测必须的依赖
+    required = ['pandas', 'fuzzywuzzy', 'tqdm', 'geopy']
+    if not skip_generation:
+        required.append('openai')
     missing = []
-    
+
     for pkg in required:
         try:
             __import__(pkg)
         except ImportError:
             missing.append(pkg)
-    
+
     if missing:
-        print(f"❌ 缺少依赖包: {', '.join(missing)}")
-        print(f"   请运行: pip install {' '.join(missing)}")
+        print(f"[ERROR] Missing deps: {', '.join(missing)}")
+        print(f"   Run: pip install {' '.join(missing)}")
         return False
-    
+
     return True
 
 
@@ -101,7 +104,7 @@ def load_test_data(data_dir, max_samples=-1):
     info_file = os.path.join(data_dir, 'infomation.json')
     
     if not os.path.exists(test_file):
-        print(f"❌ 找不到测试数据: {test_file}")
+        print(f"  [ERROR] Test data not found: {test_file}")
         return None, None
     
     with open(test_file, 'r', encoding='utf-8') as f:
@@ -185,8 +188,8 @@ def run_pipeline(api_key, base_url, model_name, test_data, info_data, output_dir
     os.makedirs(output_dir, exist_ok=True)
     
     # 初始化客户端
-    print(f"\n🔗 连接 API: {base_url}")
-    print(f"🤖 使用模型: {model_name}")
+    print(f"\n  [API] Connecting: {base_url}")
+    print(f"  [MODEL] Using: {model_name}")
     
     client = OpenAI(
         api_key=api_key,
@@ -197,7 +200,7 @@ def run_pipeline(api_key, base_url, model_name, test_data, info_data, output_dir
     results = []
     plan_key = f"{model_name.replace('-', '_')}_{mode}"
     
-    print(f"\n⏳ 开始生成旅行计划 (共 {len(test_data)} 条)...\n")
+    print(f"\n  [GEN] Generating plans ({len(test_data)} samples)...\n")
     
     for item in tqdm(test_data, desc="生成计划"):
         pid = item['pid']
@@ -219,7 +222,7 @@ def run_pipeline(api_key, base_url, model_name, test_data, info_data, output_dir
             results.append(result)
             
         except Exception as e:
-            print(f"\n⚠️ 样本 {pid} 生成失败: {e}")
+            print(f"\n  [WARN] Sample {pid} failed: {e}")
             continue
     
     # 保存结果
@@ -227,26 +230,31 @@ def run_pipeline(api_key, base_url, model_name, test_data, info_data, output_dir
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
     
-    print(f"\n✅ 计划生成完成，已保存到: {output_file}")
+    print(f"\n  [OK] Plans saved to: {output_file}")
     
     return results, plan_key, output_file
 
 
 def run_evaluation(results, plan_key, info_file):
     """运行评测"""
-    # 导入评测模块
-    sys.path.append(os.path.join(os.path.dirname(__file__), 'eval'))
+    # 确保 TripTailor/TripTailor/ 在 sys.path 上, 这样 eval 包可被正确导入
+    # 注意: 不能把 eval/ 目录本身加到 sys.path, 否则 eval.py 会被当作
+    # 顶层 eval 模块, 遮蔽 eval 包
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
+
     from eval.simple_eval import StrictEvaluator, print_results
-    
-    print(f"\n⏳ 正在评测...")
-    
+
+    print(f"\n  Evaluating with plan_key = '{plan_key}' ...")
+
     evaluator = StrictEvaluator(
-        info_file=info_file
+        info_file=info_file if os.path.exists(info_file) else None
     )
-    
+
     summary = evaluator.evaluate_batch(results, plan_key)
     print_results(summary, plan_key)
-    
+
     return summary
 
 
@@ -284,18 +292,18 @@ def main():
     search_api_key = os.environ.get('SEARCH_API') or os.environ.get('SEARCH_API_KEY')
     
     if not api_key and not args.skip_generation:
-        print("\n❌ 错误: 未设置 API Key")
-        print("   请使用以下方式之一设置:")
-        print("   1. 在 .env 文件中设置 DEEPSEEK_API=your_key")
-        print("   2. 命令行参数: --api_key YOUR_KEY")
-        print("   3. 环境变量: set DEEPSEEK_API=YOUR_KEY")
+        print("\n  [ERROR] No API Key found")
+        print("   Set via:")
+        print("   1. .env file: DEEPSEEK_API=your_key")
+        print("   2. CLI arg: --api_key YOUR_KEY")
+        print("   3. Env var: set DEEPSEEK_API=YOUR_KEY")
         sys.exit(1)
-    
+
     if api_key:
-        print(f"✅ API Key 已加载 (长度: {len(api_key)})")
-    
+        print(f"  [OK] API Key loaded (length: {len(api_key)})")
+
     # 检查依赖
-    if not check_dependencies():
+    if not check_dependencies(skip_generation=args.skip_generation):
         sys.exit(1)
     
     # 数据目录
@@ -307,10 +315,10 @@ def main():
     if args.skip_generation:
         # 直接评测已有结果
         if not args.input_file:
-            print("❌ 使用 --skip_generation 时需要指定 --input_file")
+            print("  [ERROR] --skip_generation requires --input_file")
             sys.exit(1)
-        
-        print(f"\n📁 加载已有结果: {args.input_file}")
+
+        print(f"\n  [LOAD] Loading results: {args.input_file}")
         with open(args.input_file, 'r', encoding='utf-8') as f:
             results = json.load(f)
         
@@ -324,7 +332,7 @@ def main():
         
     else:
         # 加载测试数据
-        print(f"\n📁 加载数据...")
+        print(f"\n  [LOAD] Loading data...")
         test_data, info_data = load_test_data(data_dir, args.samples)
         
         if test_data is None:
@@ -357,9 +365,9 @@ def main():
                 'timestamp': datetime.now().isoformat()
             }, f, ensure_ascii=False, indent=2)
         
-        print(f"\n💾 评测结果已保存到: {eval_output}")
-    
-    print("\n✅ 流程完成!\n")
+        print(f"\n  [SAVE] Eval result saved to: {eval_output}")
+
+    print("\n  [DONE] Pipeline complete!\n")
 
 
 if __name__ == '__main__':

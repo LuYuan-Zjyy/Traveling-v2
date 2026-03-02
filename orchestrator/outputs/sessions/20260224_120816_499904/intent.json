@@ -1,0 +1,20 @@
+{
+  "user_input": "我喜欢玩燕云十六声，为我规划一个为期一周的寻梦之旅",
+  "intent": {
+    "destination": "北京及周边地区",
+    "departure_city": null,
+    "start_date": null,
+    "end_date": null,
+    "duration_days": 7,
+    "budget": null,
+    "travelers": null,
+    "preferences": [
+      "历史文化",
+      "古风体验",
+      "游戏场景还原"
+    ],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": "基于游戏《燕云十六声》的寻梦主题旅行，希望体验游戏中的历史背景、场景和文化元素"
+  }
+}

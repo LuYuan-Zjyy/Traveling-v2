@@ -1,0 +1,23 @@
+{
+  "plan_key": "gpt_4o_mini_direct",
+  "total_score": 61.95,
+  "metrics": {
+    "completeness": 90.0,
+    "sandbox_hotel": 100.0,
+    "sandbox_transport": 100.0,
+    "sandbox_attraction": 40.0,
+    "sandbox_restaurant": 80.0,
+    "within_sandbox": 30.0,
+    "diverse_attractions": 60.0,
+    "diverse_restaurants": 70.0,
+    "within_budget": 70.0,
+    "reasonable_meal_prices": 80.0,
+    "appropriate_duration": 60.0,
+    "feasibility": 20.0,
+    "rationality": 10.0,
+    "fact_accuracy": 100.0,
+    "fact_checked_samples": 0,
+    "avg_route_distance": null
+  },
+  "timestamp": "2026-03-01T10:46:53.551299"
+}

@@ -1,0 +1,12 @@
+{
+  "session_id": "20260224_141933_091132",
+  "user_input": "?????,????????",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-24T14:19:33.091132",
+  "duration_seconds": 94.33,
+  "success": true,
+  "error": null,
+  "tool_call_count": 6,
+  "destination": null,
+  "duration_days": null
+}

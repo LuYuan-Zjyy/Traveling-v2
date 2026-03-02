@@ -66,7 +66,7 @@ def eval_score(set_type: str, file_path: str):
     plan_constraint_store = []
     for idx in tqdm(range(0,len(query_data_list))):
         query_data = query_data_list[idx]
-        tested_plan = tested_plans[idx]
+        tested_plan = tested_plans[idx] if idx < len(tested_plans) else {"idx": idx + 1, "query": "", "plan": None}
         if type(query_data) == str:
             query_data = eval(query_data)
         if type(tested_plan) == str:

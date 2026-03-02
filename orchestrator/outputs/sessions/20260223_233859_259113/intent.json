@@ -1,0 +1,21 @@
+{
+  "user_input": "根据游戏仙剑奇侠传1的脚步，为我规划一条主角团的旅游路线图，我计划7天时间，和女朋友一起出行",
+  "intent": {
+    "destination": "浙江省杭州市及周边地区",
+    "departure_city": null,
+    "start_date": null,
+    "end_date": null,
+    "duration_days": 7,
+    "budget": null,
+    "travelers": 2,
+    "preferences": [
+      "历史文化",
+      "自然风光",
+      "影视取景地",
+      "情侣出行"
+    ],
+    "accommodation_type": "不限",
+    "transport_preference": "不限",
+    "special_requirements": "根据游戏《仙剑奇侠传1》剧情地点规划旅游路线，适合情侣共同体验"
+  }
+}

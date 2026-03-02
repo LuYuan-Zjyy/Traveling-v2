@@ -1,0 +1,107 @@
+{
+  "hotel": [
+    {
+      "day": 1,
+      "name": "黄山新桥宾馆(屯溪老街店)",
+      "price_per_night": 300
+    }
+  ],
+  "transportation": [
+    {
+      "day": 1,
+      "mode": "Train",
+      "route": "出发地 to 黄山",
+      "number": "G1234",
+      "time": "08:00",
+      "price": 500
+    },
+    {
+      "day": 3,
+      "mode": "Train",
+      "route": "黄山 to 出发地",
+      "number": "G5678",
+      "time": "18:00",
+      "price": 500
+    }
+  ],
+  "itinerary": {
+    "day_1": [
+      {
+        "time": "09:00-11:00",
+        "location": "黄山风景区",
+        "price": 190,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "徽韵悦江楼·老街江畔餐厅",
+        "price": 83,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "黄山风景区-光明顶",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "屯溪老街聚贤楼(徽菜名店)",
+        "price": 59,
+        "action": "dining"
+      }
+    ],
+    "day_2": [
+      {
+        "time": "09:00-11:00",
+        "location": "排云亭",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "黄山西海饭店",
+        "price": 100,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "黄山九龙峰",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "天海美食广场",
+        "price": 80,
+        "action": "dining"
+      }
+    ],
+    "day_3": [
+      {
+        "time": "09:00-11:00",
+        "location": "黄山-丹霞峰",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "12:00-13:00",
+        "location": "黄山老妈·土菜(碧桂园店)",
+        "price": 83,
+        "action": "dining"
+      },
+      {
+        "time": "14:00-17:00",
+        "location": "黄山风景区-白鹅岭",
+        "price": 0,
+        "action": "sightseeing"
+      },
+      {
+        "time": "18:00-19:00",
+        "location": "米禾餐厅",
+        "price": 76,
+        "action": "dining"
+      }
+    ]
+  }
+}

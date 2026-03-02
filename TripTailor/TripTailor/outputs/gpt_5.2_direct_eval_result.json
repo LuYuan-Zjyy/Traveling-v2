@@ -1,0 +1,23 @@
+{
+  "plan_key": "gpt_5.2_direct",
+  "total_score": 59.25,
+  "metrics": {
+    "completeness": 86.0,
+    "sandbox_hotel": 90.0,
+    "sandbox_transport": 90.0,
+    "sandbox_attraction": 0.0,
+    "sandbox_restaurant": 20.0,
+    "within_sandbox": 0.0,
+    "diverse_attractions": 90.0,
+    "diverse_restaurants": 70.0,
+    "within_budget": 40.0,
+    "reasonable_meal_prices": 90.0,
+    "appropriate_duration": 100.0,
+    "feasibility": 0.0,
+    "rationality": 30.0,
+    "fact_accuracy": 100.0,
+    "fact_checked_samples": 0,
+    "avg_route_distance": null
+  },
+  "timestamp": "2026-03-01T11:06:56.429324"
+}

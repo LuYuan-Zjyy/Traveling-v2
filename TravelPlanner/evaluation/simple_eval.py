@@ -101,7 +101,7 @@ class TravelPlannerEvaluator:
         # 事实验证
         if enable_fact_check and FACT_CHECKER_AVAILABLE:
             self.fact_checker = TravelPlannerFactChecker(search_engine=search_engine)
-            print("✅ 事实准确度验证已启用")
+            print("[OK] Fact accuracy verification enabled")
     
     def load_data(self):
         """加载查询数据"""
@@ -303,7 +303,7 @@ class TravelPlannerEvaluator:
                         fact_result = self.fact_checker.verify_plan(plan_data, max_checks=10)
                         fact_results.append(fact_result)
                         fact_checked_count += 1
-                        print(f"   🔍 样本 {idx+1} 事实准确度: {fact_result['accuracy']*100:.1f}%")
+                        print(f"   [FACT] Sample {idx+1} fact accuracy: {fact_result['accuracy']*100:.1f}%")
                 except Exception as e:
                     pass
         
@@ -459,7 +459,7 @@ def main():
     # 执行评估
     print("\n开始评估...")
     if args.enable_fact_check:
-        print(f"🌐 事实验证已启用 (将验证前 {args.fact_check_samples} 个样本)")
+        print(f"[NET] Fact verification enabled (will check first {args.fact_check_samples} samples)")
     
     summary = evaluator.evaluate_batch(tested_plans, fact_check_samples=args.fact_check_samples)
     

@@ -1,0 +1,12 @@
+{
+  "session_id": "20260223_232844_908591",
+  "user_input": "黄山3天",
+  "model": "deepseek-chat",
+  "created_at": "2026-02-23T23:28:44.908591",
+  "duration_seconds": 99.05,
+  "success": true,
+  "error": null,
+  "tool_call_count": 8,
+  "destination": "黄山",
+  "duration_days": 3
+}

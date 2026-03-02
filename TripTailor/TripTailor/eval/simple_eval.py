@@ -187,7 +187,7 @@ class StrictEvaluator:
         
         if enable_fact_check and FACT_CHECKER_AVAILABLE:
             self.fact_checker = FactChecker(api_key=search_api_key, search_engine=search_engine)
-            print("✅ 事实准确度验证已启用")
+            print("  [OK] Fact checking enabled")
     
     def evaluate_single(self, item, plan_key, check_facts=False):
         """评估单个计划"""
@@ -516,7 +516,7 @@ class StrictEvaluator:
         for i, item in enumerate(data):
             check_facts = enable_fact_check and self.fact_checker and fact_check_count < fact_check_samples
             if check_facts:
-                print(f"   🔍 正在验证样本 {item.get('pid', i+1)} 的事实准确度...")
+                print(f"   [FACT] Verifying sample {item.get('pid', i+1)} ...")
                 fact_check_count += 1
             
             result = self.evaluate_single(item, plan_key, check_facts=check_facts)
@@ -594,8 +594,8 @@ def print_results(summary, plan_key):
     print(f"  评估结果 - {plan_key}")
     print("=" * 65)
     
-    print(f"\n📊 样本数量: {summary['total_samples']}")
-    print(f"📈 总分: {summary['total_score']:.2f} / 100")
+    print(f"\n  Samples: {summary['total_samples']}")
+    print(f"  Total Score: {summary['total_score']:.2f} / 100")
     
     m = summary['metrics']
     
@@ -632,7 +632,7 @@ def print_results(summary, plan_key):
         print(f"  平均路线距离:                   {m['avg_route_distance']:.2f} km")
     
     if m.get('fact_checked_samples', 0) > 0:
-        print(f"\n🌐 事实准确度:                    {m['fact_accuracy']:.2f}%")
+        print(f"\n  Fact Accuracy:                    {m['fact_accuracy']:.2f}%")
         print(f"   (已验证 {m['fact_checked_samples']} 个样本)")
     
     print("\n" + "=" * 65)
@@ -657,16 +657,16 @@ def main():
     args = parser.parse_args()
     
     if not os.path.exists(args.input_file):
-        print(f"❌ 错误: 找不到输入文件 {args.input_file}")
+        print(f"  [ERROR] Input file not found: {args.input_file}")
         sys.exit(1)
     
     print(f"\n📁 加载数据: {args.input_file}")
     with open(args.input_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    print(f"📊 数据条数: {len(data)}")
+    print(f"  Data count: {len(data)}")
     
     if args.enable_fact_check and not FACT_CHECKER_AVAILABLE:
-        print("⚠️ 事实验证模块不可用")
+        print("  [WARN] Fact checker module not available")
         args.enable_fact_check = False
     
     evaluator = StrictEvaluator(
@@ -676,7 +676,7 @@ def main():
         search_engine=args.search_engine
     )
     
-    print(f"\n⏳ 正在评估...")
+    print(f"\n  Evaluating...")
     summary = evaluator.evaluate_batch(
         data, args.plan_key,
         enable_fact_check=args.enable_fact_check,
@@ -698,9 +698,9 @@ def main():
         
         with open(args.output_file, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, ensure_ascii=False, indent=2)
-        print(f"\n💾 结果已保存到: {args.output_file}")
+        print(f"\n  [SAVE] Results saved to: {args.output_file}")
     
-    print("\n✅ 评估完成!\n")
+    print("\n  [DONE] Evaluation complete!\n")
     return summary
 
 
