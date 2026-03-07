@@ -305,10 +305,10 @@ def _extract_street_number(address) -> str:
     return m.group(0) if m else ""
 
 
-def _dedup_same_address_pois(markers: list) -> list:
+def _dedup_same_address_pois(markers: list, user_keywords: list = None) -> list:
     """
-    对同一门牌号的POI去重，只保留评分最高的一个。
-    例："虹桥路2381号上海动物园内(西南角)" 与 "虹桥路2381号上海动物园(西北角)" 只保留一个。
+    对同一门牌号的POI去重。
+    逻辑：评分优先，但如果 POI 名称命中了用户的意图关键词（user_keywords），给予大幅加权。
     """
     if len(markers) <= 1:
         return markers
@@ -323,15 +323,43 @@ def _dedup_same_address_pois(markers: list) -> list:
         else:
             no_addr.append(m)
 
+    # 预处理关键词：统一转小写，过滤空值
+    valid_keywords = set()
+    if user_keywords:
+        for k in user_keywords:
+            if k and isinstance(k, str):
+                valid_keywords.add(k.lower())
+
+    def _calc_match_score(poi):
+        """计算综合匹配分：基础评分 + 意图命中加分"""
+        rating = float(poi.get("rating") or 0)
+        name = poi.get("name", "").lower()
+        
+        # 基础分
+        score = rating * 10
+        
+        # 关键词命中加分（动态权重）
+        # 如果用户明确想看"熊猫"，那么"熊猫馆"会获得巨大加分(+50)，直接压倒"上海动物园"
+        for kw in valid_keywords:
+            if kw in name:
+                score += 50.0  # 命中一个关键词加 50 分
+                print(f"[MATCH] POI '{poi['name']}' 命中用户关键词 '{kw}'，加分生效")
+                
+        # 负面关键词过滤（依然保留硬性过滤，防止售票处等无用点占据主位）
+        if any(bad in name for bad in ["售票", "入口", "停车场", "厕所", "wc", "gate"]):
+            score -= 100.0
+            
+        return score
+
     kept = list(no_addr)
     for key, group in addr_groups.items():
         if len(group) == 1:
             kept.append(group[0])
         else:
-            # 评分最高者优先；评分相同取名称最短的（更通用的父景区名）
+            # 使用动态加权分进行筛选
             best = max(
                 group,
-                key=lambda x: (float(x.get("rating") or 0), -len(x.get("name", "")))
+                key=lambda x: (_calc_match_score(x), -len(x.get("name", "")))
             )
             removed_names = [x["name"] for x in group if x is not best]
             print(f"[DEDUP-ADDR] 同地址去重({key}): 保留'{best['name']}'，去除{removed_names}")
@@ -342,38 +370,55 @@ def _dedup_same_address_pois(markers: list) -> list:
     return kept
 
 
-def _dedup_parent_child_pois(markers: list) -> list:
+def _dedup_parent_child_pois(markers: list, user_keywords: list = None) -> list:
     """
     去除同一景区的子区域重复条目。
-    例如："上海动物园-亚洲象馆"、"上海动物园灵长动物区" 均属 "上海动物园"，只保留父景区。
-
-    规则：若当前条目名称以某个已保留条目的名称(≥3字)开头，则视为子区域跳过。
-    使用 startswith 而非 in，避免"动物园"误过滤"北京动物园"。
+    引入 user_keywords 保护机制：如果子景点命中了用户关键词，则不因其是子区域而被删除。
     """
     if len(markers) <= 1:
         return markers
+    
+    # 建立关键词集合
+    valid_keywords = set()
+    if user_keywords:
+        for k in user_keywords:
+            if k and isinstance(k, str):
+                valid_keywords.add(k.lower())
+
     # 按名称长度升序：短名称(父景区)优先保留
     sorted_markers = sorted(markers, key=lambda m: len(m["name"]))
     kept = []
+    
     for m in sorted_markers:
         name = m["name"]
-        is_sub = any(
-            len(k["name"]) >= 2 and name.startswith(k["name"]) and name != k["name"]
-            for k in kept
-        )
+        
+        # 检查是否是某个已保留景点的子景点
+        is_sub = False
+        for k in kept:
+            if len(k["name"]) >= 2 and name.startswith(k["name"]) and name != k["name"]:
+                # 它是 k 的子景点。
+                # 但如果它命中了用户意图（例如用户特意要去"熊猫馆"），则破例保留！
+                hits_intent = any(kw in name.lower() and kw not in k["name"].lower() for kw in valid_keywords)
+                if hits_intent:
+                    print(f"[KEEP-SUB] 虽然 '{name}' 是 '{k['name']}' 的子景点，但命中了意图，破例保留")
+                    is_sub = False # 视为非从属，独立保留
+                else:
+                    is_sub = True
+                break
+        
         if not is_sub:
             kept.append(m)
+            
     # 重置 order 字段
     for i, k in enumerate(kept):
         k["order"] = i + 1
     return kept
 
 
-def _dedup_nearby_pois(markers: list, radius_km: float = 0.3) -> list:
+def _dedup_nearby_pois(markers: list, radius_km: float = 0.3, user_keywords: list = None) -> list:
     """
-    距离去重：同一类别中，距离 ≤ radius_km 的连通组只保留评分最高的一个。
-    使用 Union-Find 处理传递性分组（A-B, B-C → {A,B,C} 同组），
-    解决"外滩"与"万国建筑博览群"等实际位置几乎重合的景点重复问题。
+    距离去重：同一类别中，距离 ≤ radius_km 的连通组只保留最优的一个。
+    同样引入关键词加权。
     """
     if len(markers) <= 1:
         return markers
@@ -406,13 +451,30 @@ def _dedup_nearby_pois(markers: list, radius_km: float = 0.3) -> list:
     for i, m in enumerate(markers):
         root = find(i)
         groups.setdefault(root, []).append(m)
+        
+    # 关键词准备
+    valid_keywords = set()
+    if user_keywords:
+        for k in user_keywords:
+            if k and isinstance(k, str):
+                valid_keywords.add(k.lower())
+
+    def _calc_match_score(poi):
+        """(复制之前的评分逻辑，保持一致)"""
+        rating = float(poi.get("rating") or 0)
+        name = poi.get("name", "").lower()
+        score = rating * 10
+        for kw in valid_keywords:
+            if kw in name:
+                score += 50.0 
+        return score
 
     kept = []
     for group in groups.values():
         if len(group) == 1:
             kept.append(group[0])
         else:
-            best = max(group, key=lambda x: (float(x.get("rating") or 0), -len(x.get("name", ""))))
+            best = max(group, key=lambda x: (_calc_match_score(x), -len(x.get("name", ""))))
             removed_names = [x["name"] for x in group if x is not best]
             print(f"[DEDUP-NEAR] 距离去重({radius_km}km内): 保留'{best['name']}'，去除{removed_names}")
             kept.append(best)
@@ -422,7 +484,7 @@ def _dedup_nearby_pois(markers: list, radius_km: float = 0.3) -> list:
     return kept
 
 
-def _extract_pois_multiagent(response: dict):
+def _extract_pois_multiagent(response: dict, user_keywords: list = None):
     """从 Multi-agent 响应提取 POI 地图标记"""
     buckets = {"attraction": [], "restaurant": [], "hotel": []}
     seen = set()
