@@ -794,6 +794,252 @@ def index():
 
 
 # ================================================================
+#  聊天 API: 小满 (GuideAgent) 多轮对话
+# ================================================================
+
+# 全局 GuideAgent 实例（与编排器共享 LLM 客户端）
+_guide_orchestrator = None   # 延迟初始化
+
+def _get_guide_agent():
+    """获取或创建 GuideAgent 实例"""
+    global _guide_orchestrator
+    if _guide_orchestrator is None:
+        _guide_orchestrator = TravelPlanningOrchestrator()
+    return _guide_orchestrator.guide_agent
+
+
+@app.route("/api/chat", methods=["POST"])
+def api_chat():
+    """
+    小满对话接口
+
+    请求: {"message": "用户消息"}
+    响应: {
+        "reply": "小满的回复",
+        "is_ready": false,   // 是否信息收集完毕
+        "intent": null       // 如果 is_ready=true，包含结构化意图
+    }
+    """
+    data = request.json or {}
+    message = data.get("message", "").strip()
+    if not message:
+        return jsonify({"error": "message is required"}), 400
+
+    guide = _get_guide_agent()
+    if guide is None:
+        # 没有 LLM 时降级：直接跳转到老流程
+        return jsonify({
+            "reply": "很抱歉，对话功能暂不可用。请直接在搜索框输入目的地进行规划。",
+            "is_ready": False,
+            "intent": None,
+        })
+
+    # 合并前端 Chip 选择到 travel_info（不经过 LLM，直接更新）
+    chip_state = data.get("chip_state")
+    if chip_state and isinstance(chip_state, dict):
+        if chip_state.get("days"):
+            guide.travel_info["days"] = int(chip_state["days"])
+        if chip_state.get("budget"):
+            guide.travel_info["budget"] = float(chip_state["budget"])
+        if chip_state.get("prefs"):
+            guide.travel_info["preferences"] = chip_state["prefs"]
+
+    try:
+        result = guide.chat(message)
+        # 附带当前已收集的旅行信息状态
+        if "travel_info" not in result:
+            result["travel_info"] = guide.get_travel_info()
+        return jsonify(result)
+    except Exception as e:
+        print(f"[ERROR] /api/chat: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/chat/plan", methods=["POST"])
+def api_chat_plan():
+    """
+    由 GuideAgent 对话完成后触发的规划接口
+
+    请求: {"intent": {destination, duration_days, ...}}
+    响应: 与 /api/plan 相同格式
+    """
+    data = request.json or {}
+    intent_data = data.get("intent")
+    if not intent_data or not intent_data.get("destination"):
+        return jsonify({"error": "intent with destination is required"}), 400
+
+    print(f"\n{'='*60}")
+    print(f"[API] /api/chat/plan: 基于对话意图规划")
+    print(f"[INPUT] intent: {intent_data}")
+
+    try:
+        agent = TravelPlanningOrchestrator()
+        response = agent.plan_sync_with_persona(intent_data)
+
+        intent = agent.last_intent or {}
+        attrs, rests, hotels = _extract_pois_multiagent(response)
+        weather = _extract_weather_multiagent(response)
+
+        # ── DEBUG: 追踪 itinerary_days 数据流 ──
+        fp = response.get("final_plan") or {}
+        opt_routes = fp.get("optimized_routes") or []
+        print(f"[DEBUG itinerary] response status: {response.get('status')}")
+        print(f"[DEBUG itinerary] final_plan keys: {list(fp.keys()) if fp else 'None'}")
+        print(f"[DEBUG itinerary] optimized_routes count: {len(opt_routes)}")
+        for ri, rt in enumerate(opt_routes):
+            pois_in_day = rt.get("pois", [])
+            print(f"[DEBUG itinerary]   Day {rt.get('day')}: {len(pois_in_day)} POIs → {[p.get('name','?') for p in pois_in_day]}")
+        print(f"[DEBUG itinerary] attrs count: {len(attrs)}")
+
+        days = int(intent.get("duration_days", 3) or 3)
+        day_attrs = _route_output_to_day_attrs(response, attrs, days)
+        print(f"[DEBUG itinerary] day_attrs: {len(day_attrs)} days")
+        for di, dl in enumerate(day_attrs):
+            print(f"[DEBUG itinerary]   Day {di+1}: {len(dl)} items → {[a.get('name','?') for a in dl]}")
+
+        plan_text = _build_plan_text_from_markers(intent, day_attrs, rests, weather, response)
+        journal = _auto_journal(intent, day_attrs, weather)
+
+        # 路线 polyline
+        routes = []
+        city = intent.get("destination", "")
+        route_count = 0
+        for day_idx, day_list in enumerate(day_attrs):
+            if len(day_list) < 2:
+                continue
+            for i in range(len(day_list) - 1):
+                if route_count >= 8:
+                    break
+                a, b = day_list[i], day_list[i + 1]
+                seg = _route_with_polyline(
+                    a["lng"], a["lat"], b["lng"], b["lat"],
+                    mode="driving", city=city,
+                )
+                seg["from"] = a["name"]
+                seg["to"] = b["name"]
+                seg["day"] = day_idx + 1
+                routes.append(seg)
+                route_count += 1
+            if route_count >= 8:
+                break
+
+        with _state_lock:
+            itinerary_flat = [a for day in day_attrs for a in day]
+            _state.update({
+                "plan_text": plan_text,
+                "demands": intent,
+                "weather": weather,
+                "attractions": attrs,
+                "restaurants": rests,
+                "hotels": hotels,
+                "routes": routes,
+                "waypoints": itinerary_flat[:10],
+                "journal": journal,
+            })
+
+        print(f"[SUCCESS] /api/chat/plan 完成")
+        print(f"{'='*60}\n")
+
+        return jsonify({
+            "plan_text": plan_text,
+            "demands": intent,
+            "notice": intent.get("notice") or None,
+            "weather": weather,
+            "attraction_markers": attrs,
+            "restaurant_markers": rests,
+            "hotel_markers": hotels,
+            "routes": routes,
+            "journal": journal,
+            "itinerary_days": [
+                [{"name": a["name"], "lat": a["lat"], "lng": a["lng"],
+                  "address": a.get("address", ""), "order": j + 1}
+                 for j, a in enumerate(day)]
+                for day in day_attrs
+            ],
+        })
+
+    except ValueError as e:
+        print(f"[WARN] 规划失败: {e}")
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        print(f"[ERROR] 规划失败: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/chat/reset", methods=["POST"])
+def api_chat_reset():
+    """重置小满对话（开始新会话）"""
+    guide = _get_guide_agent()
+    if guide:
+        guide.reset()
+    return jsonify({"status": "ok"})
+
+
+@app.route("/api/chat/travel_info", methods=["GET"])
+def api_chat_travel_info():
+    """获取当前已收集的旅行信息状态"""
+    guide = _get_guide_agent()
+    if guide is None:
+        return jsonify({"travel_info": {}})
+    return jsonify({"travel_info": guide.get_travel_info()})
+
+
+@app.route("/api/chat/update_chips", methods=["POST"])
+def api_chat_update_chips():
+    """
+    前端 Chip 选择同步接口：直接更新 travel_info，无需经过 LLM
+
+    请求: {"days": 3, "budget": 5000, "prefs": ["美食", "历史文化"]}
+    """
+    data = request.json or {}
+    guide = _get_guide_agent()
+    if guide is None:
+        return jsonify({"error": "guide agent not available"}), 500
+
+    if data.get("days") is not None:
+        guide.travel_info["days"] = int(data["days"]) if data["days"] else None
+    if data.get("budget") is not None:
+        guide.travel_info["budget"] = float(data["budget"]) if data["budget"] else None
+    if "prefs" in data:
+        guide.travel_info["preferences"] = data["prefs"] if data["prefs"] else None
+
+    return jsonify({"status": "ok", "travel_info": guide.get_travel_info()})
+
+
+@app.route("/api/chat/restore", methods=["POST"])
+def api_chat_restore():
+    """
+    恢复对话历史（断线重连时前端调用）
+
+    请求: {"history": [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}, ...]}
+    响应: {"status": "ok", "restored_count": N}
+    """
+    data = request.json or {}
+    history = data.get("history", [])
+    if not isinstance(history, list):
+        return jsonify({"error": "history must be a list"}), 400
+
+    guide = _get_guide_agent()
+    if guide is None:
+        return jsonify({"error": "guide agent not available"}), 500
+
+    # 过滤只保留 user/assistant 角色
+    valid_history = []
+    for msg in history:
+        role = msg.get("role", "")
+        content = msg.get("content", "")
+        if role in ("user", "assistant") and content:
+            valid_history.append({"role": role, "content": content})
+
+    guide.restore_history(valid_history)
+    print(f"[Chat] 对话历史已恢复, 共 {len(valid_history)} 条消息")
+
+    return jsonify({"status": "ok", "restored_count": len(valid_history)})
+
+
+# ================================================================
 #  核心 API: Agent 规划 (接入 orchestrator)
 # ================================================================
 

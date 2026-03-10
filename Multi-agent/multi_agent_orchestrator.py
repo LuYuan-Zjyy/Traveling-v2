@@ -35,6 +35,7 @@ from agents.data_collection_agent import DataCollectionAgent
 from agents.culture_agent import CultureAgent
 from agents.quality_eval_agent import QualityEvalAgent
 from agents.budget_agent import BudgetAgent
+from agents.guide_agent import GuideAgent
 from Route.route_planning_agent import RouteOptimizationAgent
 from ui_modules import UIResponseBuilder
 from tools.amap_tools import AmapTools
@@ -247,6 +248,7 @@ class TravelPlanningOrchestrator:
         # 搜索引擎工具（优先 Bing，没有 Key 则 DuckDuckGo）
         self._search_tool = get_search_tool()
 
+        self.guide_agent = GuideAgent(llm_client=self._llm) if self._llm else None
         self.data_collection_agent = DataCollectionAgent(amap_client=amap_client)
         self.culture_agent = CultureAgent(
             llm_client=self._llm,
@@ -291,6 +293,13 @@ class TravelPlanningOrchestrator:
 
         try:
             context = PlanningContext(user_intent=user_intent)
+
+            # 将用户画像写入 context（由 GuideAgent 对话阶段收集，
+            # 或通过 plan_sync_with_persona 传入）
+            if hasattr(self, '_pending_persona') and self._pending_persona:
+                context.user_persona.update(self._pending_persona)
+                self._pending_persona = None
+                print(f"[Orchestrator] 用户画像已注入: {context.user_persona}")
 
             iteration = 0
             while iteration < self.MAX_ITERATIONS:
@@ -896,11 +905,24 @@ class TravelPlanningOrchestrator:
             print("   无POI数据，跳过路线优化")
             return
 
+        # 根据用户画像动态调整路线参数
+        persona = context.user_persona
+        style = persona.get("travel_style", "balanced")
+        if style == "intense":
+            max_hours = 14.0
+            max_dist = 100.0
+        elif style == "relaxed":
+            max_hours = 7.0
+            max_dist = 40.0
+        else:
+            max_hours = 10.0
+            max_dist = 80.0
+
         constraints = {
             "duration_days": context.user_intent.duration_days,
             "budget": context.user_intent.budget,
-            "max_daily_distance": 80.0,
-            "max_daily_hours": 10.0,
+            "max_daily_distance": max_dist,
+            "max_daily_hours": max_hours,
         }
 
         route_plan = self.route_agent.plan(
@@ -1262,6 +1284,94 @@ destination 只填写第一个/主要城市（如"上海"），
         # 重置迭代历史（每次 plan_sync 是独立请求）
         self.execution_history = []
         self.feedback_history = []
+
+        response = asyncio.run(self.orchestrate(user_intent))
+        self._last_response = response
+        return response
+
+    def plan_sync_with_persona(self, intent_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        带画像的同步规划入口（由 GuideAgent 对话完成后调用）
+
+        Args:
+            intent_data: GuideAgent 收集到的结构化意图，包含:
+                destination, duration_days, budget, people_count,
+                preferences, travel_style, special_requirements
+
+        Returns:
+            与 orchestrate() 相同的 response dict
+        """
+        dest = intent_data.get("destination", "")
+        if not dest:
+            raise ValueError("缺少目的地信息")
+
+        days = int(intent_data.get("duration_days", 3) or 3)
+        budget = float(intent_data.get("budget") or 0)
+        if budget <= 0:
+            budget = days * 800  # 未指定预算时按天数估算
+
+        user_intent = UserIntent(
+            destination=dest,
+            duration_days=days,
+            budget=budget,
+            people_count=int(intent_data.get("people_count", 1) or 1),
+            preferences=intent_data.get("preferences") or [],
+            special_requirements=intent_data.get("special_requirements") or "",
+            raw_query=intent_data.get("raw_query") or dest,
+        )
+
+        # 存储画像信息，供 orchestrate 注入到 PlanningContext
+        style = intent_data.get("travel_style", "balanced")
+        self._pending_persona = {
+            "travel_style": style,
+            "tags": intent_data.get("preferences") or [],
+            "implicit_needs": [],
+            "consumption_level": (
+                "budget" if budget < days * 400 else
+                "luxury" if budget > days * 1500 else
+                "economy"
+            ),
+            "pacing_preference": (
+                5 if style == "intense" else
+                2 if style == "relaxed" else
+                3
+            ),
+        }
+
+        # 解析特殊需求中的隐性需求
+        special = intent_data.get("special_requirements") or ""
+        if special:
+            need_keywords = {
+                "老人": ["少爬山", "减少步行", "节奏舒缓"],
+                "小孩": ["亲子友好", "安全第一"],
+                "孩子": ["亲子友好", "安全第一"],
+                "婴儿": ["母婴室", "减少颠簸"],
+                "轮椅": ["无障碍通道"],
+                "腿脚": ["少台阶", "减少步行距离"],
+            }
+            for kw, needs in need_keywords.items():
+                if kw in special:
+                    self._pending_persona["implicit_needs"].extend(needs)
+
+        self._last_intent = {
+            "destination": user_intent.destination,
+            "duration_days": user_intent.duration_days,
+            "budget": user_intent.budget,
+            "preferences": user_intent.preferences,
+            "start_date": user_intent.start_date,
+            "end_date": user_intent.end_date,
+            "accommodation_type": user_intent.accommodation_type,
+            "transport_preference": user_intent.transport_preference,
+            "special_requirements": user_intent.special_requirements,
+            "notice": None,
+        }
+
+        self.execution_history = []
+        self.feedback_history = []
+
+        print(f"\n[plan_sync_with_persona] 目的地={dest}, 天数={days}, "
+              f"预算={budget}, 风格={style}")
+        print(f"[plan_sync_with_persona] 画像: {self._pending_persona}")
 
         response = asyncio.run(self.orchestrate(user_intent))
         self._last_response = response

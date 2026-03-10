@@ -19,9 +19,13 @@
             <span class="brand">MCP Travel Agent</span>
         </div>
         <div class="topbar-center">
-            <div class="search-box">
-                <input id="queryInput" type="text" placeholder="输入目的地，如: 安庆、黄山、西安..." />
-                <button id="planBtn" onclick="startPlan()"><i class="fas fa-magic"></i> AI 规划</button>
+            <div class="chat-input-bar">
+                <span class="chat-input-avatar">🌿</span>
+                <input id="chatInput" type="text" placeholder="和小满聊聊你的旅行计划..."
+                       onkeydown="if(event.key==='Enter')sendChatMessage()" autocomplete="off"
+                       onfocus="showConversation()" />
+                <span class="chat-unread-badge" id="chatUnreadBadge" onclick="showConversation()"></span>
+                <button id="chatSendBtn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
         <div class="topbar-right">
@@ -57,6 +61,28 @@
             <button class="chip" data-type="budget" data-val="5000" onclick="toggleChip(this)">¥5000</button>
             <button class="chip" data-type="budget" data-val="10000" onclick="toggleChip(this)">¥万+</button>
         </div>
+    </div>
+
+    <!-- 点击遮罩收起对话 -->
+    <div class="conv-backdrop hidden" id="convBackdrop" onclick="hideConversation()"></div>
+
+    <!-- 小满对话面板（搜索框下方下拉） -->
+    <div class="conversation-panel collapsed" id="conversationPanel">
+        <div class="conversation-header" onclick="hideConversation()">
+            <div class="conversation-title">
+                <span class="conv-avatar">🌿</span>
+                <span>小满 · 旅行定制师</span>
+                <span class="conversation-status" id="convStatus">在线</span>
+            </div>
+            <div class="conversation-actions">
+                <button class="conv-action-btn" onclick="event.stopPropagation();resetChat()" title="新对话"><i class="fas fa-redo-alt"></i></button>
+                <button class="conv-action-btn" onclick="hideConversation()" title="收起"><i class="fas fa-chevron-up"></i></button>
+            </div>
+        </div>
+        <div class="conversation-body" id="conversationBody">
+            <div class="conversation-messages" id="chatMessages"></div>
+        </div>
+        <div class="conv-resize-handle" id="convResizeHandle"></div>
     </div>
 
     <div id="loadingOverlay" class="loading-overlay" style="display:none;">

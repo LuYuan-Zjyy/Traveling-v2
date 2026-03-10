@@ -16,19 +16,21 @@
     --sidebar-w: 400px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
 
 /* ===== Topbar ===== */
 .topbar { display:flex; align-items:center; height:56px; padding:0 20px; background:var(--surface); border-bottom:1px solid var(--border); z-index:1000; position:relative; }
 .topbar-left { display:flex; align-items:center; gap:8px; font-size:18px; font-weight:700; color:var(--primary); min-width:200px; }
 .topbar-left i { font-size:22px; }
-.topbar-center { flex:1; display:flex; justify-content:center; }
-.search-box { display:flex; max-width:620px; width:100%; }
-.search-box input { flex:1; height:40px; padding:0 16px; border:2px solid var(--border); border-radius:var(--radius) 0 0 var(--radius); font-size:14px; outline:none; transition:border .2s; }
-.search-box input:focus { border-color:var(--primary); }
-.search-box button { height:40px; padding:0 24px; background:var(--primary); color:#fff; border:none; border-radius:0 var(--radius) var(--radius) 0; font-size:14px; font-weight:600; cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; transition:background .2s; }
-.search-box button:hover { background:var(--primary-dark); }
-.search-box button:disabled { opacity:.6; cursor:not-allowed; }
+.topbar-center { flex:1; display:flex; justify-content:center; position:relative; }
+.chat-input-bar { display:flex; align-items:center; max-width:620px; width:100%; height:42px; background:var(--bg); border:2px solid var(--border); border-radius:21px; padding:0 6px 0 14px; transition:border-color .2s, box-shadow .2s; position:relative; z-index:1002; }
+.chat-input-bar:focus-within { border-color:#6366F1; box-shadow:0 0 0 3px rgba(99,102,241,.1); }
+.chat-input-avatar { font-size:18px; margin-right:8px; flex-shrink:0; line-height:1; }
+.chat-input-bar input { flex:1; border:none; background:transparent; font-size:14px; outline:none; height:100%; color:var(--text); }
+.chat-input-bar input::placeholder { color:var(--text2); }
+.chat-input-bar button { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, #6366F1, #8B5CF6); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; transition:transform .15s, box-shadow .15s; flex-shrink:0; }
+.chat-input-bar button:hover { transform:scale(1.08); box-shadow:0 2px 8px rgba(99,102,241,.3); }
+.chat-input-bar button:disabled { opacity:.5; cursor:not-allowed; transform:none; }
 .topbar-right { display:flex; gap:4px; min-width:180px; justify-content:flex-end; }
 .tab-btn { height:36px; padding:0 16px; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; background:transparent; color:var(--text2); display:flex; align-items:center; gap:6px; transition:all .2s; }
 .tab-btn.active { background:var(--primary-light); color:var(--primary); }
@@ -43,7 +45,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto
 .loading-steps { margin-top:12px; font-size:13px; color:var(--text2); max-height:120px; overflow-y:auto; }
 
 /* ===== Layout ===== */
-.main-wrapper { height:calc(100vh - 56px - 42px); }
+.main-wrapper { flex:1; min-height:0; overflow:hidden; }
 .tab-content { display:none; height:100%; }
 .tab-content.active { display:flex; flex-direction:column; }
 .layout-row { display:flex; flex:1; overflow:hidden; }
@@ -474,7 +476,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto
 @media (max-width:768px) {
     .sidebar { width:100%; min-width:100%; position:absolute; z-index:500; height:50%; bottom:0; border-right:none; border-top:1px solid var(--border); }
     .sidebar.collapsed { margin-left:0; margin-bottom:calc(-50% + 28px); }
-    .search-box { max-width:100%; }
+    .chat-input-bar { max-width:100%; }
 }
 
 /* ===== Markdown 样式 ===== */
@@ -730,4 +732,263 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto
     line-height: 1;
 }
 #planNotice .notice-close:hover { opacity: 1; }
+
+
+/* ================================================================
+   小满对话面板（搜索框下方下拉，覆盖地图）
+   ================================================================ */
+.conversation-panel {
+    position: fixed;
+    top: 56px; /* topbar 高度 */
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100vw;
+    max-height: calc(100vh - 120px);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0,0,0,.12);
+    opacity: 1;
+    transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+    pointer-events: auto;
+}
+.conversation-panel.collapsed {
+    opacity: 0;
+    max-height: 0 !important;
+    pointer-events: none;
+    transform: translateY(-8px);
+    overflow: hidden;
+}
+/* 半透明遮罩：点击可收起 */
+.conv-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: transparent;
+    pointer-events: auto;
+}
+.conv-backdrop.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.conversation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    user-select: none;
+    background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.03));
+    border-bottom: 1px solid rgba(99,102,241,0.08);
+    flex-shrink: 0;
+}
+.conversation-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+.conv-avatar { font-size: 16px; }
+.conversation-status {
+    font-size: 11px;
+    font-weight: 500;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 1px 8px;
+    border-radius: 10px;
+}
+.conversation-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.conv-action-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: rgba(99,102,241,0.08);
+    color: var(--text2);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: all 0.15s;
+}
+.conv-action-btn:hover {
+    background: rgba(99,102,241,0.15);
+    color: var(--primary);
+}
+.conversation-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.conversation-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #F8FAFC;
+}
+/* 底部拖拽调整高度手柄 */
+.conv-resize-handle {
+    height: 6px;
+    cursor: ns-resize;
+    background: linear-gradient(to bottom, var(--border), transparent);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+.conv-resize-handle::after {
+    content: '';
+    width: 36px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.15s;
+}
+.conv-resize-handle:hover,
+.conv-resize-handle:active {
+    background: linear-gradient(to bottom, rgba(99,102,241,0.15), transparent);
+}
+.conv-resize-handle:hover::after,
+.conv-resize-handle:active::after {
+    background: var(--primary);
+}
+/* 拖拽时禁止面板过渡动画 */
+.conversation-panel.resizing {
+    transition: none !important;
+}
+/* 消息数指示器（收起时显示在输入框右侧） */
+.chat-unread-badge {
+    position: absolute;
+    right: 46px;
+    top: 50%;
+    transform: translateY(-50%);
+    min-width: 18px;
+    height: 18px;
+    background: #EF4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    line-height: 1;
+    z-index: 1003;
+    cursor: pointer;
+}
+.chat-unread-badge.show { display: flex; }
+
+/* 对话消息样式 */
+.chat-msg {
+    display: flex;
+    gap: 8px;
+    max-width: 85%;
+    animation: msgFadeIn 0.25s ease-out;
+}
+@keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.chat-msg-user {
+    flex-direction: row-reverse;
+    align-self: flex-end;
+}
+.chat-msg-assistant {
+    align-self: flex-start;
+}
+.chat-msg-system {
+    align-self: center;
+    max-width: 100%;
+}
+.chat-msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    background: #EEF2FF;
+}
+.chat-msg-user .chat-msg-avatar {
+    background: #DBEAFE;
+}
+.chat-msg-bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+.chat-msg-bubble p { margin: 0 0 6px 0; }
+.chat-msg-bubble p:last-child { margin-bottom: 0; }
+.chat-msg-assistant .chat-msg-bubble {
+    background: #fff;
+    color: #1E293B;
+    border: 1px solid #E2E8F0;
+    border-top-left-radius: 4px;
+}
+.chat-msg-user .chat-msg-bubble {
+    background: linear-gradient(135deg, #6366F1, #7C3AED);
+    color: #fff;
+    border-top-right-radius: 4px;
+}
+.chat-msg-system {
+    text-align: center;
+    font-size: 12px;
+    color: #94A3B8;
+    padding: 4px 0;
+}
+.chat-msg-bubble strong { color: inherit; font-weight: 700; }
+.chat-msg-assistant .chat-msg-bubble strong { color: var(--primary); }
+
+/* 输入中指示器 */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px !important;
+}
+.typing-indicator span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #94A3B8;
+    animation: typingBounce 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .chat-input-bar {
+        max-width: 100%;
+    }
+    .conversation-messages {
+        max-height: 300px;
+    }
+}
 

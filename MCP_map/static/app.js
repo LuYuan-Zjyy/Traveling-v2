@@ -88,9 +88,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Enter 键触发
-    document.getElementById('queryInput').addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') startPlan();
+    // 聊天自动初始化：进入页面就触发小满打招呼
+    initChat();
+
+    // Enter 键从顶栏聊天框发送
+    document.getElementById('chatInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') sendChatMessage();
     });
 });
 
@@ -129,10 +132,10 @@ function toggleSidebar() {
 
 // ========== Agent 规划 ==========
 function startPlan() {
-    var baseQuery = document.getElementById('queryInput').value.trim();
+    var baseQuery = document.getElementById('chatInput').value.trim();
     var query = buildQueryWithChips(baseQuery);
-    if (!query) { alert('请输入旅行需求或选择上方选项'); return; }
-    var btn = document.getElementById('planBtn');
+    if (!query) { alert('请在对话框输入旅行需求或选择上方选项'); return; }
+    var btn = document.getElementById('chatSendBtn');
     btn.disabled = true;
     showLoading('Agent 正在调用 12 项高德 MCP 服务...');
     fetch('/api/plan', {
@@ -797,6 +800,23 @@ function toggleChip(btn) {
             btn.classList.add('active');
         }
     }
+
+    // 同步 Chip 选择到后端 travel_info
+    syncChipsToBackend();
+}
+
+function syncChipsToBackend() {
+    fetch('/api/chat/update_chips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            days: chipState.days ? parseInt(chipState.days) : null,
+            budget: chipState.budget ? parseFloat(chipState.budget) : null,
+            prefs: chipState.prefs.length > 0 ? chipState.prefs : null
+        })
+    }).catch(function (e) {
+        console.warn('Chip sync failed:', e);
+    });
 }
 
 function buildQueryWithChips(baseQuery) {
@@ -806,6 +826,43 @@ function buildQueryWithChips(baseQuery) {
     if (chipState.prefs.length) parts.push('偏好' + chipState.prefs.join('、'));
     if (chipState.budget) parts.push('预算' + chipState.budget + '元');
     return parts.join('，');
+}
+
+// ========== 旅行信息收集状态展示 ==========
+function updateTravelInfoDisplay(info) {
+    // 更新对话面板状态栏
+    var status = document.getElementById('convStatus');
+    if (!status) return;
+
+    var parts = [];
+    if (info.destination) parts.push('📍' + info.destination);
+    if (info.days) parts.push(info.days + '天');
+    if (info.budget) parts.push('¥' + info.budget);
+    if (info.preferences && info.preferences.length) parts.push(info.preferences.join('/'));
+
+    if (parts.length > 0) {
+        status.textContent = parts.join(' · ');
+        status.title = '已收集: ' + JSON.stringify(info);
+    } else {
+        status.textContent = '在线';
+        status.title = '';
+    }
+
+    // 同步 chip UI 状态（后端可能通过对话更新了信息）
+    if (info.days && !chipState.days) {
+        var dayBtn = document.querySelector('.chip[data-type="days"][data-val="' + info.days + '"]');
+        if (dayBtn) { dayBtn.classList.add('active'); chipState.days = String(info.days); }
+    }
+    if (info.budget && !chipState.budget) {
+        var budgetBtn = document.querySelector('.chip[data-type="budget"][data-val="' + info.budget + '"]');
+        if (budgetBtn) { budgetBtn.classList.add('active'); chipState.budget = String(info.budget); }
+    }
+    if (info.preferences && info.preferences.length && chipState.prefs.length === 0) {
+        info.preferences.forEach(function (p) {
+            var prefBtn = document.querySelector('.chip[data-type="pref"][data-val="' + p + '"]');
+            if (prefBtn) { prefBtn.classList.add('active'); chipState.prefs.push(p); }
+        });
+    }
 }
 
 // ========== 侧边栏二级 Tab ==========
@@ -901,4 +958,405 @@ function flyToPoi(lat, lng, name, type) {
             }
         }
     }, 150);
+}
+
+
+// ================================================================
+//  小满聊天系统 (GuideAgent Frontend)
+//  对话持久化: localStorage 保存消息, 断线恢复
+// ================================================================
+
+var chatInitialized = false;
+var conversationExpanded = false;
+var planCompleted = false;  // 规划是否已完成
+var chatAutoHideTimer = null;      // 自动收起定时器
+var chatUnreadCount = 0;           // 未读消息数
+var AUTO_HIDE_DELAY = 6000;        // 自动收起延迟 (ms)
+
+// ---- localStorage 对话持久化 ----
+var CHAT_STORAGE_KEY = 'xiaoman_chat_messages';
+var CHAT_STATE_KEY = 'xiaoman_chat_state';
+
+function saveChatToStorage() {
+    var container = document.getElementById('chatMessages');
+    var messages = [];
+    var nodes = container.querySelectorAll('.chat-msg');
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        // 跳过 typing indicator
+        if (node.id && node.id.indexOf('typing-') === 0) continue;
+        var role = 'system';
+        if (node.classList.contains('chat-msg-user')) role = 'user';
+        else if (node.classList.contains('chat-msg-assistant')) role = 'assistant';
+        // 提取纯文本内容用于后端恢复
+        var bubble = node.querySelector('.chat-msg-bubble');
+        var sysEl = node.querySelector('.chat-msg-system');
+        var text = '';
+        if (bubble) text = bubble.textContent || '';
+        else if (sysEl) text = sysEl.textContent || '';
+        // 保存原始 HTML 用于前端显示恢复
+        messages.push({ role: role, text: text, html: node.outerHTML });
+    }
+    try {
+        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+        localStorage.setItem(CHAT_STATE_KEY, JSON.stringify({
+            initialized: chatInitialized,
+            planCompleted: planCompleted
+        }));
+    } catch (e) {
+        console.warn('localStorage save failed:', e);
+    }
+}
+
+function loadChatFromStorage() {
+    try {
+        var raw = localStorage.getItem(CHAT_STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+function loadChatState() {
+    try {
+        var raw = localStorage.getItem(CHAT_STATE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+    } catch (e) {
+        return null;
+    }
+}
+
+function clearChatStorage() {
+    try {
+        localStorage.removeItem(CHAT_STORAGE_KEY);
+        localStorage.removeItem(CHAT_STATE_KEY);
+    } catch (e) {}
+}
+
+// 将保存的对话历史恢复到后端 GuideAgent
+function restoreBackendHistory(messages) {
+    // 提取 user 和 assistant 消息用于恢复后端状态
+    var history = [];
+    for (var i = 0; i < messages.length; i++) {
+        var m = messages[i];
+        if (m.role === 'user' || m.role === 'assistant') {
+            history.push({ role: m.role, content: m.text });
+        }
+    }
+    if (history.length === 0) return;
+
+    fetch('/api/chat/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ history: history })
+    }).then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.status === 'ok') {
+            console.log('[Chat] 后端对话历史恢复成功, 共 ' + history.length + ' 条');
+        }
+    }).catch(function (e) {
+        console.warn('[Chat] 后端恢复失败:', e);
+    });
+}
+
+function initChat() {
+    var saved = loadChatFromStorage();
+    var savedState = loadChatState();
+
+    if (saved && saved.length > 0 && savedState && !savedState.planCompleted) {
+        // 有未完成的对话 → 恢复显示 + 同步后端
+        var container = document.getElementById('chatMessages');
+        container.innerHTML = '';
+        for (var i = 0; i < saved.length; i++) {
+            var div = document.createElement('div');
+            div.innerHTML = saved[i].html;
+            if (div.firstChild) {
+                container.appendChild(div.firstChild);
+            }
+        }
+        container.scrollTop = container.scrollHeight;
+        chatInitialized = true;
+        planCompleted = false;
+        // 添加一条恢复提示
+        appendChatMessage('system', '🔄 已恢复上次的对话，我们继续聊吧~');
+        // 同步到后端
+        restoreBackendHistory(saved);
+    } else {
+        // 规划已完成或无历史 → 清除旧数据, 开始新对话
+        clearChatStorage();
+        planCompleted = false;
+        if (!chatInitialized) {
+            chatInitialized = true;
+            sendSystemMessage('[系统] 用户已连接');
+        }
+    }
+}
+
+function showConversation() {
+    var panel = document.getElementById('conversationPanel');
+    var backdrop = document.getElementById('convBackdrop');
+    if (!conversationExpanded) {
+        panel.classList.remove('collapsed');
+        backdrop.classList.remove('hidden');
+        conversationExpanded = true;
+        chatUnreadCount = 0;
+        updateUnreadBadge();
+        var msgs = document.getElementById('chatMessages');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    }
+    resetAutoHideTimer();
+}
+
+function hideConversation() {
+    var panel = document.getElementById('conversationPanel');
+    var backdrop = document.getElementById('convBackdrop');
+    panel.classList.add('collapsed');
+    backdrop.classList.add('hidden');
+    conversationExpanded = false;
+    clearAutoHideTimer();
+}
+
+function toggleConversation() {
+    if (conversationExpanded) {
+        hideConversation();
+    } else {
+        showConversation();
+    }
+}
+
+function resetAutoHideTimer() {
+    clearAutoHideTimer();
+    chatAutoHideTimer = setTimeout(function () {
+        // 如果输入框没有焦点，且没有正在输入的指示器，则自动收起
+        var input = document.getElementById('chatInput');
+        var hasTyping = document.querySelector('.typing-indicator');
+        if (document.activeElement !== input && !hasTyping) {
+            hideConversation();
+        } else {
+            // 用户仍在交互，延迟再试
+            resetAutoHideTimer();
+        }
+    }, AUTO_HIDE_DELAY);
+}
+
+function clearAutoHideTimer() {
+    if (chatAutoHideTimer) {
+        clearTimeout(chatAutoHideTimer);
+        chatAutoHideTimer = null;
+    }
+}
+
+function updateUnreadBadge() {
+    var badge = document.getElementById('chatUnreadBadge');
+    if (!badge) return;
+    if (chatUnreadCount > 0 && !conversationExpanded) {
+        badge.textContent = chatUnreadCount > 99 ? '99+' : chatUnreadCount;
+        badge.classList.add('show');
+    } else {
+        badge.classList.remove('show');
+        chatUnreadCount = 0;
+    }
+}
+
+// ---- 对话面板高度拖拽调整 ----
+(function initConvResize() {
+    document.addEventListener('DOMContentLoaded', function () {
+        var handle = document.getElementById('convResizeHandle');
+        var panel = document.getElementById('conversationPanel');
+        if (!handle || !panel) return;
+
+        var startY, startH;
+        handle.addEventListener('mousedown', onStart);
+        handle.addEventListener('touchstart', onStart, { passive: false });
+
+        function onStart(e) {
+            e.preventDefault();
+            panel.classList.add('resizing');
+            startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            startH = panel.offsetHeight;
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+            document.addEventListener('touchmove', onMove, { passive: false });
+            document.addEventListener('touchend', onEnd);
+        }
+        function onMove(e) {
+            e.preventDefault();
+            var y = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            var newH = startH + (y - startY);
+            var minH = 120;
+            var maxH = window.innerHeight - 120;
+            newH = Math.max(minH, Math.min(maxH, newH));
+            panel.style.height = newH + 'px';
+        }
+        function onEnd() {
+            panel.classList.remove('resizing');
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
+        }
+    });
+})();
+
+function sendSystemMessage(text) {
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+    }).then(function (r) { return r.json(); })
+    .then(function (data) {
+        if (data.reply) {
+            appendChatMessage('assistant', data.reply);
+        }
+    }).catch(function (e) {
+        console.error('Chat init error:', e);
+        appendChatMessage('assistant', '嗨～我是小满 🌿 很高兴见到你！不管是想来一场说走就走的旅行，还是已经有了心仪的目的地，都可以跟我聊聊 ✨ 你最近想去哪里看看呀？');
+    });
+}
+
+function sendChatMessage() {
+    var input = document.getElementById('chatInput');
+    var text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    appendChatMessage('user', text);
+    clearAutoHideTimer();   // 等待回复期间不自动收起
+
+    var sendBtn = document.getElementById('chatSendBtn');
+    sendBtn.disabled = true;
+
+    // 显示"正在输入"指示器
+    var typingId = showTypingIndicator();
+
+    fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            message: text,
+            chip_state: {
+                days: chipState.days ? parseInt(chipState.days) : null,
+                budget: chipState.budget ? parseFloat(chipState.budget) : null,
+                prefs: chipState.prefs.length > 0 ? chipState.prefs : null
+            }
+        })
+    }).then(function (r) { return r.json(); })
+    .then(function (data) {
+        removeTypingIndicator(typingId);
+        if (data.error) {
+            appendChatMessage('assistant', '抱歉出了点问题: ' + data.error);
+            return;
+        }
+        appendChatMessage('assistant', data.reply);
+
+        // 更新旅行信息状态显示
+        if (data.travel_info) {
+            updateTravelInfoDisplay(data.travel_info);
+        }
+
+        if (data.is_ready && data.intent) {
+            // 信息收集完毕，开始规划
+            startPlanFromChat(data.intent);
+        }
+    }).catch(function (e) {
+        removeTypingIndicator(typingId);
+        appendChatMessage('assistant', '网络有点小波动，不过没关系，再跟我说一次吧～ 🙏');
+    }).finally(function () {
+        sendBtn.disabled = false;
+    });
+}
+
+function startPlanFromChat(intent) {
+    // 添加一条加载提示
+    appendChatMessage('system', '🗺️ 小满正在认真研究你的行程，请稍等一小会儿...');
+    hideConversation();
+    showLoading('小满正在精心为你安排行程...');
+
+    fetch('/api/chat/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intent: intent })
+    }).then(function (r) {
+        if (!r.ok) return r.json().then(function (e) { throw new Error(e.error || 'error'); });
+        return r.json();
+    }).then(function (data) {
+        applyPlanResult(data);
+        planCompleted = true;
+        saveChatToStorage();
+        appendChatMessage('assistant', '行程安排好了！🎉 我把每天的安排都放在了左侧「行程」面板，地图上也标注了所有推荐的地方。你看看有没有想调整的，比如哪里想多待一会儿、哪里想换个地方，随时告诉我～');
+        // 自动切换到地图视图
+        switchTab('map');
+    }).catch(function (e) {
+        appendChatMessage('assistant', '规划过程中遇到了一点小问题: ' + e.message + '\n不过没关系，你换个说法或者再试一次，我再帮你安排～');
+    }).finally(function () {
+        hideLoading();
+    });
+}
+
+function appendChatMessage(role, text) {
+    var container = document.getElementById('chatMessages');
+    var wrapper = document.createElement('div');
+    wrapper.className = 'chat-msg chat-msg-' + role;
+
+    if (role === 'system') {
+        wrapper.innerHTML = '<div class="chat-msg-system">' + esc(text) + '</div>';
+    } else {
+        var avatar = role === 'assistant' ? '🌿' : '🧑';
+        var renderedText = md.render(text);
+        wrapper.innerHTML =
+            '<div class="chat-msg-avatar">' + avatar + '</div>' +
+            '<div class="chat-msg-bubble">' + renderedText + '</div>';
+    }
+    container.appendChild(wrapper);
+    container.scrollTop = container.scrollHeight;
+
+    // 每条消息都持久化保存
+    saveChatToStorage();
+
+    // 新消息时展开对话面板
+    showConversation();
+
+    // assistant 消息到来后重置自动收起计时器
+    if (role === 'assistant') {
+        resetAutoHideTimer();
+    }
+
+    // 如果面板收起状态，增加未读计数
+    if (!conversationExpanded && role !== 'system') {
+        chatUnreadCount++;
+        updateUnreadBadge();
+    }
+}
+
+function showTypingIndicator() {
+    var container = document.getElementById('chatMessages');
+    var el = document.createElement('div');
+    var id = 'typing-' + Date.now();
+    el.id = id;
+    el.className = 'chat-msg chat-msg-assistant';
+    el.innerHTML =
+        '<div class="chat-msg-avatar">🌿</div>' +
+        '<div class="chat-msg-bubble typing-indicator"><span></span><span></span><span></span></div>';
+    container.appendChild(el);
+    container.scrollTop = container.scrollHeight;
+    return id;
+}
+
+function removeTypingIndicator(id) {
+    var el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function resetChat() {
+    if (!confirm('确定要开始新对话吗？')) return;
+    clearChatStorage();
+    planCompleted = false;
+    fetch('/api/chat/reset', { method: 'POST' })
+    .then(function () {
+        document.getElementById('chatMessages').innerHTML = '';
+        chatInitialized = false;
+        initChat();
+    });
 }

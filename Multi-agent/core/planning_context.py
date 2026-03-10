@@ -61,6 +61,15 @@ class PlanningContext:
     def __init__(self, user_intent: Optional[UserIntent] = None):
         # Step 0: 用户意图
         self.user_intent: Optional[UserIntent] = user_intent
+
+        # Step 0.5: 用户画像（由 GuideAgent 对话收集 + 推断，供后续 Agent 参考）
+        self.user_persona: Dict[str, Any] = {
+            "travel_style": "balanced",      # relaxed / balanced / intense
+            "tags": [],                      # 兴趣标签，如 ["#历史迷", "#摄影"]
+            "implicit_needs": [],            # 隐性需求，如 ["少爬山", "轮椅友好"]
+            "consumption_level": "economy",  # budget / economy / luxury
+            "pacing_preference": 3,          # 每日建议景点数
+        }
         
         # Step 1: 原始数据
         self.pois: List[POI] = []
